@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         list.innerHTML = '<div class="items-loading" style="text-align:center;padding:40px;color:var(--text-secondary);"><p>加载中...</p></div>';
         try {
             const resp = await getItemAPI().getMyItems();
-            const items = resp.items || [];
+            const items = resp.data || resp.items || [];
             if (items.length === 0) {
                 list.innerHTML = `
                     <div class="items-empty" style="grid-column: 1 / -1;">

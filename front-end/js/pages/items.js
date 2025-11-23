@@ -159,9 +159,9 @@ async function loadItems() {
         };
 
         const response = await getItemAPI().searchItems(searchParams);
-        const items = response.data?.items || response.items || [];
-        const total = response.data?.total || response.total || 0;
-        const totalPages = Math.ceil(total / pageSize);
+        const items = response.data || [];
+        const total = response.pagination?.total || 0;
+        const totalPages = response.pagination?.totalPages || Math.ceil(total / pageSize);
 
         // 更新结果数量
         if (resultsCount) {

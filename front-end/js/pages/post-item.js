@@ -237,8 +237,12 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
         // 调用API
         const response = await ItemAPI.createItem(itemData);
         
-        alert('物品发布成功！');
-        window.location.href = `item-detail.html?id=${response.data?.id || response.id}`;
+        if (response.success) {
+            alert('物品发布成功！');
+            window.location.href = `item-detail.html?id=${response.itemId || response.data?.id || response.id}`;
+        } else {
+            throw new Error(response.message || '发布失败');
+        }
     } catch (error) {
         console.error('发布物品失败:', error);
         alert('发布失败：' + (error.message || '请稍后重试'));

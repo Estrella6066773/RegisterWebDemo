@@ -23,7 +23,7 @@ async function loadFeaturedItems() {
     try {
         // 调用API获取热门物品
         const response = await getItemAPI().getFeaturedItems(6);
-        const items = response.data || response.items || [];
+        const items = response.data || [];
 
         if (items.length === 0) {
             container.innerHTML = `

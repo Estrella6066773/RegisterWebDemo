@@ -28,18 +28,23 @@ async function initProfilePage() {
  */
 async function loadUserProfile() {
     try {
-        // 调用API获取用户资料（预留后端）
-        // const profile = await UserAPI.getProfile();
+        // 调用API获取用户资料
+        const response = await UserAPI.getCurrentUser();
         
-        // 模拟数据（开发阶段）
-        const profile = getMockProfileData();
-        
-        // 渲染资料
-        renderProfile(profile);
+        if (response.success && response.data) {
+            // 渲染资料
+            renderProfile(response.data);
+        } else {
+            throw new Error(response.message || '获取资料失败');
+        }
         
     } catch (error) {
         console.error('加载资料失败:', error);
         alert('加载资料失败: ' + (error.message || '未知错误'));
+        // 如果未登录，跳转到登录页
+        if (error.message && error.message.includes('认证')) {
+            window.location.href = 'login.html';
+        }
     }
 }
 

@@ -19,14 +19,25 @@ RegisterDemo/
 │   ├── pages/          # 其他页面
 │   ├── css/            # 样式文件
 │   ├── js/             # JavaScript 文件
+│   │   ├── utils/      # 工具模块（API、认证、验证）
+│   │   └── pages/      # 页面逻辑
 │   └── images/         # 图片资源
 ├── back-end/           # 后端模块
 │   ├── index.js        # Express 服务器
 │   ├── routes/         # API 路由
+│   │   ├── users.js    # 用户相关路由
+│   │   └── items.js    # 物品相关路由
 │   ├── middleware/     # 中间件
+│   │   └── auth.js     # JWT 认证中间件
+│   ├── utils/          # 工具模块
+│   │   └── fieldConverter.js  # 字段名称转换工具
 │   ├── db/             # 数据库
+│   │   ├── database.js # 数据库连接和初始化
+│   │   └── SCHEMA.md   # 数据库架构文档
 │   └── package.json    # 项目配置
-└── README.md           # 项目说明（本文档）
+├── README.md           # 项目说明（本文档）
+├── back-end/README.md  # 后端模块文档
+└── front-end/README.md # 前端模块文档
 ```
 
 ## 🚀 快速开始
@@ -82,12 +93,20 @@ npx http-server -p 8080
 - ✅ **FR3: 搜索和发现** - 完整实现
 - ✅ **FR5: 物品状态管理** - 完整实现
 
+### 技术特性
+
+- ✅ **前后端完全集成** - API 端点匹配，数据格式统一
+- ✅ **自动字段转换** - snake_case ↔ camelCase 自动转换
+- ✅ **统一错误处理** - 前后端错误处理机制一致
+- ✅ **JWT 认证** - 安全的身份认证机制
+
 ## 🛠️ 技术栈
 
 ### 前端
 - **HTML5** - 页面结构
 - **CSS3** - 样式设计（响应式布局）
 - **JavaScript (ES6+)** - 客户端逻辑
+- **Fetch API** - HTTP 请求
 
 ### 后端
 - **Node.js** - 运行环境
@@ -95,6 +114,7 @@ npx http-server -p 8080
 - **SQLite** - 数据库
 - **JWT** - 身份认证
 - **bcryptjs** - 密码加密
+- **字段转换工具** - 自动处理前后端字段格式差异
 
 ### 数据库选择
 
@@ -118,6 +138,8 @@ npx http-server -p 8080
 ### 物品相关 API
 - 物品搜索、列表、详情
 - 物品发布、更新、删除
+- 获取我的物品列表
+- 物品状态管理
 - 浏览量统计
 
 完整 API 文档请参考：[后端 README](./back-end/README.md)
@@ -178,7 +200,6 @@ npm run dev  # 使用 nodemon 自动重启
 ### 其他文档
 
 - `back-end/db/SCHEMA.md` - 数据库架构详细说明
-- `docs/` - 项目相关文档（可选）
 
 ## 👥 项目信息
 

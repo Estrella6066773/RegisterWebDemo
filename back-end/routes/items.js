@@ -10,6 +10,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const { getDatabase } = require('../db/database');
 const { authenticateToken, optionalAuth } = require('../middleware/auth');
+const { convertItemData, convertItemDataFromFrontend } = require('../utils/fieldConverter');
 
 /**
  * GET /api/items/search
@@ -100,11 +101,8 @@ router.get('/search', (req, res) => {
                 console.error('Database error:', err);
             }
 
-            // 解析 images JSON
-            const processedItems = items.map(item => ({
-                ...item,
-                images: item.images ? JSON.parse(item.images) : []
-            }));
+            // 转换字段名称并解析 images JSON
+            const processedItems = convertItemData(items);
 
             res.json({
                 success: true,
@@ -159,10 +157,8 @@ router.get('/', (req, res) => {
             });
         }
 
-        const processedItems = items.map(item => ({
-            ...item,
-            images: item.images ? JSON.parse(item.images) : []
-        }));
+        // 转换字段名称
+        const processedItems = convertItemData(items);
 
         res.json({
             success: true,
@@ -194,10 +190,8 @@ router.get('/featured', (req, res) => {
                 });
             }
 
-            const processedItems = items.map(item => ({
-                ...item,
-                images: item.images ? JSON.parse(item.images) : []
-            }));
+            // 转换字段名称
+            const processedItems = convertItemData(items);
 
             res.json({
                 success: true,
@@ -237,11 +231,11 @@ router.get('/:id', (req, res) => {
                 console.error('Database error:', err);
             }
 
-            const itemData = {
+            // 转换字段名称
+            const itemData = convertItemData({
                 ...item,
-                images: item.images ? JSON.parse(item.images) : [],
                 seller: seller || null
-            };
+            });
 
             res.json({
                 success: true,
@@ -256,6 +250,9 @@ router.get('/:id', (req, res) => {
  * 发布物品
  */
 router.post('/', authenticateToken, (req, res) => {
+    // 转换前端发送的camelCase字段为snake_case
+    const convertedData = convertItemDataFromFrontend(req.body);
+    
     const {
         title, description, category, price, condition, images,
         isbn, course_code, module_name, edition, author,
@@ -263,7 +260,7 @@ router.post('/', authenticateToken, (req, res) => {
         item_type, dimensions, material, assembly_required, condition_details,
         size, clothing_brand, material_type, color, gender,
         sports_brand, size_dimensions, sport_type, sports_condition_details
-    } = req.body;
+    } = convertedData;
 
     // 验证必填字段
     if (!title || !category || !price || !condition) {
@@ -481,6 +478,113 @@ router.post('/:id/view', (req, res) => {
             success: true,
             message: '浏览量已更新'
         });
+    });
+});
+
+/**
+ * GET /api/items/my
+ * 获取当前用户的物品列表
+ */
+router.get('/my', authenticateToken, (req, res) => {
+    const db = getDatabase();
+    const { status, page = 1, pageSize = 20 } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(pageSize);
+
+    let query = 'SELECT * FROM items WHERE seller_id = ?';
+    const params = [req.user.userId];
+
+    if (status) {
+        query += ' AND status = ?';
+        params.push(status);
+    } else {
+        query += ' AND status != "DELETED"';
+    }
+
+    query += ' ORDER BY post_date DESC LIMIT ? OFFSET ?';
+    params.push(parseInt(pageSize), offset);
+
+    db.all(query, params, (err, items) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({
+                success: false,
+                message: '获取物品列表失败'
+            });
+        }
+
+        // 转换字段名称
+        const processedItems = convertItemData(items);
+
+        res.json({
+            success: true,
+            data: processedItems,
+            items: processedItems // 兼容前端可能的两种格式
+        });
+    });
+});
+
+/**
+ * PUT /api/items/:id/status
+ * 更新物品状态
+ */
+router.put('/:id/status', authenticateToken, (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const db = getDatabase();
+
+    // 验证状态值
+    const validStatuses = ['AVAILABLE', 'RESERVED', 'SOLD', 'DELETED'];
+    if (!status || !validStatuses.includes(status)) {
+        return res.status(400).json({
+            success: false,
+            message: '无效的状态值'
+        });
+    }
+
+    // 检查物品是否存在且属于当前用户
+    db.get('SELECT seller_id FROM items WHERE id = ?', [id], (err, item) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({
+                success: false,
+                message: '数据库错误'
+            });
+        }
+
+        if (!item) {
+            return res.status(404).json({
+                success: false,
+                message: '物品不存在'
+            });
+        }
+
+        if (item.seller_id !== req.user.userId) {
+            return res.status(403).json({
+                success: false,
+                message: '无权修改此物品'
+            });
+        }
+
+        // 更新状态
+        db.run(
+            'UPDATE items SET status = ?, updated_at = ? WHERE id = ?',
+            [status, Date.now(), id],
+            (err) => {
+                if (err) {
+                    console.error('Database error:', err);
+                    return res.status(500).json({
+                        success: false,
+                        message: '更新状态失败'
+                    });
+                }
+
+                res.json({
+                    success: true,
+                    message: '状态更新成功',
+                    ok: true // 兼容前端
+                });
+            }
+        );
     });
 });
 

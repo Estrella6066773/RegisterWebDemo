@@ -118,30 +118,18 @@ async function submitLoginForm() {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         
-        // 调用API（预留后端）
-        // const response = await UserAPI.login(email, password);
+        // 调用API
+        const response = await UserAPI.login(email, password);
         
-        // 模拟API调用（开发阶段）
-        console.log('登录数据:', { email, password });
-        
-        // 模拟成功响应
-        setTimeout(() => {
-            const mockUserData = {
-                id: '1',
-                email: email,
-                name: '张三',
-                memberType: 'STUDENT',
-                verified: false,
-            };
-            const mockToken = 'mock_token_' + Date.now();
-            
-            saveAuth(mockUserData, mockToken);
-            
+        if (response.success && response.token && response.userData) {
+            saveAuth(response.userData, response.token);
             alert('登录成功！');
             submitButton.disabled = false;
             submitButton.textContent = '登录';
             window.location.href = 'profile.html';
-        }, 1000);
+        } else {
+            throw new Error(response.message || '登录失败');
+        }
         
     } catch (error) {
         console.error('登录失败:', error);

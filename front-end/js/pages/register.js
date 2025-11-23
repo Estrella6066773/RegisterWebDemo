@@ -292,18 +292,18 @@ async function submitRegisterForm() {
             name: document.getElementById('name')?.value.trim() || '',
         };
         
-        // 调用API（预留后端）
-        // const response = await UserAPI.register(formData);
+        // 调用API
+        const response = await UserAPI.register(formData);
         
-        // 模拟API调用（开发阶段）
-        console.log('注册数据:', formData);
-        
-        // 模拟成功响应
-        setTimeout(() => {
-            alert('注册成功！请检查您的邮箱以完成验证。');
+        if (response.success) {
+            alert('注册成功！' + (response.requiresVerification ? '请检查您的邮箱以完成验证。' : ''));
             // 跳转到登录页面或验证页面
-            window.location.href = 'verification.html?email=' + encodeURIComponent(formData.email);
-        }, 1000);
+            if (response.requiresVerification) {
+                window.location.href = 'verification.html?email=' + encodeURIComponent(formData.email);
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
         
     } catch (error) {
         console.error('注册失败:', error);

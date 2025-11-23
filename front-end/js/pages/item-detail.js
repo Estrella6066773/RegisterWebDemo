@@ -43,7 +43,7 @@ async function loadItemDetail() {
     try {
         // 获取物品详情
         const response = await getItemAPI().getItemDetail(itemId);
-        const item = response.item || response.data || response;
+        const item = response.data || response;
 
         // 增加浏览量
         try {

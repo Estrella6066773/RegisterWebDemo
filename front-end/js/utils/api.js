@@ -110,7 +110,7 @@ const UserAPI = {
      * @param {string} userId - 用户ID（可选，不传则获取当前用户）
      */
     async getProfile(userId = null) {
-        const endpoint = userId ? `/users/${userId}/profile` : '/users/profile';
+        const endpoint = userId ? `/users/profile?userId=${userId}` : '/users/profile';
         return apiRequest(endpoint);
     },
 
@@ -258,6 +258,34 @@ const ItemAPI = {
     async incrementViewCount(itemId) {
         return apiRequest(`/items/${itemId}/view`, {
             method: 'POST',
+        });
+    },
+
+    /**
+     * 获取当前用户的物品列表
+     * @param {Object} params - 查询参数
+     */
+    async getMyItems(params = {}) {
+        const queryParams = new URLSearchParams();
+        Object.keys(params).forEach(key => {
+            if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                queryParams.append(key, params[key]);
+            }
+        });
+        const queryString = queryParams.toString();
+        const endpoint = `/items/my${queryString ? '?' + queryString : ''}`;
+        return apiRequest(endpoint);
+    },
+
+    /**
+     * 更新物品状态
+     * @param {string} itemId - 物品ID
+     * @param {string} status - 状态: 'AVAILABLE', 'RESERVED', 'SOLD', 'DELETED'
+     */
+    async updateItemStatus(itemId, status) {
+        return apiRequest(`/items/${itemId}/status`, {
+            method: 'PUT',
+            body: JSON.stringify({ status }),
         });
     },
 };
