@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮箱验证 - 学生港湾</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/pages/register.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">学生港湾</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="items.html" class="nav-link">浏览宝贝</a>
+                    <a href="login.html" class="nav-link">登录</a>
+                    <a href="register.html" class="nav-link">注册</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <div class="container">
+            <div class="register-container">
+                <div class="register-card">
+                    <div class="register-header">
+                        <h1 class="register-title">邮箱验证</h1>
+                        <p class="register-subtitle">请验证您的邮箱地址以完成注册</p>
+                    </div>
+
+                    <div id="verificationContent">
+                        <!-- 开发模式提示（仅在前端测试时显示） -->
+                        <div id="devModeNotice" class="dev-mode-notice" style="display: none;">
+                            <div class="notice-title">
+                                <span>🔧</span>
+                                <span>开发模式 - 测试验证</span>
+                            </div>
+                            <div class="notice-content">
+                                <p style="margin-bottom: 8px;">当前为前端开发模式，无法发送真实邮件。您可以使用以下测试链接来模拟验证流程：</p>
+                                <p style="margin-bottom: 8px;"><strong>测试验证链接：</strong></p>
+                                <a href="#" id="testVerificationLink" class="dev-link">点击这里模拟验证成功</a>
+                                <p style="margin-top: 12px; font-size: 12px; color: var(--text-secondary);">
+                                    💡 提示：在实际部署后，用户会收到包含验证链接的真实邮件。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 等待验证状态 -->
+                        <div id="pendingState" class="text-center">
+                            <div style="font-size: 64px; margin-bottom: 24px;">📧</div>
+                            <h2 style="margin-bottom: 16px;">验证邮件已发送</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                                我们已向 <strong id="verificationEmail"></strong> 发送了验证邮件
+                            </p>
+                            <p style="color: var(--text-secondary); margin-bottom: 32px;">
+                                请检查您的邮箱并点击验证链接。如果未收到邮件，请检查垃圾邮件文件夹。
+                            </p>
+                            <button class="btn btn-secondary" id="resendBtn">重新发送验证邮件</button>
+                        </div>
+
+                        <!-- 验证成功状态 -->
+                        <div id="successState" class="hidden text-center">
+                            <div style="font-size: 64px; margin-bottom: 24px; color: var(--success-color);">✓</div>
+                            <h2 style="margin-bottom: 16px; color: var(--success-color);">验证成功！</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 32px;">
+                                您的邮箱已验证成功，现在可以享受完整功能了。
+                            </p>
+                            <a href="login.html" class="btn btn-primary">前往登录</a>
+                        </div>
+
+                        <!-- 验证失败状态 -->
+                        <div id="errorState" class="hidden text-center">
+                            <div style="font-size: 64px; margin-bottom: 24px; color: var(--error-color);">✗</div>
+                            <h2 style="margin-bottom: 16px; color: var(--error-color);">验证失败</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 32px;" id="errorMessage">
+                                验证链接无效或已过期。
+                            </p>
+                            <button class="btn btn-primary" id="retryBtn">重新发送验证邮件</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/utils/api.js"></script>
+    <script>
+        // 获取URL参数
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 初始化验证页面
+        document.addEventListener('DOMContentLoaded', function() {
+            const email = getUrlParameter('email');
+            const token = getUrlParameter('token');
+            
+            if (email) {
+                document.getElementById('verificationEmail').textContent = email;
+            }
+            
+            // 开发模式：如果没有token，显示测试工具
+            if (!token) {
+                showDevModeNotice(email);
+            }
+            
+            // 如果有token，尝试验证
+            if (token) {
+                verifyEmail(token);
+            }
+            
+            // 重新发送验证邮件
+            document.getElementById('resendBtn').addEventListener('click', async function() {
+                if (!email) {
+                    alert('无法获取邮箱地址');
+                    return;
+                }
+                
+                this.disabled = true;
+                this.textContent = '发送中...';
+                
+                try {
+                    // 调用API（预留后端）
+                    // await UserAPI.sendVerificationEmail(email);
+                    
+                    // 模拟API调用
+                    setTimeout(() => {
+                        alert('验证邮件已重新发送！');
+                        this.disabled = false;
+                        this.textContent = '重新发送验证邮件';
+                    }, 1000);
+                } catch (error) {
+                    alert('发送失败: ' + (error.message || '未知错误'));
+                    this.disabled = false;
+                    this.textContent = '重新发送验证邮件';
+                }
+            });
+            
+            // 重试按钮
+            document.getElementById('retryBtn').addEventListener('click', function() {
+                if (email) {
+                    window.location.href = `verification.html?email=${encodeURIComponent(email)}`;
+                } else {
+                    window.location.href = 'register.html';
+                }
+            });
+            
+            // 测试验证链接（开发模式）
+            const testLink = document.getElementById('testVerificationLink');
+            if (testLink) {
+                testLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // 模拟验证成功
+                    const testToken = 'test_token_' + Date.now();
+                    verifyEmail(testToken);
+                });
+            }
+        });
+        
+        // 显示开发模式提示
+        function showDevModeNotice(email) {
+            const notice = document.getElementById('devModeNotice');
+            if (notice) {
+                notice.style.display = 'block';
+            }
+        }
+        
+        // 验证邮箱
+        async function verifyEmail(token) {
+            try {
+                // 调用API（预留后端）
+                // const response = await UserAPI.verifyEmail(token);
+                
+                // 模拟API调用
+                setTimeout(() => {
+                    // 显示成功状态
+                    document.getElementById('pendingState').classList.add('hidden');
+                    document.getElementById('errorState').classList.add('hidden');
+                    document.getElementById('successState').classList.remove('hidden');
+                }, 1000);
+            } catch (error) {
+                // 显示失败状态
+                document.getElementById('pendingState').classList.add('hidden');
+                document.getElementById('successState').classList.add('hidden');
+                document.getElementById('errorState').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = error.message || '验证失败';
+            }
+        }
+    </script>
+</body>
+</html>
+

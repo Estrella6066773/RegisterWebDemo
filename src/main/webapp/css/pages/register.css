@@ -1,0 +1,199 @@
+/* ============================================
+   注册页面样式 - Register Page Styles
+   ============================================ */
+
+.register-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.register-card {
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-xl);
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.register-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.register-subtitle {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* 会员类型选择 */
+.member-type-selector {
+    margin-bottom: var(--spacing-xl);
+}
+
+.member-type-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.member-type-card {
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: var(--white);
+}
+
+.member-type-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.member-type-card.selected {
+    border-color: var(--primary-color);
+    background-color: rgba(74, 144, 226, 0.05);
+}
+
+.member-type-card input[type="radio"] {
+    display: none;
+}
+
+.member-type-icon {
+    font-size: 32px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.member-type-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-primary);
+}
+
+.member-type-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.member-type-badge {
+    margin-top: var(--spacing-sm);
+    font-size: 11px;
+}
+
+/* 表单步骤指示器 */
+.form-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+    position: relative;
+}
+
+.form-steps::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--border-color);
+    z-index: 0;
+}
+
+.form-step {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    flex: 1;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--white);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--spacing-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.step-number.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
+}
+
+.step-number.completed {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+    color: var(--white);
+}
+
+.step-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.step-label.active {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* 表单步骤内容 */
+.form-step-content {
+    display: none;
+}
+
+.form-step-content.active {
+    display: block;
+}
+
+/* 邮箱验证提示 */
+.email-verification-notice {
+    background-color: rgba(24, 144, 255, 0.1);
+    border: 1px solid var(--info-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.email-verification-notice .notice-icon {
+    color: var(--info-color);
+    margin-right: var(--spacing-sm);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .member-type-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .register-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .form-steps {
+        font-size: 12px;
+    }
+    
+    .step-number {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+}
+

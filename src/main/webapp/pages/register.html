@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 学生港湾</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/pages/register.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">学生港湾</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="items.html" class="nav-link">浏览宝贝</a>
+                    <a href="login.html" class="nav-link">登录</a>
+                    <a href="register.html" class="nav-link active">注册</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <div class="container">
+            <div class="register-container">
+                <div class="register-card">
+                    <div class="register-header">
+                        <h1 class="register-title">加入学生港湾</h1>
+                        <p class="register-subtitle">创建您的账户，开始买卖二手物品</p>
+                    </div>
+
+                    <!-- 会员类型选择 -->
+                    <div class="member-type-selector">
+                        <label class="form-label">选择会员类型 <span class="required">*</span></label>
+                        <div class="member-type-options">
+                            <!-- 学生会员 -->
+                            <div class="member-type-card" data-type="STUDENT">
+                                <input type="radio" name="memberType" value="STUDENT" id="typeStudent">
+                                <div class="member-type-icon">🎓</div>
+                                <div class="member-type-name">学生会员</div>
+                                <div class="member-type-desc">完整买卖权限，需大学邮箱验证</div>
+                                <div class="member-type-badge badge badge-member-student">完整权限</div>
+                            </div>
+
+                            <!-- 关联会员 -->
+                            <div class="member-type-card" data-type="ASSOCIATE">
+                                <input type="radio" name="memberType" value="ASSOCIATE" id="typeAssociate">
+                                <div class="member-type-icon">👔</div>
+                                <div class="member-type-name">关联会员</div>
+                                <div class="member-type-desc">教职工，完整买卖权限，需机构邮箱验证</div>
+                                <div class="member-type-badge badge badge-member-associate">完整权限</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="memberType" name="memberType" value="">
+                    </div>
+
+                    <!-- 邮箱验证提示 -->
+                    <div class="email-verification-notice" style="display: none;">
+                        <span class="notice-icon">ℹ️</span>
+                        <span class="notice-text">大学邮箱验证是必需的，我们将向您的邮箱发送验证链接。</span>
+                    </div>
+
+                    <!-- 注册表单 -->
+                    <form id="registerForm" class="register-form">
+                        <!-- 步骤1: 基本信息 -->
+                        <div class="form-step-content active" data-step="1">
+                            <div class="form-group">
+                                <label for="email" class="form-label">邮箱地址 <span class="required">*</span></label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    class="form-control" 
+                                    placeholder="example@university.edu"
+                                    required
+                                >
+                                <div class="form-help">学生会员和关联会员请使用大学或机构邮箱</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password" class="form-label">密码 <span class="required">*</span></label>
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    class="form-control" 
+                                    placeholder="至少8位，包含字母和数字"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword" class="form-label">确认密码 <span class="required">*</span></label>
+                                <input 
+                                    type="password" 
+                                    id="confirmPassword" 
+                                    name="confirmPassword" 
+                                    class="form-control" 
+                                    placeholder="请再次输入密码"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <!-- 步骤2: 个人信息（可选） -->
+                        <div class="form-step-content" data-step="2">
+                            <div class="form-group">
+                                <label for="name" class="form-label">姓名</label>
+                                <input 
+                                    type="text" 
+                                    id="name" 
+                                    name="name" 
+                                    class="form-control" 
+                                    placeholder="您的真实姓名（可选）"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="university" class="form-label">大学</label>
+                                <input 
+                                    type="text" 
+                                    id="university" 
+                                    name="university" 
+                                    class="form-control" 
+                                    placeholder="您所在的大学（可选）"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="enrollmentYear" class="form-label">入学年份</label>
+                                <input 
+                                    type="number" 
+                                    id="enrollmentYear" 
+                                    name="enrollmentYear" 
+                                    class="form-control" 
+                                    placeholder="例如：2024"
+                                    min="2000"
+                                    max="2099"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- 提交按钮 -->
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">注册</button>
+                        </div>
+
+                        <div class="text-center mt-md">
+                            <p style="color: var(--text-secondary); font-size: 14px;">
+                                已有账户？<a href="login.html" style="color: var(--primary-color);">立即登录</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/utils/validation.js"></script>
+    <script src="../js/utils/auth.js"></script>
+    <script src="../js/utils/api.js"></script>
+    <script src="../js/pages/register.js"></script>
+</body>
+</html>
+

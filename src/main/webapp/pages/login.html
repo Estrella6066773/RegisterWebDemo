@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 学生港湾</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/pages/register.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">学生港湾</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="items.html" class="nav-link">浏览宝贝</a>
+                    <a href="login.html" class="nav-link active">登录</a>
+                    <a href="register.html" class="nav-link">注册</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <div class="container">
+            <div class="register-container">
+                <div class="register-card">
+                    <div class="register-header">
+                        <h1 class="register-title">登录</h1>
+                        <p class="register-subtitle">欢迎回到学生港湾</p>
+                    </div>
+
+                    <!-- 登录表单 -->
+                    <form id="loginForm" class="register-form">
+                        <div class="form-group">
+                            <label for="email" class="form-label">邮箱地址 <span class="required">*</span></label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                class="form-control" 
+                                placeholder="请输入您的邮箱"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="form-label">密码 <span class="required">*</span></label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                class="form-control" 
+                                placeholder="请输入您的密码"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="checkbox" id="remember" style="margin-right: 8px;">
+                                    <span style="font-size: 14px;">记住我</span>
+                                </label>
+                                <a href="#" style="font-size: 14px; color: var(--primary-color);">忘记密码？</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">登录</button>
+                        </div>
+
+                        <div class="text-center mt-md">
+                            <p style="color: var(--text-secondary); font-size: 14px;">
+                                还没有账户？<a href="register.html" style="color: var(--primary-color);">立即注册</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/utils/validation.js"></script>
+    <script src="../js/utils/auth.js"></script>
+    <script src="../js/utils/api.js"></script>
+    <script src="../js/pages/login.js"></script>
+</body>
+</html>
+

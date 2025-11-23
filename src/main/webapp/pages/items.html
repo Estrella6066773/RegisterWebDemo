@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浏览宝贝 - 学生港湾</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/pages/items.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">学生港湾</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="items.html" class="nav-link active">浏览宝贝</a>
+                    <a href="login.html" class="nav-link" id="loginLink">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink">注册</a>
+                    <a href="profile.html" class="nav-link" id="profileLink">个人资料</a>
+                    <div class="nav-dropdown">
+                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item">发布物品</a>
+                        </div>
+                    </div>
+                    <a href="#" class="nav-link" id="logoutLink">退出登录</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <div class="container">
+            <!-- 页面标题 -->
+            <div class="page-header">
+                <h1 class="page-title">浏览宝贝</h1>
+                <p class="page-subtitle">找到您需要的二手物品</p>
+            </div>
+
+            <!-- 搜索和筛选区域 -->
+            <div class="card" style="margin-bottom: var(--spacing-lg);">
+                <form id="searchForm" class="search-form">
+                    <div class="search-input-group">
+                        <input 
+                            type="text" 
+                            name="keyword" 
+                            id="searchKeyword"
+                            class="search-input" 
+                            placeholder="搜索课程教材、电子产品、家具等..."
+                            autocomplete="off"
+                        >
+                        <button type="submit" class="btn btn-primary search-btn">搜索</button>
+                    </div>
+                    <div class="search-quick-filters">
+                        <span class="search-filter-label">快速筛选：</span>
+                        <a href="?category=TEXTBOOK" class="search-filter-tag" data-category="TEXTBOOK">📚 教材</a>
+                        <a href="?category=ELECTRONICS" class="search-filter-tag" data-category="ELECTRONICS">💻 电子产品</a>
+                        <a href="?category=FURNITURE" class="search-filter-tag" data-category="FURNITURE">🪑 家具</a>
+                        <a href="?category=APPAREL" class="search-filter-tag" data-category="APPAREL">👕 服装</a>
+                        <a href="?category=SPORTS" class="search-filter-tag" data-category="SPORTS">⚽ 体育器材</a>
+                    </div>
+                </form>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 250px 1fr; gap: var(--spacing-lg);">
+                <!-- 筛选侧边栏 -->
+                <aside class="filters-sidebar">
+                    <div class="filter-section">
+                        <div class="filter-title">类别</div>
+                        <div class="filter-options">
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="category" value="TEXTBOOK">
+                                <span>📚 教材</span>
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="category" value="ELECTRONICS">
+                                <span>💻 电子产品</span>
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="category" value="FURNITURE">
+                                <span>🪑 家具</span>
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="category" value="APPAREL">
+                                <span>👕 服装</span>
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="category" value="SPORTS">
+                                <span>⚽ 体育器材</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-title">价格范围</div>
+                        <div class="price-range-inputs">
+                            <input type="number" id="minPrice" placeholder="最低" min="0">
+                            <span>-</span>
+                            <input type="number" id="maxPrice" placeholder="最高" min="0">
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-title">物品状况</div>
+                        <div class="filter-options">
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="condition" value="NEW">
+                                <span>全新</span>
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="condition" value="LIKE_NEW">
+                                <span>几乎全新</span>
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="condition" value="GOOD">
+                                <span>良好</span>
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="condition" value="FAIR">
+                                <span>一般</span>
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="condition" value="POOR">
+                                <span>较差</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="button" id="applyFilters" class="btn btn-primary btn-block">应用筛选</button>
+                    <button type="button" id="resetFilters" class="btn btn-secondary btn-block" style="margin-top: var(--spacing-sm);">重置</button>
+                </aside>
+
+                <!-- 物品列表区域 -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
+                        <div id="resultsCount" style="color: var(--text-secondary); font-size: 14px;">
+                            正在加载...
+                        </div>
+                        <div style="display: flex; gap: var(--spacing-sm); align-items: center;">
+                            <label style="font-size: 14px; color: var(--text-secondary);">排序：</label>
+                            <select id="sortBy" class="form-control" style="width: auto; padding: 6px 12px; font-size: 14px;">
+                                <option value="newest">最新发布</option>
+                                <option value="price_asc">价格：低到高</option>
+                                <option value="price_desc">价格：高到低</option>
+                                <option value="views">最多浏览</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="itemsList" class="items-grid">
+                        <div class="items-loading" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <p>正在加载物品...</p>
+                        </div>
+                    </div>
+
+                    <!-- 分页 -->
+                    <div id="pagination" class="pagination" style="display: none;">
+                        <!-- 分页按钮将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/utils/auth.js"></script>
+    <script src="../js/utils/api.js"></script>
+    <script src="../js/utils/mock.js"></script>
+    <script src="../js/pages/items.js"></script>
+    <script>
+        // 根据登录状态更新导航
+        document.addEventListener('DOMContentLoaded', function() {
+            if (isAuthenticated()) {
+                document.getElementById('loginLink').classList.add('hidden');
+                document.getElementById('registerLink').classList.add('hidden');
+                document.getElementById('profileLink').classList.remove('hidden');
+                document.getElementById('logoutLink').classList.remove('hidden');
+            } else {
+                document.getElementById('loginLink').classList.remove('hidden');
+                document.getElementById('registerLink').classList.remove('hidden');
+                document.getElementById('profileLink').classList.add('hidden');
+                document.getElementById('logoutLink').classList.add('hidden');
+            }
+            
+            // 退出登录
+            const logoutLink = document.getElementById('logoutLink');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('确定要退出登录吗？')) {
+                        clearAuth();
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

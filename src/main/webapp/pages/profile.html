@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人资料 - 学生港湾</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/pages/profile.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">学生港湾</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="items.html" class="nav-link">浏览宝贝</a>
+                    <a href="profile.html" class="nav-link active">个人资料</a>
+                    <div class="nav-dropdown">
+                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item">发布物品</a>
+                        </div>
+                    </div>
+                    <a href="#" class="nav-link" id="logoutLink">退出登录</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <div class="container">
+            <div class="profile-container">
+                <!-- 资料头部 -->
+                <div class="profile-header">
+                    <img src="../images/default-avatar.png" alt="头像" class="profile-avatar" id="profileAvatar">
+                    <div class="profile-info">
+                        <h1 class="profile-name" id="profileName">加载中...</h1>
+                        <p class="profile-email" id="profileEmail">加载中...</p>
+                        <div class="profile-meta">
+                            <div class="profile-meta-item">
+                                <span>会员类型：</span>
+                                <span class="badge badge-member-student" id="profileMemberType">学生会员</span>
+                            </div>
+                            <div class="profile-meta-item">
+                                <span>加入日期：</span>
+                                <span id="profileJoinDate">加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn btn-secondary">编辑资料</button>
+                    </div>
+                </div>
+
+                <!-- 信任指标 -->
+                <div class="trust-indicators" id="trustIndicators">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 资料完整度 -->
+                <div class="profile-completeness">
+                    <div class="completeness-header">
+                        <h3 class="section-title">资料完整度</h3>
+                        <div class="completeness-percentage">0%</div>
+                    </div>
+                    <div class="completeness-progress">
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="completeness-items">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 详细资料 -->
+                <div class="profile-details">
+                    <div class="details-section">
+                        <h3 class="section-title">基本信息</h3>
+                        <div class="details-grid" id="profileDetails">
+                            <!-- 动态生成 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 评分历史 -->
+                <div class="rating-history">
+                    <h3 class="section-title">评分历史</h3>
+                    <div class="rating-summary">
+                        <div class="rating-average">0.0</div>
+                        <div>
+                            <div class="rating-stars">
+                                <!-- 动态生成 -->
+                            </div>
+                            <div class="rating-count">基于 0 条评价</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/utils/validation.js"></script>
+    <script src="../js/utils/auth.js"></script>
+    <script src="../js/utils/api.js"></script>
+    <script src="../js/pages/profile.js"></script>
+    <script>
+        // 退出登录
+        document.getElementById('logoutLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('确定要退出登录吗？')) {
+                clearAuth();
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>
+

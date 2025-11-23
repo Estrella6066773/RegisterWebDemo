@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布物品 - 学生港湾</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/pages/post-item.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">学生港湾</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="items.html" class="nav-link">浏览宝贝</a>
+                    <a href="profile.html" class="nav-link" id="profileLink">个人资料</a>
+                    <div class="nav-dropdown">
+                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item active">发布物品</a>
+                        </div>
+                    </div>
+                    <a href="#" class="nav-link" id="logoutLink">退出登录</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">发布物品</h1>
+                <p class="page-subtitle">出售您的二手物品，让它们找到新主人</p>
+            </div>
+
+            <div class="post-item-container">
+                <form id="postItemForm" class="post-item-form">
+                    <!-- 基本信息 -->
+                    <div class="form-section">
+                        <h2 class="section-title">基本信息</h2>
+                        
+                        <div class="form-group">
+                            <label for="category" class="form-label">物品类别 <span class="required">*</span></label>
+                            <select id="category" name="category" class="form-control" required>
+                                <option value="">请选择类别</option>
+                                <option value="TEXTBOOK">📚 教材</option>
+                                <option value="ELECTRONICS">💻 电子产品</option>
+                                <option value="FURNITURE">🪑 家具</option>
+                                <option value="APPAREL">👕 服装</option>
+                                <option value="SPORTS">⚽ 体育器材</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="title" class="form-label">物品标题 <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                id="title" 
+                                name="title" 
+                                class="form-control" 
+                                placeholder="例如：高等数学教材 第3版"
+                                required
+                                maxlength="100"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">详细描述 <span class="required">*</span></label>
+                            <textarea 
+                                id="description" 
+                                name="description" 
+                                class="form-control" 
+                                rows="6"
+                                placeholder="请详细描述物品的状况、使用情况、购买时间等信息..."
+                                required
+                                maxlength="2000"
+                            ></textarea>
+                            <div class="form-help">最多2000字</div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="price" class="form-label">价格 <span class="required">*</span></label>
+                                <div class="price-input-group">
+                                    <span class="price-symbol">¥</span>
+                                    <input 
+                                        type="number" 
+                                        id="price" 
+                                        name="price" 
+                                        class="form-control" 
+                                        placeholder="0.00"
+                                        min="0"
+                                        step="0.01"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="condition" class="form-label">物品状况 <span class="required">*</span></label>
+                                <select id="condition" name="condition" class="form-control" required>
+                                    <option value="">请选择状况</option>
+                                    <option value="NEW">全新</option>
+                                    <option value="LIKE_NEW">几乎全新</option>
+                                    <option value="GOOD">良好</option>
+                                    <option value="FAIR">一般</option>
+                                    <option value="POOR">较差</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 类别特定字段 -->
+                    <div id="categoryFields" class="form-section" style="display: none;">
+                        <h2 class="section-title">详细信息</h2>
+                        <div id="categoryFieldsContent">
+                            <!-- 动态加载的字段 -->
+                        </div>
+                    </div>
+
+                    <!-- 图片上传 -->
+                    <div class="form-section">
+                        <h2 class="section-title">物品图片</h2>
+                        <div class="form-group">
+                            <label class="form-label">上传图片 <span class="required">*</span></label>
+                            <div class="image-upload-area">
+                                <input 
+                                    type="file" 
+                                    id="imageInput" 
+                                    accept="image/*" 
+                                    multiple
+                                    style="display: none;"
+                                >
+                                <div class="image-upload-grid" id="imagePreviewGrid">
+                                    <div class="image-upload-item image-upload-placeholder" id="uploadTrigger">
+                                        <div class="upload-icon">📷</div>
+                                        <div class="upload-text">点击上传</div>
+                                        <div class="upload-hint">最多5张图片</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-help">支持 JPG、PNG 格式，每张图片不超过 5MB，最多上传 5 张</div>
+                        </div>
+                    </div>
+
+                    <!-- 提交按钮 -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-lg">发布物品</button>
+                        <button type="button" class="btn btn-secondary btn-lg" onclick="window.history.back()">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/utils/auth.js"></script>
+    <script src="../js/utils/api.js"></script>
+    <script src="../js/utils/validation.js"></script>
+    <script src="../js/pages/post-item.js"></script>
+    <script>
+        // 检查登录状态
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!isAuthenticated()) {
+                alert('请先登录后再发布物品');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // 退出登录
+            document.getElementById('logoutLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('确定要退出登录吗？')) {
+                    clearAuth();
+                    window.location.href = 'index.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

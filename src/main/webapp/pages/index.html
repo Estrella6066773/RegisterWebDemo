@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生港湾 - 学生二手物品交易平台</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">学生港湾</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link active">首页</a>
+                    <a href="items.html" class="nav-link">浏览宝贝</a>
+                    <a href="login.html" class="nav-link" id="loginLink">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink">注册</a>
+                    <a href="profile.html" class="nav-link" id="profileLink">个人资料</a>
+                    <div class="nav-dropdown">
+                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item">发布物品</a>
+                        </div>
+                    </div>
+                    <a href="#" class="nav-link" id="logoutLink">退出登录</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <div class="container">
+            <!-- 页面标题 -->
+            <div class="page-header text-center">
+                <h1 class="page-title">欢迎来到学生港湾</h1>
+                <p class="page-subtitle">专为学生打造的二手物品交易平台</p>
+            </div>
+
+            <!-- 搜索栏 -->
+            <div class="card" style="margin-bottom: var(--spacing-xl);">
+                <div class="search-container">
+                    <form id="homeSearchForm" class="search-form" action="items.html" method="get">
+                        <div class="search-input-group">
+                            <input 
+                                type="text" 
+                                name="keyword" 
+                                id="homeSearchInput"
+                                class="search-input" 
+                                placeholder="搜索课程教材、电子产品、家具等..."
+                                autocomplete="off"
+                            >
+                            <button type="submit" class="btn btn-primary search-btn">搜索</button>
+                        </div>
+                        <div class="search-quick-filters">
+                            <span class="search-filter-label">快速筛选：</span>
+                            <a href="items.html?category=TEXTBOOK" class="search-filter-tag">📚 教材</a>
+                            <a href="items.html?category=ELECTRONICS" class="search-filter-tag">💻 电子产品</a>
+                            <a href="items.html?category=FURNITURE" class="search-filter-tag">🪑 家具</a>
+                            <a href="items.html?category=APPAREL" class="search-filter-tag">👕 服装</a>
+                            <a href="items.html?category=SPORTS" class="search-filter-tag">⚽ 体育器材</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 轮播广告 -->
+            <div class="card" style="margin-bottom: var(--spacing-xl); overflow: hidden;">
+                <div id="heroCarousel" style="position: relative; width: 100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-color);">
+                    <div class="carousel-track" style="display: flex; width: 100%; height: 100%; transition: transform 0.5s ease;"></div>
+                    <button class="carousel-btn prev" aria-label="prev" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;">‹</button>
+                    <button class="carousel-btn next" aria-label="next" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;">›</button>
+                    <div class="carousel-dots" style="position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:6px;"></div>
+                </div>
+            </div>
+
+            <!-- 热门物品预览 -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 style="font-size: 24px; margin: 0;">热门物品</h2>
+                    <a href="items.html" class="btn btn-secondary" style="font-size: 14px;">查看全部 →</a>
+                </div>
+                <div id="featuredItems" class="items-grid">
+                    <!-- 物品将通过JavaScript动态加载 -->
+                    <div class="items-loading" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <p>正在加载热门物品...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 功能介绍 -->
+            <div class="card">
+                <h2 style="margin-bottom: 24px; font-size: 24px;">平台特色</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
+                    <div>
+                        <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
+                        <h3 style="margin-bottom: 8px; font-size: 18px;">物品发现</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px;">
+                            高效搜索功能，快速找到您需要的课程教材、电子产品等
+                        </p>
+                    </div>
+                    <div>
+                        <div style="font-size: 32px; margin-bottom: 8px;">🛡️</div>
+                        <h3 style="margin-bottom: 8px; font-size: 18px;">信任与安全</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px;">
+                            大学邮箱验证，完整的信任指标，让交易更安心
+                        </p>
+                    </div>
+                    <div>
+                        <div style="font-size: 32px; margin-bottom: 8px;">⭐</div>
+                        <h3 style="margin-bottom: 8px; font-size: 18px;">评分系统</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px;">
+                            透明的评分历史，帮助您做出更好的交易决策
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 会员类型介绍 -->
+            <div class="card">
+                <h2 style="margin-bottom: 24px; font-size: 24px;">会员类型</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+                    <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 24px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                            <span class="badge badge-member-general" style="margin-right: 12px;">普通会员</span>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                            无需验证，可浏览所有物品信息
+                        </p>
+                        <ul style="list-style: none; padding: 0; font-size: 14px; color: var(--text-secondary);">
+                            <li style="margin-bottom: 8px;">✓ 浏览物品</li>
+                            <li style="margin-bottom: 8px;">✗ 发布物品</li>
+                            <li style="margin-bottom: 8px;">✗ 购买物品</li>
+                        </ul>
+                    </div>
+                    <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 24px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                            <span class="badge badge-member-student" style="margin-right: 12px;">学生会员</span>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                            通过大学邮箱验证，享受完整功能
+                        </p>
+                        <ul style="list-style: none; padding: 0; font-size: 14px; color: var(--text-secondary);">
+                            <li style="margin-bottom: 8px;">✓ 浏览物品</li>
+                            <li style="margin-bottom: 8px;">✓ 发布物品</li>
+                            <li style="margin-bottom: 8px;">✓ 购买物品</li>
+                        </ul>
+                    </div>
+                    <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 24px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                            <span class="badge badge-member-associate" style="margin-right: 12px;">关联会员</span>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                            教职工专用，通过机构邮箱验证
+                        </p>
+                        <ul style="list-style: none; padding: 0; font-size: 14px; color: var(--text-secondary);">
+                            <li style="margin-bottom: 8px;">✓ 浏览物品</li>
+                            <li style="margin-bottom: 8px;">✓ 发布物品</li>
+                            <li style="margin-bottom: 8px;">✓ 购买物品</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 行动号召 - 仅未登录时显示 -->
+            <div class="card text-center" id="callToActionSection">
+                <h2 style="margin-bottom: 16px; font-size: 24px;">准备开始了吗？</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                    立即注册，加入学生港湾，开始您的二手物品交易之旅
+                </p>
+                <div style="display: flex; gap: 16px; justify-content: center;">
+                    <a href="register.html" class="btn btn-primary">立即注册</a>
+                    <a href="login.html" class="btn btn-secondary">已有账户？登录</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/utils/auth.js"></script>
+    <script src="../js/utils/api.js"></script>
+    <script src="../js/utils/mock.js"></script>
+    <script src="../js/pages/index.js"></script>
+    <script>
+        // 简易轮播实现（依赖 mock 数据中的前5个宝贝）
+        document.addEventListener('DOMContentLoaded', async function() {
+            const wrap = document.getElementById('heroCarousel');
+            if (!wrap) return;
+            const track = wrap.querySelector('.carousel-track');
+            const dots = wrap.querySelector('.carousel-dots');
+            const btnPrev = wrap.querySelector('.prev');
+            const btnNext = wrap.querySelector('.next');
+
+            try {
+                const resp = await ItemAPI.getFeaturedItems(5);
+                const items = resp.data || resp.items || [];
+                if (items.length === 0) return;
+
+                // 生成slide
+                track.innerHTML = items.map((it, i) => {
+                    const img = (it.images && it.images[0]) ? it.images[0] : 'https://picsum.photos/1200/400?random=' + (i+1);
+                    return `<a href="item-detail.html?id=${it.id}" style="flex:0 0 100%;height:100%;display:block;position:relative;">
+                        <img src="${img}" alt="${it.title}" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;left:16px;bottom:16px;background:rgba(0,0,0,.45);color:#fff;padding:8px 12px;border-radius:8px;">
+                            <div style="font-weight:700;">${it.title}</div>
+                            <div>¥${it.price || 0}</div>
+                        </div>
+                    </a>`;
+                }).join('');
+
+                // dots
+                dots.innerHTML = items.map((_, i) => `<span data-i="${i}" style="width:8px;height:8px;border-radius:50%;background:${i===0?'#fff':'rgba(255,255,255,.6)'};display:inline-block;cursor:pointer;"></span>`).join('');
+
+                let index = 0;
+                const len = items.length;
+                const go = (i) => {
+                    index = (i + len) % len;
+                    track.style.transform = `translateX(-${index * 100}%)`;
+                    Array.from(dots.children).forEach((d, di) => d.style.background = di===index ? '#fff' : 'rgba(255,255,255,.6)');
+                };
+
+                btnPrev.addEventListener('click', () => go(index - 1));
+                btnNext.addEventListener('click', () => go(index + 1));
+                dots.addEventListener('click', (e) => {
+                    const i = e.target.getAttribute('data-i');
+                    if (i !== null) go(Number(i));
+                });
+
+                // 自动轮播
+                let timer = setInterval(() => go(index + 1), 4000);
+                wrap.addEventListener('mouseenter', () => clearInterval(timer));
+                wrap.addEventListener('mouseleave', () => timer = setInterval(() => go(index + 1), 4000));
+
+            } catch (e) {
+                // 忽略轮播失败
+            }
+        });
+    </script>
+    <script>
+        // 根据登录状态更新导航和内容
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = isAuthenticated();
+            if (isLoggedIn) {
+                document.getElementById('loginLink').classList.add('hidden');
+                document.getElementById('registerLink').classList.add('hidden');
+                document.getElementById('profileLink').classList.remove('hidden');
+                document.getElementById('logoutLink').classList.remove('hidden');
+                const callToAction = document.getElementById('callToActionSection');
+                if (callToAction) {
+                    callToAction.classList.add('hidden');
+                }
+            } else {
+                document.getElementById('loginLink').classList.remove('hidden');
+                document.getElementById('registerLink').classList.remove('hidden');
+                document.getElementById('profileLink').classList.add('hidden');
+                document.getElementById('logoutLink').classList.add('hidden');
+                const callToAction = document.getElementById('callToActionSection');
+                if (callToAction) {
+                    callToAction.classList.remove('hidden');
+                }
+            }
+            
+            // 退出登录
+            const logoutLink = document.getElementById('logoutLink');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('确定要退出登录吗？')) {
+                        clearAuth();
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
