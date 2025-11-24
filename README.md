@@ -32,23 +32,29 @@
 ## 📁 项目结构
 
 ```
-back-end/
+.
 ├── index.js              # Express 服务器主文件
 ├── package.json          # 项目配置和依赖
+├── package-lock.json     # 依赖锁定文件
 ├── .env                  # 环境变量（需要创建）
 ├── .env.example          # 环境变量示例
 ├── routes/               # API 路由
-│   ├── users.js         # 用户相关路由
-│   ├── items.js         # 物品相关路由
-│   └── upload.js        # 图片上传路由
-├── middleware/          # 中间件
-│   ├── auth.js          # JWT 认证中间件
-│   └── validation.js    # 数据验证中间件
-├── utils/               # 工具模块
+│   ├── users.js          # 用户相关路由
+│   ├── items.js          # 物品相关路由
+│   └── upload.js         # 图片上传路由
+├── middleware/           # 中间件
+│   ├── auth.js           # JWT 认证中间件
+│   └── validation.js     # 数据验证中间件
+├── utils/                # 工具模块
 │   └── fieldConverter.js # 字段名称转换工具（snake_case ↔ camelCase）
-└── db/                  # 数据库
-    ├── database.js      # 数据库连接和初始化
-    └── SCHEMA.md        # 数据库架构文档
+├── db/                   # 数据库
+│   ├── database.js       # 数据库连接和初始化
+│   └── SCHEMA.md         # 数据库架构文档
+└── public/               # 静态前端资源
+    ├── index.html        # 前端入口
+    ├── css/              # 样式
+    ├── js/               # 前端脚本
+    └── pages/            # 业务页面
 ```
 
 ## 🚀 快速开始
@@ -84,19 +90,11 @@ npm --version  # 应显示版本号，如 10.2.4
 **重要：在启动服务器之前，必须先安装项目依赖！**
 
 ```bash
-cd back-end
 npm install
 ```
 
-**重要：必须在 `back-end` 目录下执行 `npm install`！**
+**重要：请在项目根目录（即 `package.json` 所在目录）执行 `npm install`！**
 
-如果显示以下错误：
-```
-npm error code ENOENT
-npm error path D:\myproject\RegisterWebDemo\package.json
-```
-
-说明你在错误的目录（项目根目录）执行了命令，需要先进入 `back-end` 目录。
 
 这会安装所有必需的依赖包，包括：
 - `express` - Web 框架
@@ -108,16 +106,11 @@ npm error path D:\myproject\RegisterWebDemo\package.json
 - `uuid` - UUID 生成
 - 以及其他依赖
 
-**如果没有安装依赖，启动时会报错：**
-```
-Error: Cannot find module 'dotenv'
-```
-
-**验证安装：** 检查 `back-end` 目录下是否有 `node_modules` 文件夹。
+**验证安装：** 检查项目根目录下是否有 `node_modules` 文件夹。
 
 ### 步骤 2：配置环境变量
 
-在 `back-end` 目录下创建 `.env` 文件：
+在项目根目录下创建 `.env` 文件：
 
 ```env
 PORT=8080
@@ -139,11 +132,7 @@ cp .env.example .env
 
 ### 步骤 3：启动服务器
 
-**重要：必须使用 Node.js 启动服务器，不要使用 IDE 的内置服务器！**
-
-#### 方式1：使用终端命令（推荐）
-
-在终端中执行以下命令：
+**在终端中执行以下命令：**
 
 ```bash
 # 方式1：使用 npm 启动（推荐）
@@ -164,51 +153,6 @@ npm run dev
 📡 API endpoints available at http://localhost:8080/api
 🌍 Environment: development
 ```
-
-#### 方式2：配置 IDE 运行配置
-
-如果你想在 IDE 中直接运行，需要配置运行配置：
-
-**WebStorm / IntelliJ IDEA：**
-
-1. 点击右上角运行配置下拉菜单
-2. 选择 "Edit Configurations..."
-3. 点击 `+` 号，选择 "Node.js"
-4. 配置如下：
-   - **名称**: `Student Bay Server`
-   - **Node 解释器**: 选择你的 Node.js 可执行文件（如 `D:\大三html\node.js\node.exe`）
-   - **工作目录**: `D:\myproject\RegisterWebDemo\back-end`
-   - **JavaScript 文件**: `index.js`
-   - **环境变量**: 如果已创建 `.env` 文件，可以留空
-5. 点击 "OK" 保存并运行
-
-**VS Code：**
-
-创建 `.vscode/launch.json` 文件：
-
-```json
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "启动后端服务器",
-            "program": "${workspaceFolder}/back-end/index.js",
-            "cwd": "${workspaceFolder}/back-end",
-            "console": "integratedTerminal"
-        }
-    ]
-}
-```
-
-按 `F5` 启动调试。
-
-> ⚠️ **重要提示**: 
-> - ✅ **正确方式**：使用 Node.js 启动（`npm start` 或 `node index.js` 或 IDE 运行配置）
-> - ❌ **错误方式**：使用 IDE 的内置服务器（如 WebStorm 的 63342 端口、VS Code 的 Live Server 等）
-> - 🌐 **访问地址**：启动后必须在浏览器中访问 `http://localhost:8080`（不是其他端口）
-> - 📦 **前后端已整合**：只需启动这一个 Node.js 服务器即可同时提供前端页面和 API 服务
 
 ### 步骤 4：在浏览器中访问应用
 
@@ -232,76 +176,15 @@ npm run dev
 }
 ```
 
-## ❌ 常见问题
-
-### 问题1：Cannot find module 'dotenv'
-
-**原因：** 依赖未安装
-
-**解决：**
-```bash
-cd back-end
-npm install
-```
-
-### 问题2：JWT_SECRET 未设置
-
-**原因：** `.env` 文件不存在或未配置
-
-**解决：** 在 `back-end` 目录下创建 `.env` 文件，添加 `JWT_SECRET=your-secret-key-change-this`
-
-### 问题3：端口被占用
-
-**原因：** 8080 端口已被其他程序占用
-
-**解决：**
-- 修改 `.env` 文件中的 `PORT=8080` 为其他端口（如 `PORT=3000`）
-- 或关闭占用 8080 端口的程序
-
-### 问题4：npm install 在错误目录执行
-
-**错误：** 在项目根目录执行 `npm install`，提示找不到 `package.json`
-
-**解决：** 必须在 `back-end` 目录下执行：
-```bash
-cd back-end
-npm install
-```
-
-### 问题5：使用 IDE 内置服务器访问
-
-**错误：** 使用 IDE 的内置服务器（如 63342 端口）访问，导致 API 请求失败
-
-**解决：** 
-- ❌ 不要使用 IDE 的内置服务器
-- ✅ 必须使用 Node.js 启动服务器（`npm start` 或 IDE 运行配置）
-- ✅ 访问 `http://localhost:8080`（不是其他端口）
-
-### 问题6：npm 命令找不到
-
-**原因：** Node.js 未添加到系统 PATH
-
-**解决方案：**
-1. 重新安装 Node.js，确保勾选 "Add to PATH"
-2. 或手动添加 Node.js 安装目录到系统 PATH
-3. 重启终端或 IDE
-
-### 问题7：npm 版本过旧
-
-**更新 npm：**
-```bash
-npm install -g npm@latest
-```
-
 ## 📝 快速检查清单
 
 启动前确保：
 
 - [ ] Node.js 和 npm 已安装（`node --version` 和 `npm --version` 有输出）
-- [ ] 在 `back-end` 目录下执行了 `npm install`
-- [ ] `back-end` 目录下有 `node_modules` 文件夹
+- [ ] 在项目根目录执行了 `npm install`
+- [ ] 根目录下存在 `node_modules` 文件夹
 - [ ] 创建了 `.env` 文件并配置了 `JWT_SECRET`
-- [ ] 工作目录设置为 `back-end` 目录（如果使用 IDE 配置）
+- [ ] IDE（若使用）设置的工作目录指向项目根目录
 - [ ] 端口 8080 未被占用
 
 ## 📡 API 端点
@@ -363,13 +246,13 @@ npm install -g npm@latest
 - **watchlists** - 关注列表表
 - **item_status_history** - 物品状态变更记录表
 
-详细数据库架构说明请参考：[db/SCHEMA.md](./db/SCHEMA.md)
+详细数据库架构说明请参考：[SCHEMA.md](./db/SCHEMA.md)
 
 ### 数据库初始化
 
 数据库会在服务器启动时自动初始化，如果表不存在会自动创建。
 
-数据库文件位置：`back-end/db/student_bay.db`
+数据库文件位置：`./db/student_bay.db`
 
 ## 🔧 技术实现
 
@@ -525,33 +408,3 @@ curl -X GET http://localhost:8080/api/items \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
-## 🌐 访问方式
-
-### 开发环境
-
-启动服务器后，访问：
-- **前端应用**: `http://localhost:8080` - 完整的前端界面
-- **API接口**: `http://localhost:8080/api/*` - 后端API端点
-
-### 架构说明
-
-前后端已整合到同一服务器：
-- **静态文件服务**: Express 提供前端 HTML/CSS/JS 文件
-- **API服务**: Express 提供 RESTful API 接口
-- **统一端口**: 所有请求都通过 8080 端口访问
-- **SPA支持**: 非API请求自动返回前端首页，支持前端路由
-
-### 优势
-
-1. **简化部署**: 只需启动一个服务器
-2. **同源访问**: 无需配置CORS，减少跨域问题
-3. **统一管理**: 前后端代码在同一项目中，便于管理
-4. **开发便捷**: 一个命令启动完整应用
-
-## 📚 相关文档
-
-- **数据库架构**: [db/SCHEMA.md](./db/SCHEMA.md) - 详细的数据库表结构说明
-
----
-
-**最后更新**: 2025年
