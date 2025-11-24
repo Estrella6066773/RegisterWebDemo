@@ -42,7 +42,7 @@ const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // 前端静态文件（CSS、JS、图片等）
-const frontendPath = path.join(__dirname, 'public');
+const frontendPath = path.join(__dirname, '../front-end');
 app.use(express.static(frontendPath));
 
 // ============================================

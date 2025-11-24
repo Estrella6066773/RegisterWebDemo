@@ -2,7 +2,7 @@
 node_modules/
 
 # 环境变量
-.env
+back-end/.env
 
 # 数据库文件
 *.db
