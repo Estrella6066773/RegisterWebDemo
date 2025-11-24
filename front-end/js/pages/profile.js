@@ -40,9 +40,21 @@ async function loadUserProfile() {
         
     } catch (error) {
         console.error('加载资料失败:', error);
-        alert('加载资料失败: ' + (error.message || '未知错误'));
+        
+        let errorMessage = '加载资料失败：';
+        if (error.type === 'NETWORK_ERROR') {
+            errorMessage = '网络连接失败，请检查网络连接';
+        } else if (error.type === 'AUTH_ERROR') {
+            errorMessage = '登录已过期，请重新登录';
+            setTimeout(() => window.location.href = 'login.html', 2000);
+            return;
+        } else {
+            errorMessage += error.message || '未知错误';
+        }
+        
+        alert(errorMessage);
         // 如果未登录，跳转到登录页
-        if (error.message && error.message.includes('认证')) {
+        if (error.type === 'AUTH_ERROR' || (error.message && error.message.includes('认证'))) {
             window.location.href = 'login.html';
         }
     }

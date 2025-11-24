@@ -37,6 +37,7 @@ function getDatabase() {
 
 /**
  * 初始化数据库表结构
+ * 使用 Promise 链确保表按顺序创建
  */
 function initDatabase() {
     return new Promise((resolve, reject) => {
@@ -45,8 +46,23 @@ function initDatabase() {
         // 启用外键约束
         database.run('PRAGMA foreign_keys = ON');
 
-        // 创建用户表
-        database.run(`
+        // 将 db.run 包装为 Promise
+        const runSQL = (sql, description) => {
+            return new Promise((resolveSQL, rejectSQL) => {
+                database.run(sql, (err) => {
+                    if (err) {
+                        console.error(`Error creating ${description}:`, err);
+                        rejectSQL(err);
+                    } else {
+                        console.log(`✅ ${description} created`);
+                        resolveSQL();
+                    }
+                });
+            });
+        };
+
+        // 按顺序创建表
+        runSQL(`
             CREATE TABLE IF NOT EXISTS users (
                 id TEXT PRIMARY KEY,
                 email TEXT UNIQUE NOT NULL,
@@ -65,16 +81,8 @@ function initDatabase() {
                 created_at INTEGER NOT NULL,
                 updated_at INTEGER NOT NULL
             )
-        `, (err) => {
-            if (err) {
-                console.error('Error creating users table:', err);
-                return reject(err);
-            }
-            console.log('✅ Users table created');
-        });
-
-        // 创建物品表
-        database.run(`
+        `, 'Users table')
+        .then(() => runSQL(`
             CREATE TABLE IF NOT EXISTS items (
                 id TEXT PRIMARY KEY,
                 seller_id TEXT NOT NULL,
@@ -120,16 +128,8 @@ function initDatabase() {
                 updated_at INTEGER NOT NULL,
                 FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
             )
-        `, (err) => {
-            if (err) {
-                console.error('Error creating items table:', err);
-                return reject(err);
-            }
-            console.log('✅ Items table created');
-        });
-
-        // 创建评分表
-        database.run(`
+        `, 'Items table'))
+        .then(() => runSQL(`
             CREATE TABLE IF NOT EXISTS ratings (
                 id TEXT PRIMARY KEY,
                 rated_user_id TEXT NOT NULL,
@@ -142,16 +142,8 @@ function initDatabase() {
                 FOREIGN KEY (rater_user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE SET NULL
             )
-        `, (err) => {
-            if (err) {
-                console.error('Error creating ratings table:', err);
-                return reject(err);
-            }
-            console.log('✅ Ratings table created');
-        });
-
-        // 创建关注列表表
-        database.run(`
+        `, 'Ratings table'))
+        .then(() => runSQL(`
             CREATE TABLE IF NOT EXISTS watchlists (
                 id TEXT PRIMARY KEY,
                 user_id TEXT NOT NULL,
@@ -161,16 +153,8 @@ function initDatabase() {
                 FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
                 UNIQUE(user_id, item_id)
             )
-        `, (err) => {
-            if (err) {
-                console.error('Error creating watchlists table:', err);
-                return reject(err);
-            }
-            console.log('✅ Watchlists table created');
-        });
-
-        // 创建物品状态变更记录表
-        database.run(`
+        `, 'Watchlists table'))
+        .then(() => runSQL(`
             CREATE TABLE IF NOT EXISTS item_status_history (
                 id TEXT PRIMARY KEY,
                 item_id TEXT NOT NULL,
@@ -184,13 +168,14 @@ function initDatabase() {
                 FOREIGN KEY (buyer_id) REFERENCES users(id) ON DELETE SET NULL,
                 FOREIGN KEY (changed_by) REFERENCES users(id) ON DELETE CASCADE
             )
-        `, (err) => {
-            if (err) {
-                console.error('Error creating item_status_history table:', err);
-                return reject(err);
-            }
-            console.log('✅ Item status history table created');
+        `, 'Item status history table'))
+        .then(() => {
+            console.log('✅ All database tables initialized successfully');
             resolve();
+        })
+        .catch((err) => {
+            console.error('❌ Database initialization failed:', err);
+            reject(err);
         });
     });
 }

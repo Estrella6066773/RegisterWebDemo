@@ -39,19 +39,60 @@ async function apiRequest(endpoint, options = {}) {
         // 处理非JSON响应
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
-            throw new Error('响应格式错误');
+            const error = new Error('服务器响应格式错误');
+            error.type = 'RESPONSE_ERROR';
+            throw error;
         }
 
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.message || `请求失败: ${response.status}`);
+            // 根据状态码分类错误
+            const error = new Error(data.message || `请求失败: ${response.status}`);
+            error.status = response.status;
+            
+            if (response.status === 401) {
+                error.type = 'AUTH_ERROR';
+                error.message = '登录已过期，请重新登录';
+            } else if (response.status === 403) {
+                error.type = 'PERMISSION_ERROR';
+                error.message = data.message || '权限不足';
+            } else if (response.status === 404) {
+                error.type = 'NOT_FOUND';
+                error.message = data.message || '资源不存在';
+            } else if (response.status >= 500) {
+                error.type = 'SERVER_ERROR';
+                error.message = '服务器错误，请稍后重试';
+            } else {
+                error.type = 'CLIENT_ERROR';
+            }
+            
+            throw error;
         }
 
         return data;
     } catch (error) {
-        console.error('API请求错误:', error);
-        throw error;
+        // 网络错误处理
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            const networkError = new Error('网络连接失败，请检查网络连接或服务器是否运行');
+            networkError.type = 'NETWORK_ERROR';
+            networkError.originalError = error;
+            console.error('网络错误:', networkError);
+            throw networkError;
+        }
+        
+        // 如果已经有类型，直接抛出
+        if (error.type) {
+            console.error('API请求错误:', error.type, error.message);
+            throw error;
+        }
+        
+        // 其他未知错误
+        const unknownError = new Error(error.message || '未知错误');
+        unknownError.type = 'UNKNOWN_ERROR';
+        unknownError.originalError = error;
+        console.error('未知错误:', unknownError);
+        throw unknownError;
     }
 }
 
@@ -292,10 +333,116 @@ const ItemAPI = {
 
 /**
  * ============================================
+ * 图片上传相关API - Upload APIs
+ * ============================================
+ */
+
+const UploadAPI = {
+    /**
+     * 上传单张图片
+     * @param {File} file - 图片文件
+     */
+    async uploadImage(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const token = localStorage.getItem('authToken');
+        const headers = {};
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/upload/image`, {
+                method: 'POST',
+                headers: headers,
+                body: formData,
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const error = new Error('服务器响应格式错误');
+                error.type = 'RESPONSE_ERROR';
+                throw error;
+            }
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                const error = new Error(data.message || `上传失败: ${response.status}`);
+                error.status = response.status;
+                error.type = response.status === 401 ? 'AUTH_ERROR' : 'UPLOAD_ERROR';
+                throw error;
+            }
+
+            return data;
+        } catch (error) {
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                const networkError = new Error('网络连接失败，请检查网络连接或服务器是否运行');
+                networkError.type = 'NETWORK_ERROR';
+                throw networkError;
+            }
+            throw error;
+        }
+    },
+
+    /**
+     * 上传多张图片（最多5张）
+     * @param {File[]} files - 图片文件数组
+     */
+    async uploadImages(files) {
+        const formData = new FormData();
+        files.forEach(file => {
+            formData.append('images', file);
+        });
+
+        const token = localStorage.getItem('authToken');
+        const headers = {};
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/upload/images`, {
+                method: 'POST',
+                headers: headers,
+                body: formData,
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const error = new Error('服务器响应格式错误');
+                error.type = 'RESPONSE_ERROR';
+                throw error;
+            }
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                const error = new Error(data.message || `上传失败: ${response.status}`);
+                error.status = response.status;
+                error.type = response.status === 401 ? 'AUTH_ERROR' : 'UPLOAD_ERROR';
+                throw error;
+            }
+
+            return data;
+        } catch (error) {
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                const networkError = new Error('网络连接失败，请检查网络连接或服务器是否运行');
+                networkError.type = 'NETWORK_ERROR';
+                throw networkError;
+            }
+            throw error;
+        }
+    },
+};
+
+/**
+ * ============================================
  * 导出API模块
  * ============================================
  */
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { UserAPI, ItemAPI, apiRequest };
+    module.exports = { UserAPI, ItemAPI, UploadAPI, apiRequest };
 }
 

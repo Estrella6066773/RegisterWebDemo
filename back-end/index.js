@@ -13,6 +13,7 @@ const bodyParser = require('body-parser');
 // 导入路由
 const userRoutes = require('./routes/users');
 const itemRoutes = require('./routes/items');
+const uploadRoutes = require('./routes/upload');
 
 // 导入数据库初始化
 const { initDatabase } = require('./db/database');
@@ -34,6 +35,10 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// 静态文件服务（用于访问上传的图片）- 需要在路由之前
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // ============================================
 // API 路由
 // ============================================
@@ -52,6 +57,9 @@ app.use('/api/users', userRoutes);
 
 // 物品相关路由
 app.use('/api/items', itemRoutes);
+
+// 图片上传路由
+app.use('/api/upload', uploadRoutes);
 
 // ============================================
 // 错误处理中间件
@@ -80,6 +88,14 @@ app.use((err, req, res, next) => {
 
 async function startServer() {
     try {
+        // 检查必需的环境变量
+        if (!process.env.JWT_SECRET) {
+            console.error('❌ 错误: JWT_SECRET 未设置！');
+            console.error('请在 back-end/.env 文件中设置 JWT_SECRET');
+            console.error('示例: JWT_SECRET=your-secret-key-change-this');
+            process.exit(1);
+        }
+
         // 初始化数据库
         await initDatabase();
         console.log('✅ Database initialized');

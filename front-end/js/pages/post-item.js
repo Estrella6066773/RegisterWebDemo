@@ -223,18 +223,49 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
         });
     }
 
-    // 添加图片（实际应该上传到服务器，这里先模拟）
-    // 注意：实际实现中，图片应该先上传到服务器获取URL，然后再提交物品数据
-    itemData.images = selectedImages.map(img => img.preview); // 临时使用base64，实际应该使用服务器URL
-
     try {
         // 显示加载状态
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
+        submitBtn.textContent = '上传图片中...';
+
+        // 先上传图片到服务器
+        const imageFiles = selectedImages.map(img => img.file);
+        let imageUrls = [];
+        
+        try {
+            const uploadResponse = await UploadAPI.uploadImages(imageFiles);
+            if (uploadResponse.success && uploadResponse.data) {
+                imageUrls = uploadResponse.data.map(img => img.url);
+            } else {
+                throw new Error('图片上传失败');
+            }
+        } catch (uploadError) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            
+            let errorMessage = '图片上传失败：';
+            if (uploadError.type === 'NETWORK_ERROR') {
+                errorMessage = '网络连接失败，请检查网络连接';
+            } else if (uploadError.type === 'AUTH_ERROR') {
+                errorMessage = '登录已过期，请重新登录';
+                setTimeout(() => window.location.href = 'login.html', 2000);
+            } else {
+                errorMessage += uploadError.message || '请稍后重试';
+            }
+            
+            alert(errorMessage);
+            return;
+        }
+
+        // 使用上传后的图片URL
+        itemData.images = imageUrls;
+
+        // 更新按钮状态
         submitBtn.textContent = '发布中...';
 
-        // 调用API
+        // 调用API创建物品
         const response = await ItemAPI.createItem(itemData);
         
         if (response.success) {
@@ -245,7 +276,20 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
         }
     } catch (error) {
         console.error('发布物品失败:', error);
-        alert('发布失败：' + (error.message || '请稍后重试'));
+        
+        let errorMessage = '发布失败：';
+        if (error.type === 'NETWORK_ERROR') {
+            errorMessage = '网络连接失败，请检查网络连接';
+        } else if (error.type === 'AUTH_ERROR') {
+            errorMessage = '登录已过期，请重新登录';
+            setTimeout(() => window.location.href = 'login.html', 2000);
+        } else if (error.errors && Array.isArray(error.errors)) {
+            errorMessage = '数据验证失败：\n' + error.errors.join('\n');
+        } else {
+            errorMessage += error.message || '请稍后重试';
+        }
+        
+        alert(errorMessage);
         
         // 恢复按钮状态
         const submitBtn = e.target.querySelector('button[type="submit"]');

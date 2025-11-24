@@ -133,7 +133,19 @@ async function submitLoginForm() {
         
     } catch (error) {
         console.error('登录失败:', error);
-        alert('登录失败: ' + (error.message || '邮箱或密码错误'));
+        
+        let errorMessage = '登录失败：';
+        if (error.type === 'NETWORK_ERROR') {
+            errorMessage = '网络连接失败，请检查网络连接或服务器是否运行';
+        } else if (error.type === 'AUTH_ERROR') {
+            errorMessage = '邮箱或密码错误';
+        } else if (error.errors && Array.isArray(error.errors)) {
+            errorMessage = '数据验证失败：\n' + error.errors.join('\n');
+        } else {
+            errorMessage += error.message || '邮箱或密码错误';
+        }
+        
+        alert(errorMessage);
         submitButton.disabled = false;
         submitButton.textContent = '登录';
     }

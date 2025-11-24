@@ -12,12 +12,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { getDatabase } = require('../db/database');
 const { authenticateToken, optionalAuth } = require('../middleware/auth');
+const { validateRegister, validateLogin, validateProfileUpdate } = require('../middleware/validation');
 
 /**
  * POST /api/users/register
  * 用户注册
  */
-router.post('/register', async (req, res) => {
+router.post('/register', validateRegister, async (req, res) => {
     try {
         const { email, password, memberType, name } = req.body;
 
@@ -128,7 +129,7 @@ router.post('/register', async (req, res) => {
  * POST /api/users/login
  * 用户登录
  */
-router.post('/login', (req, res) => {
+router.post('/login', validateLogin, (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -364,7 +365,7 @@ router.get('/profile', optionalAuth, (req, res) => {
  * PUT /api/users/profile
  * 更新用户资料
  */
-router.put('/profile', authenticateToken, (req, res) => {
+router.put('/profile', authenticateToken, validateProfileUpdate, (req, res) => {
     const { name, avatar, bio, university, enrollmentYear } = req.body;
     const db = getDatabase();
     const now = Date.now();

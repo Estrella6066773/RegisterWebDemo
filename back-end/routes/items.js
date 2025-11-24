@@ -11,6 +11,7 @@ const { v4: uuidv4 } = require('uuid');
 const { getDatabase } = require('../db/database');
 const { authenticateToken, optionalAuth } = require('../middleware/auth');
 const { convertItemData, convertItemDataFromFrontend } = require('../utils/fieldConverter');
+const { validateItem } = require('../middleware/validation');
 
 /**
  * GET /api/items/search
@@ -249,7 +250,7 @@ router.get('/:id', (req, res) => {
  * POST /api/items
  * 发布物品
  */
-router.post('/', authenticateToken, (req, res) => {
+router.post('/', authenticateToken, validateItem, (req, res) => {
     // 转换前端发送的camelCase字段为snake_case
     const convertedData = convertItemDataFromFrontend(req.body);
     
