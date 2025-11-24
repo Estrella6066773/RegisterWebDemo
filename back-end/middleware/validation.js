@@ -99,10 +99,10 @@ function validateRegister(req, res, next) {
         errors.push('密码不能超过100个字符');
     }
 
-    // 验证会员类型
-    const validMemberTypes = ['GENERAL', 'STUDENT', 'ASSOCIATE'];
+    // 验证会员类型（只支持学生会员和关联会员）
+    const validMemberTypes = ['STUDENT', 'ASSOCIATE'];
     if (!memberType || !validMemberTypes.includes(memberType)) {
-        errors.push('会员类型必须是: ' + validMemberTypes.join(', '));
+        errors.push('会员类型必须是: ' + validMemberTypes.join(' 或 '));
     }
 
     // 验证姓名（可选）

@@ -49,7 +49,7 @@ function isAuthenticated() {
 
 /**
  * 检查用户会员类型
- * @returns {string|null} 'GENERAL', 'STUDENT', 'ASSOCIATE' 或 null
+ * @returns {string|null} 'STUDENT', 'ASSOCIATE' 或 null
  */
 function getUserMemberType() {
     const userData = getUserData();
@@ -72,7 +72,6 @@ function isUserVerified() {
  */
 function getMemberTypeName(memberType) {
     const names = {
-        'GENERAL': '普通会员',
         'STUDENT': '学生会员',
         'ASSOCIATE': '关联会员',
     };
@@ -87,11 +86,6 @@ function getMemberTypeName(memberType) {
 function hasPermission(requiredType) {
     const userType = getUserMemberType();
     if (!userType) return false;
-    
-    // 普通会员只能浏览
-    if (userType === 'GENERAL') {
-        return requiredType === 'GENERAL';
-    }
     
     // 学生会员和关联会员有完整权限
     return userType === 'STUDENT' || userType === 'ASSOCIATE';

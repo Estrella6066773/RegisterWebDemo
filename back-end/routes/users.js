@@ -30,11 +30,11 @@ router.post('/register', validateRegister, async (req, res) => {
             });
         }
 
-        // 验证会员类型
-        if (!['GENERAL', 'STUDENT', 'ASSOCIATE'].includes(memberType)) {
+        // 验证会员类型（只允许学生会员和关联会员）
+        if (!['STUDENT', 'ASSOCIATE'].includes(memberType)) {
             return res.status(400).json({
                 success: false,
-                message: '无效的会员类型'
+                message: '无效的会员类型，只支持学生会员和关联会员'
             });
         }
 
@@ -94,7 +94,7 @@ router.post('/register', validateRegister, async (req, res) => {
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     userId, email, passwordHash, name || null, memberType,
-                    memberType === 'GENERAL' ? 1 : 0, // 普通会员自动验证
+                    0, // 学生会员和关联会员需要验证
                     verificationToken, verificationTokenExpires,
                     now, now, now
                 ],
@@ -111,7 +111,7 @@ router.post('/register', validateRegister, async (req, res) => {
                         success: true,
                         message: '注册成功',
                         userId: userId,
-                        requiresVerification: memberType !== 'GENERAL'
+                        requiresVerification: true // 学生会员和关联会员都需要验证
                     });
                 }
             );

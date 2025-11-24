@@ -2,7 +2,7 @@
 
 ## 📋 模块简介
 
-后端模块使用 Node.js + Express.js + SQLite 实现，提供 RESTful API 接口，支持用户管理、物品管理、搜索等功能。
+后端模块使用 Node.js + Express.js + SQLite 实现，提供 RESTful API 接口和前端静态文件服务。前后端已整合到同一服务器，统一从 8080 端口访问。
 
 ## 🎯 核心功能
 
@@ -69,7 +69,7 @@ cp .env.example .env
 编辑 `.env` 文件：
 
 ```env
-PORT=3000
+PORT=8080
 NODE_ENV=development
 FRONTEND_URL=http://localhost:8080
 JWT_SECRET=your-secret-key-change-this
@@ -87,11 +87,15 @@ npm run dev
 npm start
 ```
 
-服务器将在 `http://localhost:3000` 启动
+服务器将在 `http://localhost:8080` 启动
 
-### 4. 验证安装
+### 4. 访问应用
 
-访问 `http://localhost:3000/api/health`，应该看到：
+- **前端页面**: `http://localhost:8080` - 访问完整的前端应用
+- **API接口**: `http://localhost:8080/api/*` - 访问后端API
+- **健康检查**: `http://localhost:8080/api/health` - 验证服务器运行状态
+
+访问健康检查接口应该看到：
 
 ```json
 {
@@ -248,28 +252,78 @@ npm run dev  # 使用 nodemon 自动重启
 - **数据库封装**：数据库操作封装在 database.js
 - **错误处理**：统一的错误处理机制
 
-## 🧪 测试 API
+## 🧪 测试账户
 
-### 使用 curl 测试
+### 插入测试用户
+
+为了方便开发和测试，提供了一个测试用户插入脚本：
+
+```bash
+# 在 back-end 目录下运行
+node db/insert-test-users.js
+```
+
+脚本会插入以下测试账户（所有账户密码均为 `123456`）：
+
+1. **学生会员**
+   - 邮箱: `student@university.edu`
+   - 密码: `123456`
+   - 姓名: 张三
+   - 会员类型: STUDENT
+   - 已验证
+
+2. **关联会员**
+   - 邮箱: `associate@university.edu`
+   - 密码: `123456`
+   - 姓名: 李教授
+   - 会员类型: ASSOCIATE
+   - 已验证
+
+> **注意**: 如果邮箱已存在，脚本会跳过该用户，不会重复插入。
+
+### 使用 curl 测试 API
 
 ```bash
 # 健康检查
-curl http://localhost:3000/api/health
+curl http://localhost:8080/api/health
 
 # 用户注册
-curl -X POST http://localhost:3000/api/users/register \
+curl -X POST http://localhost:8080/api/users/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@university.edu","password":"password123","memberType":"STUDENT","name":"测试用户"}'
 
 # 用户登录
-curl -X POST http://localhost:3000/api/users/login \
+curl -X POST http://localhost:8080/api/users/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@university.edu","password":"password123"}'
 
 # 获取物品列表（需要先登录获取 token）
-curl -X GET http://localhost:3000/api/items \
+curl -X GET http://localhost:8080/api/items \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
+
+## 🌐 访问方式
+
+### 开发环境
+
+启动服务器后，访问：
+- **前端应用**: `http://localhost:8080` - 完整的前端界面
+- **API接口**: `http://localhost:8080/api/*` - 后端API端点
+
+### 架构说明
+
+前后端已整合到同一服务器：
+- **静态文件服务**: Express 提供前端 HTML/CSS/JS 文件
+- **API服务**: Express 提供 RESTful API 接口
+- **统一端口**: 所有请求都通过 8080 端口访问
+- **SPA支持**: 非API请求自动返回前端首页，支持前端路由
+
+### 优势
+
+1. **简化部署**: 只需启动一个服务器
+2. **同源访问**: 无需配置CORS，减少跨域问题
+3. **统一管理**: 前后端代码在同一项目中，便于管理
+4. **开发便捷**: 一个命令启动完整应用
 
 ## 📚 相关文档
 
