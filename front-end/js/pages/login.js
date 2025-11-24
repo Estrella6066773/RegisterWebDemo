@@ -126,6 +126,10 @@ async function submitLoginForm() {
             alert('登录成功！');
             submitButton.disabled = false;
             submitButton.textContent = '登录';
+            // 更新导航后跳转
+            if (typeof updateNavigation === 'function') {
+                updateNavigation();
+            }
             window.location.href = 'profile.html';
         } else {
             throw new Error(response.message || '登录失败');

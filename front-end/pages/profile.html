@@ -17,7 +17,9 @@
                 <nav class="nav">
                     <a href="../index.html" class="nav-link">首页</a>
                     <a href="items.html" class="nav-link">浏览宝贝</a>
-                    <a href="profile.html" class="nav-link active">个人资料</a>
+                    <a href="login.html" class="nav-link" id="loginLink" style="display: none;">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink" style="display: none;">注册</a>
+                    <a href="profile.html" class="nav-link active" id="profileLink">个人资料</a>
                     <div class="nav-dropdown">
                         <a href="profile.html" class="nav-link">个人中心 ▾</a>
                         <div class="dropdown-menu">
@@ -130,7 +132,8 @@
                     <!-- 姓名 -->
                     <div class="form-group">
                         <label for="editName">姓名 <span class="required">*</span></label>
-                        <input type="text" id="editName" name="name" placeholder="请输入姓名">
+                        <input type="text" id="editName" name="name" placeholder="请输入姓名" required>
+                        <small class="form-help">姓名是必填项，至少2个字符</small>
                     </div>
 
                     <!-- 大学 -->
@@ -171,14 +174,23 @@
     <script src="../js/utils/validation.js"></script>
     <script src="../js/utils/auth.js"></script>
     <script src="../js/utils/api.js"></script>
+    <script src="../js/utils/navigation.js"></script>
     <script src="../js/pages/profile.js"></script>
     <script>
         // 退出登录
-        document.getElementById('logoutLink').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('确定要退出登录吗？')) {
-                clearAuth();
-                window.location.href = 'index.html';
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigation();
+            
+            const logoutLink = document.getElementById('logoutLink');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('确定要退出登录吗？')) {
+                        clearAuth();
+                        updateNavigation();
+                        window.location.href = '../index.html';
+                    }
+                });
             }
         });
     </script>

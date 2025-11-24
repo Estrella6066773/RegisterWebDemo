@@ -17,8 +17,17 @@
                 <nav class="nav">
                     <a href="../index.html" class="nav-link">首页</a>
                     <a href="items.html" class="nav-link">浏览宝贝</a>
-                    <a href="login.html" class="nav-link active">登录</a>
-                    <a href="register.html" class="nav-link">注册</a>
+                    <a href="login.html" class="nav-link active" id="loginLink">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink">注册</a>
+                    <a href="profile.html" class="nav-link" id="profileLink" style="display: none;">个人资料</a>
+                    <div class="nav-dropdown" style="display: none;">
+                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <div class="dropdown-menu">
+                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item">发布物品</a>
+                        </div>
+                    </div>
+                    <a href="#" class="nav-link" id="logoutLink" style="display: none;">退出登录</a>
                 </nav>
             </div>
         </div>
@@ -80,6 +89,116 @@
                             </p>
                         </div>
                     </form>
+
+                    <!-- 测试账号说明 -->
+                    <div class="test-accounts-info" style="background-color: #f0f7ff; border: 1px solid #4A90E2; border-radius: 8px; padding: 16px; margin-top: 24px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                            <span style="font-size: 20px; margin-right: 8px;">🧪</span>
+                            <h3 style="margin: 0; font-size: 16px; color: var(--primary-color);">测试账号</h3>
+                        </div>
+                        <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+                            <p style="margin: 0 0 8px 0;">以下为预设测试账号示例，仅用于演示登录表单的一键填写功能：</p>
+                        </div>
+                        <div class="test-accounts-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+                            <!-- 学生会员 1 -->
+                            <div class="test-account-item" style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 500; margin-bottom: 4px;">学生会员 1</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            邮箱: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">student@university.edu</code>
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            密码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('student@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;">一键填写</button>
+                                </div>
+                            </div>
+                            <!-- 关联会员 1 -->
+                            <div class="test-account-item" style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 500; margin-bottom: 4px;">关联会员 1</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            邮箱: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">associate@university.edu</code>
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            密码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('associate@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;">一键填写</button>
+                                </div>
+                            </div>
+                            <!-- 学生会员 2 -->
+                            <div class="test-account-item" style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 500; margin-bottom: 4px;">学生会员 2</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            邮箱: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">student2@university.edu</code>
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            密码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('student2@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;">一键填写</button>
+                                </div>
+                            </div>
+                            <!-- 关联会员 2 -->
+                            <div class="test-account-item" style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 500; margin-bottom: 4px;">关联会员 2</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            邮箱: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">associate2@university.edu</code>
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            密码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('associate2@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;">一键填写</button>
+                                </div>
+                            </div>
+                            <!-- 通用测试账号 -->
+                            <div class="test-account-item" style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 500; margin-bottom: 4px;">通用测试账号</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            邮箱: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">test@university.edu</code>
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">
+                                            密码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('test@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;">一键填写</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 注册提示 -->
+                        <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin-top: 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">💡</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; color: #856404; font-weight: 500; margin-bottom: 4px;">重要提示</div>
+                                    <div style="font-size: 12px; color: #856404; line-height: 1.6;">
+                                        <p style="margin: 0 0 6px 0;">
+                                            上述账号信息仅用于演示"一键填写"功能，这些账号在数据库中并不存在。
+                                        </p>
+                                        <p style="margin: 0 0 6px 0;">
+                                            <strong>测试流程：</strong>请先
+                                            <a href="register.html" style="color: var(--primary-color); font-weight: 500; text-decoration: underline;">前往注册页面</a>
+                                            手动注册您自己的测试账号，这是测试的重要环节。
+                                        </p>
+                                        <p style="margin: 0;">
+                                            <strong>注册要求：</strong>使用大学邮箱（.edu 域名），密码至少8位且包含字母和数字。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -96,7 +215,32 @@
     <script src="../js/utils/validation.js"></script>
     <script src="../js/utils/auth.js"></script>
     <script src="../js/utils/api.js"></script>
+    <script src="../js/utils/navigation.js"></script>
     <script src="../js/pages/login.js"></script>
+    <script>
+        // 一键填写测试账号
+        function fillTestAccount(email, password) {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            if (emailInput) emailInput.value = email;
+            if (passwordInput) passwordInput.value = password;
+        }
+        
+        // 退出登录
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.getElementById('logoutLink');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('确定要退出登录吗？')) {
+                        clearAuth();
+                        updateNavigation();
+                        window.location.href = '../index.html';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 

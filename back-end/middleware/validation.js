@@ -93,10 +93,17 @@ function validateRegister(req, res, next) {
     // 验证密码
     if (!password || typeof password !== 'string') {
         errors.push('密码为必填项');
-    } else if (password.length < 6) {
-        errors.push('密码至少需要6个字符');
-    } else if (password.length > 100) {
-        errors.push('密码不能超过100个字符');
+    } else if (password.length < 8) {
+        errors.push('密码至少需要8个字符');
+    } else if (password.length > 20) {
+        errors.push('密码不能超过20个字符');
+    } else {
+        // 检查密码复杂度：必须包含字母和数字
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        if (!hasLetter || !hasNumber) {
+            errors.push('密码必须包含字母和数字');
+        }
     }
 
     // 验证会员类型（只支持学生会员和关联会员）
@@ -109,8 +116,8 @@ function validateRegister(req, res, next) {
     if (name && typeof name === 'string') {
         if (name.trim().length < 2) {
             errors.push('姓名至少需要2个字符');
-        } else if (name.length > 100) {
-            errors.push('姓名不能超过100个字符');
+        } else if (name.length > 50) {
+            errors.push('姓名不能超过50个字符');
         }
     }
 
@@ -163,8 +170,8 @@ function validateProfileUpdate(req, res, next) {
             errors.push('姓名必须是字符串');
         } else if (name.trim().length > 0 && name.trim().length < 2) {
             errors.push('姓名至少需要2个字符');
-        } else if (name.length > 100) {
-            errors.push('姓名不能超过100个字符');
+        } else if (name.length > 50) {
+            errors.push('姓名不能超过50个字符');
         }
     }
 

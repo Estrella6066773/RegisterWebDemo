@@ -19,15 +19,15 @@
                     <a href="items.html" class="nav-link active">浏览宝贝</a>
                     <a href="login.html" class="nav-link" id="loginLink">登录</a>
                     <a href="register.html" class="nav-link" id="registerLink">注册</a>
-                    <a href="profile.html" class="nav-link" id="profileLink">个人资料</a>
-                    <div class="nav-dropdown">
+                    <a href="profile.html" class="nav-link" id="profileLink" style="display: none;">个人资料</a>
+                    <div class="nav-dropdown" style="display: none;">
                         <a href="profile.html" class="nav-link">个人中心 ▾</a>
                         <div class="dropdown-menu">
                             <a href="my-items.html" class="dropdown-item">我的宝贝</a>
                             <a href="post-item.html" class="dropdown-item">发布物品</a>
                         </div>
                     </div>
-                    <a href="#" class="nav-link" id="logoutLink">退出登录</a>
+                    <a href="#" class="nav-link" id="logoutLink" style="display: none;">退出登录</a>
                 </nav>
             </div>
         </div>
@@ -177,21 +177,12 @@
     <!-- JavaScript -->
     <script src="../js/utils/auth.js"></script>
     <script src="../js/utils/api.js"></script>
+    <script src="../js/utils/navigation.js"></script>
     <script src="../js/pages/items.js"></script>
     <script>
         // 根据登录状态更新导航
         document.addEventListener('DOMContentLoaded', function() {
-            if (isAuthenticated()) {
-                document.getElementById('loginLink').classList.add('hidden');
-                document.getElementById('registerLink').classList.add('hidden');
-                document.getElementById('profileLink').classList.remove('hidden');
-                document.getElementById('logoutLink').classList.remove('hidden');
-            } else {
-                document.getElementById('loginLink').classList.remove('hidden');
-                document.getElementById('registerLink').classList.remove('hidden');
-                document.getElementById('profileLink').classList.add('hidden');
-                document.getElementById('logoutLink').classList.add('hidden');
-            }
+            updateNavigation();
             
             // 退出登录
             const logoutLink = document.getElementById('logoutLink');
@@ -200,6 +191,7 @@
                     e.preventDefault();
                     if (confirm('确定要退出登录吗？')) {
                         clearAuth();
+                        updateNavigation();
                         window.location.reload();
                     }
                 });

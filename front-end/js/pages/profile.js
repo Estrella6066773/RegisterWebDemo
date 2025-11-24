@@ -386,6 +386,22 @@ function initEditProfile() {
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // 验证必填字段
+            const nameInput = document.getElementById('editName');
+            if (nameInput && !nameInput.value.trim()) {
+                alert('姓名是必填项，请填写姓名');
+                nameInput.focus();
+                return;
+            }
+            
+            // 验证姓名长度
+            if (nameInput && nameInput.value.trim().length < 2) {
+                alert('姓名至少需要2个字符');
+                nameInput.focus();
+                return;
+            }
+            
             await saveProfile();
         });
     }

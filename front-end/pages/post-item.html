@@ -17,6 +17,8 @@
                 <nav class="nav">
                     <a href="../index.html" class="nav-link">首页</a>
                     <a href="items.html" class="nav-link">浏览宝贝</a>
+                    <a href="login.html" class="nav-link" id="loginLink" style="display: none;">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink" style="display: none;">注册</a>
                     <a href="profile.html" class="nav-link" id="profileLink">个人资料</a>
                     <div class="nav-dropdown">
                         <a href="profile.html" class="nav-link">个人中心 ▾</a>
@@ -169,11 +171,14 @@
     <!-- JavaScript -->
     <script src="../js/utils/auth.js"></script>
     <script src="../js/utils/api.js"></script>
+    <script src="../js/utils/navigation.js"></script>
     <script src="../js/utils/validation.js"></script>
     <script src="../js/pages/post-item.js"></script>
     <script>
         // 检查登录状态
         document.addEventListener('DOMContentLoaded', function() {
+            updateNavigation();
+            
             if (!isAuthenticated()) {
                 alert('请先登录后再发布物品');
                 window.location.href = 'login.html';
@@ -181,13 +186,17 @@
             }
             
             // 退出登录
-            document.getElementById('logoutLink').addEventListener('click', function(e) {
-                e.preventDefault();
-                if (confirm('确定要退出登录吗？')) {
-                    clearAuth();
-                    window.location.href = 'index.html';
-                }
-            });
+            const logoutLink = document.getElementById('logoutLink');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('确定要退出登录吗？')) {
+                        clearAuth();
+                        updateNavigation();
+                        window.location.href = '../index.html';
+                    }
+                });
+            }
         });
     </script>
 </body>

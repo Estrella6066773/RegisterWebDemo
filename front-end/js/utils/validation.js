@@ -23,8 +23,8 @@ function isValidUniversityEmail(email) {
     if (!isValidEmail(email)) {
         return false;
     }
-    // 检查是否包含.edu域名
-    return email.toLowerCase().includes('.edu');
+    // 检查是否以.edu结尾（更严格的验证）
+    return email.toLowerCase().endsWith('.edu');
 }
 
 /**
