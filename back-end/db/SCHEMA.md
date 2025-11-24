@@ -14,7 +14,7 @@
 | email | TEXT UNIQUE NOT NULL | 邮箱地址 |
 | password_hash | TEXT NOT NULL | 密码哈希值（bcrypt） |
 | name | TEXT | 姓名 |
-| member_type | TEXT NOT NULL | 会员类型：GENERAL/STUDENT/ASSOCIATE |
+| member_type | TEXT NOT NULL | 会员类型：STUDENT/ASSOCIATE（GENERAL已废弃，仅用于兼容旧数据） |
 | verified | INTEGER DEFAULT 0 | 是否已验证（0/1） |
 | verification_token | TEXT | 验证令牌 |
 | verification_token_expires | INTEGER | 验证令牌过期时间 |

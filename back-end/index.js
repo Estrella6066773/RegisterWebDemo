@@ -19,15 +19,15 @@ const uploadRoutes = require('./routes/upload');
 const { initDatabase } = require('./db/database');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 // ============================================
 // 中间件配置
 // ============================================
 
-// CORS 配置
+// CORS 配置（同源访问，可以简化）
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:8080',
+    origin: process.env.FRONTEND_URL || `http://localhost:${PORT}`,
     credentials: true
 }));
 
@@ -35,9 +35,15 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// 静态文件服务（用于访问上传的图片）- 需要在路由之前
+// 静态文件服务配置
 const path = require('path');
+
+// 上传的图片文件
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// 前端静态文件（CSS、JS、图片等）
+const frontendPath = path.join(__dirname, '../front-end');
+app.use(express.static(frontendPath));
 
 // ============================================
 // API 路由
@@ -62,11 +68,31 @@ app.use('/api/items', itemRoutes);
 app.use('/api/upload', uploadRoutes);
 
 // ============================================
+// 前端路由处理（SPA支持）
+// ============================================
+
+// 对于所有非API请求，返回前端index.html（支持前端路由）
+app.get('*', (req, res, next) => {
+    // 如果是API请求，跳过
+    if (req.path.startsWith('/api')) {
+        return next();
+    }
+    
+    // 如果是静态资源请求（已有扩展名），跳过
+    if (req.path.includes('.')) {
+        return next();
+    }
+    
+    // 返回前端首页
+    res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// ============================================
 // 错误处理中间件
 // ============================================
 
-// 404 处理
-app.use((req, res) => {
+// API 404 处理
+app.use('/api/*', (req, res) => {
     res.status(404).json({
         success: false,
         message: 'API endpoint not found'
@@ -103,6 +129,7 @@ async function startServer() {
         // 启动服务器
         app.listen(PORT, () => {
             console.log(`🚀 Server is running on http://localhost:${PORT}`);
+            console.log(`🌐 Frontend available at http://localhost:${PORT}`);
             console.log(`📡 API endpoints available at http://localhost:${PORT}/api`);
             console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
         });

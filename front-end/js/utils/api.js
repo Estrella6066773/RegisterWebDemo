@@ -5,7 +5,9 @@
  * ============================================
  */
 
-const API_BASE_URL = '/api'; // 后端API基础路径
+// 后端API基础路径
+// 前后端已整合到同一服务器，使用相对路径
+const API_BASE_URL = '/api';
 
 /**
  * 通用请求方法
@@ -108,7 +110,7 @@ const UserAPI = {
      * @param {Object} userData - 用户注册数据
      * @param {string} userData.email - 邮箱
      * @param {string} userData.password - 密码
-     * @param {string} userData.memberType - 会员类型: 'GENERAL', 'STUDENT', 'ASSOCIATE'
+     * @param {string} userData.memberType - 会员类型: 'STUDENT', 'ASSOCIATE'
      * @param {string} userData.name - 姓名（可选）
      */
     async register(userData) {

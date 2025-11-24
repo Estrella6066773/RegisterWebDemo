@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initProfilePage();
 });
 
+// 当前用户资料数据
+let currentProfile = null;
+
 /**
  * 初始化个人资料页面
  */
@@ -21,6 +24,9 @@ async function initProfilePage() {
     
     // 加载用户资料
     await loadUserProfile();
+    
+    // 初始化编辑资料功能
+    initEditProfile();
 }
 
 /**
@@ -65,6 +71,9 @@ async function loadUserProfile() {
  * @param {Object} profile - 用户资料数据
  */
 function renderProfile(profile) {
+    // 保存当前资料
+    currentProfile = profile;
+    
     // 渲染头部信息
     renderProfileHeader(profile);
     
@@ -86,19 +95,22 @@ function renderProfile(profile) {
  * @param {Object} profile - 用户资料
  */
 function renderProfileHeader(profile) {
-    const avatar = document.querySelector('.profile-avatar');
-    const name = document.querySelector('.profile-name');
-    const email = document.querySelector('.profile-email');
-    const memberType = document.querySelector('.profile-member-type');
-    const joinDate = document.querySelector('.profile-join-date');
+    const avatar = document.getElementById('profileAvatar');
+    const name = document.getElementById('profileName');
+    const email = document.getElementById('profileEmail');
+    const memberType = document.getElementById('profileMemberType');
+    const joinDate = document.getElementById('profileJoinDate');
     
     if (avatar) {
-        avatar.src = profile.avatar || 'images/default-avatar.png';
+        avatar.src = profile.avatar ? (profile.avatar.startsWith('http') ? profile.avatar : profile.avatar) : '../images/default-avatar.png';
         avatar.alt = profile.name || '用户头像';
     }
     
     if (name) {
         name.textContent = profile.name || '未设置姓名';
+        // 清除旧的验证徽章
+        const oldBadge = name.querySelector('.badge');
+        if (oldBadge) oldBadge.remove();
         // 添加验证徽章
         const badge = document.createElement('span');
         badge.className = profile.verified ? 'badge badge-verified' : 'badge badge-unverified';
@@ -176,8 +188,10 @@ function renderProfileCompleteness(profile) {
         { key: 'enrollmentYear', label: '入学年份', completed: !!profile.enrollmentYear },
     ];
     
-    const completedCount = completenessItems.filter(item => item.completed).length;
-    const percentage = Math.round((completedCount / completenessItems.length) * 100);
+    // 使用后端返回的完整度百分比，如果没有则计算
+    const percentage = profile.profileCompleteness !== undefined 
+        ? profile.profileCompleteness 
+        : Math.round((completenessItems.filter(item => item.completed).length / completenessItems.length) * 100);
     
     // 更新百分比
     const percentageElement = document.querySelector('.completeness-percentage');
@@ -189,6 +203,14 @@ function renderProfileCompleteness(profile) {
     const progressBar = document.querySelector('.progress-bar');
     if (progressBar) {
         progressBar.style.width = `${percentage}%`;
+        // 根据百分比设置进度条颜色
+        if (percentage < 40) {
+            progressBar.style.backgroundColor = 'var(--error-color)';
+        } else if (percentage < 80) {
+            progressBar.style.backgroundColor = '#FFA500';
+        } else {
+            progressBar.style.backgroundColor = 'var(--success-color)';
+        }
     }
     
     // 更新项目列表
@@ -263,12 +285,15 @@ function renderRatingHistory(profile) {
 
 /**
  * 格式化日期
- * @param {string|Date} date - 日期
+ * @param {string|Date|number} date - 日期（可以是时间戳、ISO字符串或Date对象）
  * @returns {string}
  */
 function formatDate(date) {
     if (!date) return '未知';
-    const d = new Date(date);
+    // 如果是数字（时间戳），直接使用
+    // 如果是字符串，先尝试解析
+    const d = typeof date === 'number' ? new Date(date) : new Date(date);
+    if (isNaN(d.getTime())) return '未知';
     return d.toLocaleDateString('zh-CN', {
         year: 'numeric',
         month: 'long',
@@ -277,25 +302,229 @@ function formatDate(date) {
 }
 
 /**
- * 获取模拟资料数据（开发阶段）
- * @returns {Object}
+ * 获取会员类型中文名称
+ * @param {string} memberType - 会员类型
+ * @returns {string}
  */
-function getMockProfileData() {
-    const userData = getUserData();
-    return {
-        id: userData?.id || '1',
-        email: userData?.email || 'student@university.edu',
-        name: userData?.name || '张三',
-        memberType: userData?.memberType || 'STUDENT',
-        verified: userData?.verified || false,
-        avatar: userData?.avatar || null,
-        bio: userData?.bio || null,
-        university: userData?.university || null,
-        enrollmentYear: userData?.enrollmentYear || null,
-        joinDate: userData?.joinDate || new Date().toISOString(),
-        successfulTransactions: 12,
-        averageRating: 4.5,
-        ratingCount: 8,
+function getMemberTypeName(memberType) {
+    const names = {
+        'STUDENT': '学生会员',
+        'ASSOCIATE': '关联会员',
     };
+    return names[memberType] || '未知';
+}
+
+/**
+ * 初始化编辑资料功能
+ */
+function initEditProfile() {
+    const editBtn = document.getElementById('editProfileBtn');
+    const modal = document.getElementById('editProfileModal');
+    const closeBtn = document.getElementById('closeEditModal');
+    const cancelBtn = document.getElementById('cancelEditBtn');
+    const form = document.getElementById('editProfileForm');
+    const avatarInput = document.getElementById('avatarInput');
+    const selectAvatarBtn = document.getElementById('selectAvatarBtn');
+    const removeAvatarBtn = document.getElementById('removeAvatarBtn');
+    const avatarPreview = document.getElementById('avatarPreview');
+
+    // 打开模态框
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            openEditModal();
+        });
+    }
+
+    // 关闭模态框
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeEditModal);
+    }
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeEditModal);
+    }
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeEditModal();
+            }
+        });
+    }
+
+    // 选择头像
+    if (selectAvatarBtn) {
+        selectAvatarBtn.addEventListener('click', () => {
+            avatarInput?.click();
+        });
+    }
+
+    // 头像文件选择
+    if (avatarInput) {
+        avatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // 预览头像
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    avatarPreview.src = event.target.result;
+                    removeAvatarBtn.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // 移除头像
+    if (removeAvatarBtn) {
+        removeAvatarBtn.addEventListener('click', () => {
+            avatarInput.value = '';
+            avatarPreview.src = '../images/default-avatar.png';
+            removeAvatarBtn.style.display = 'none';
+        });
+    }
+
+    // 提交表单
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await saveProfile();
+        });
+    }
+}
+
+/**
+ * 打开编辑模态框
+ */
+function openEditModal() {
+    if (!currentProfile) return;
+
+    const modal = document.getElementById('editProfileModal');
+    const nameInput = document.getElementById('editName');
+    const universityInput = document.getElementById('editUniversity');
+    const enrollmentYearInput = document.getElementById('editEnrollmentYear');
+    const bioInput = document.getElementById('editBio');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const removeAvatarBtn = document.getElementById('removeAvatarBtn');
+
+    // 填充表单数据
+    if (nameInput) nameInput.value = currentProfile.name || '';
+    if (universityInput) universityInput.value = currentProfile.university || '';
+    if (enrollmentYearInput) enrollmentYearInput.value = currentProfile.enrollmentYear || '';
+    if (bioInput) bioInput.value = currentProfile.bio || '';
+    
+    // 设置头像预览
+    if (avatarPreview) {
+        if (currentProfile.avatar) {
+            avatarPreview.src = currentProfile.avatar.startsWith('http') 
+                ? currentProfile.avatar 
+                : currentProfile.avatar;
+            if (removeAvatarBtn) removeAvatarBtn.style.display = 'block';
+        } else {
+            avatarPreview.src = '../images/default-avatar.png';
+            if (removeAvatarBtn) removeAvatarBtn.style.display = 'none';
+        }
+    }
+
+    // 显示模态框
+    if (modal) {
+        modal.classList.add('show');
+    }
+}
+
+/**
+ * 关闭编辑模态框
+ */
+function closeEditModal() {
+    const modal = document.getElementById('editProfileModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
+/**
+ * 保存资料
+ */
+async function saveProfile() {
+    try {
+        const nameInput = document.getElementById('editName');
+        const universityInput = document.getElementById('editUniversity');
+        const enrollmentYearInput = document.getElementById('editEnrollmentYear');
+        const bioInput = document.getElementById('editBio');
+        const avatarInput = document.getElementById('avatarInput');
+        const submitBtn = document.querySelector('#editProfileForm button[type="submit"]');
+
+        // 禁用提交按钮
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = '保存中...';
+        }
+
+        let avatarUrl = currentProfile?.avatar || null;
+
+        // 上传头像（如果选择了新头像）
+        if (avatarInput && avatarInput.files && avatarInput.files.length > 0) {
+            try {
+                // 使用FormData上传头像，字段名为avatar
+                const formData = new FormData();
+                formData.append('avatar', avatarInput.files[0]);
+
+                const token = localStorage.getItem('authToken');
+                const headers = {};
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                const response = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    headers: headers,
+                    body: formData,
+                });
+
+                const uploadResponse = await response.json();
+                if (uploadResponse.success && uploadResponse.data) {
+                    avatarUrl = uploadResponse.data.url;
+                } else {
+                    throw new Error(uploadResponse.message || '上传失败');
+                }
+            } catch (error) {
+                console.error('头像上传失败:', error);
+                alert('头像上传失败：' + (error.message || '未知错误'));
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '保存';
+                }
+                return;
+            }
+        }
+
+        // 准备更新数据
+        const updateData = {
+            name: nameInput?.value || null,
+            university: universityInput?.value || null,
+            enrollmentYear: enrollmentYearInput?.value ? parseInt(enrollmentYearInput.value) : null,
+            bio: bioInput?.value || null,
+            avatar: avatarUrl,
+        };
+
+        // 调用API更新资料
+        const response = await UserAPI.updateProfile(updateData);
+
+        if (response.success) {
+            alert('资料更新成功！');
+            closeEditModal();
+            // 重新加载资料
+            await loadUserProfile();
+        } else {
+            throw new Error(response.message || '更新失败');
+        }
+    } catch (error) {
+        console.error('保存资料失败:', error);
+        alert('保存失败：' + (error.message || '未知错误'));
+    } finally {
+        const submitBtn = document.querySelector('#editProfileForm button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = '保存';
+        }
+    }
 }
 

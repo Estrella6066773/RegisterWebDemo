@@ -27,7 +27,9 @@ const storage = multer.diskStorage({
         // 生成唯一文件名：时间戳-随机数-原文件名
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         const ext = path.extname(file.originalname);
-        cb(null, 'item-' + uniqueSuffix + ext);
+        // 根据字段名判断是头像还是物品图片
+        const prefix = file.fieldname === 'avatar' ? 'avatar-' : 'item-';
+        cb(null, prefix + uniqueSuffix + ext);
     }
 });
 
@@ -54,10 +56,52 @@ const upload = multer({
 });
 
 /**
- * POST /api/upload/image
- * 上传单张图片
+ * Multer 错误处理中间件
  */
-router.post('/image', authenticateToken, upload.single('image'), handleMulterError, (req, res) => {
+function handleMulterError(err, req, res, next) {
+    if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({
+                success: false,
+                message: '文件大小超过限制（最大5MB）'
+            });
+        }
+        return res.status(400).json({
+            success: false,
+            message: `上传错误: ${err.message}`
+        });
+    }
+    if (err) {
+        return res.status(400).json({
+            success: false,
+            message: err.message || '文件上传失败'
+        });
+    }
+    next();
+}
+
+/**
+ * 处理单文件上传（支持image和avatar字段名）
+ */
+const uploadSingle = (req, res, next) => {
+    const uploadHandler = upload.fields([{ name: 'image', maxCount: 1 }, { name: 'avatar', maxCount: 1 }]);
+    uploadHandler(req, res, (err) => {
+        if (err) {
+            return handleMulterError(err, req, res, next);
+        }
+        // 将fields转换为single格式以保持兼容性
+        if (req.files) {
+            req.file = req.files.image?.[0] || req.files.avatar?.[0];
+        }
+        next();
+    });
+};
+
+/**
+ * POST /api/upload/image
+ * 上传单张图片（支持image和avatar字段名）
+ */
+router.post('/image', authenticateToken, uploadSingle, handleMulterError, (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({

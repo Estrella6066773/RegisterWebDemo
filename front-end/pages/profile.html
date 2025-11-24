@@ -53,7 +53,7 @@
                         </div>
                     </div>
                     <div class="profile-actions">
-                        <button class="btn btn-secondary">编辑资料</button>
+                        <button class="btn btn-secondary" id="editProfileBtn">编辑资料</button>
                     </div>
                 </div>
 
@@ -104,6 +104,61 @@
             </div>
         </div>
     </main>
+
+    <!-- 编辑资料模态框 -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>编辑资料</h2>
+                <button class="modal-close" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <!-- 头像上传 -->
+                    <div class="form-group">
+                        <label>头像</label>
+                        <div class="avatar-upload-container">
+                            <img src="../images/default-avatar.png" alt="头像预览" id="avatarPreview" class="avatar-preview">
+                            <div class="avatar-upload-controls">
+                                <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                                <button type="button" class="btn btn-secondary btn-sm" id="selectAvatarBtn">选择头像</button>
+                                <button type="button" class="btn btn-text btn-sm" id="removeAvatarBtn" style="display: none;">移除</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 姓名 -->
+                    <div class="form-group">
+                        <label for="editName">姓名 <span class="required">*</span></label>
+                        <input type="text" id="editName" name="name" placeholder="请输入姓名">
+                    </div>
+
+                    <!-- 大学 -->
+                    <div class="form-group">
+                        <label for="editUniversity">大学</label>
+                        <input type="text" id="editUniversity" name="university" placeholder="请输入大学名称">
+                    </div>
+
+                    <!-- 入学年份 -->
+                    <div class="form-group">
+                        <label for="editEnrollmentYear">入学年份</label>
+                        <input type="number" id="editEnrollmentYear" name="enrollmentYear" placeholder="例如：2024" min="1900" max="2100">
+                    </div>
+
+                    <!-- 个人简介 -->
+                    <div class="form-group">
+                        <label for="editBio">个人简介</label>
+                        <textarea id="editBio" name="bio" rows="4" placeholder="介绍一下自己..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelEditBtn">取消</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- 页脚 -->
     <footer class="footer">
