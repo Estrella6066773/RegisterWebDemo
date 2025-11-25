@@ -9,6 +9,13 @@ document.addEventListener('DOMContentLoaded', function() {
     initLoginPage();
 });
 
+function t(key, fallback = '') {
+    if (window.I18n && typeof window.I18n.t === 'function') {
+        return I18n.t(key, fallback || key);
+    }
+    return fallback || key;
+}
+
 /**
  * 初始化登录页面
  */
@@ -29,7 +36,7 @@ function initLoginPage() {
     if (passwordInput) {
         passwordInput.addEventListener('blur', function() {
             if (!this.value.trim()) {
-                showFieldError(this, '密码不能为空');
+                showFieldError(this, t('login.validation.passwordRequired', '密码不能为空'));
             } else {
                 hideFieldError(this);
             }
@@ -68,7 +75,7 @@ function validateLoginForm() {
     }
     
     if (!password) {
-        showFieldError(passwordField, '密码不能为空');
+        showFieldError(passwordField, t('login.validation.passwordRequired', '密码不能为空'));
         isValid = false;
     } else {
         hideFieldError(passwordField);
@@ -90,12 +97,12 @@ function validateLoginEmailField(field) {
     const email = field.value.trim();
     
     if (!email) {
-        showFieldError(field, '邮箱不能为空');
+        showFieldError(field, t('login.validation.emailRequired', '邮箱不能为空'));
         return false;
     }
     
     if (!isValidEmail(email)) {
-        showFieldError(field, '邮箱格式不正确');
+        showFieldError(field, t('login.validation.emailFormat', '邮箱格式不正确'));
         return false;
     }
     
@@ -112,7 +119,7 @@ async function submitLoginForm() {
     
     // 禁用提交按钮
     submitButton.disabled = true;
-    submitButton.textContent = '登录中...';
+    submitButton.textContent = t('login.form.submitLoading', '登录中...');
     
     try {
         const email = document.getElementById('email').value.trim();
@@ -123,35 +130,35 @@ async function submitLoginForm() {
         
         if (response.success && response.token && response.userData) {
             saveAuth(response.userData, response.token);
-            alert('登录成功！');
+            alert(t('login.alert.success', '登录成功！'));
             submitButton.disabled = false;
-            submitButton.textContent = '登录';
+            submitButton.textContent = t('login.form.submit', '登录');
             // 更新导航后跳转
             if (typeof updateNavigation === 'function') {
                 updateNavigation();
             }
             window.location.href = 'profile.html';
         } else {
-            throw new Error(response.message || '登录失败');
+            throw new Error(response.message || t('login.alert.genericError', '登录失败'));
         }
         
     } catch (error) {
         console.error('登录失败:', error);
         
-        let errorMessage = '登录失败：';
+        let errorMessage = t('login.alert.errorPrefix', '登录失败：');
         if (error.type === 'NETWORK_ERROR') {
-            errorMessage = '网络连接失败，请检查网络连接或服务器是否运行';
+            errorMessage = t('login.alert.network', '网络连接失败，请检查网络连接或服务器是否运行');
         } else if (error.type === 'AUTH_ERROR') {
-            errorMessage = '邮箱或密码错误';
+            errorMessage = t('login.alert.auth', '邮箱或密码错误');
         } else if (error.errors && Array.isArray(error.errors)) {
-            errorMessage = '数据验证失败：\n' + error.errors.join('\n');
+            errorMessage = t('login.alert.validation', '数据验证失败：') + '\n' + error.errors.join('\n');
         } else {
-            errorMessage += error.message || '邮箱或密码错误';
+            errorMessage += error.message || t('login.alert.auth', '邮箱或密码错误');
         }
         
         alert(errorMessage);
         submitButton.disabled = false;
-        submitButton.textContent = '登录';
+        submitButton.textContent = t('login.form.submit', '登录');
     }
 }
 

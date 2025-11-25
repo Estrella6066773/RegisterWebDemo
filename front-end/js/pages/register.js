@@ -9,6 +9,20 @@ document.addEventListener('DOMContentLoaded', function() {
     initRegisterPage();
 });
 
+function t(key, fallback = '') {
+    if (window.I18n && typeof window.I18n.t === 'function') {
+        return I18n.t(key, fallback || key);
+    }
+    return fallback || key;
+}
+
+const PASSWORD_MESSAGE_MAP = {
+    '密码不能为空': 'register.validation.passwordRequired',
+    '密码长度至少8位': 'register.validation.passwordMin',
+    '密码长度不能超过20位': 'register.validation.passwordMax',
+    '密码必须包含字母和数字': 'register.validation.passwordComplex',
+};
+
 /**
  * 初始化注册页面
  */
@@ -63,11 +77,15 @@ function updateEmailVerificationNotice(memberType) {
     
     if (memberType === 'STUDENT' || memberType === 'ASSOCIATE') {
         notice.style.display = 'block';
-        const emailType = memberType === 'STUDENT' ? '大学' : '机构';
-        notice.querySelector('.notice-text').textContent = 
-            `${emailType}邮箱验证是必需的，我们将向您的邮箱发送验证链接。`;
+        const key = memberType === 'STUDENT'
+            ? 'register.notice.student'
+            : 'register.notice.associate';
+        notice.querySelector('.notice-text').textContent =
+            t(key, t('register.notice.default', '大学邮箱验证是必需的，我们将向您的邮箱发送验证链接。'));
     } else {
         notice.style.display = 'none';
+        notice.querySelector('.notice-text').textContent =
+            t('register.notice.default', '大学邮箱验证是必需的，我们将向您的邮箱发送验证链接。');
     }
 }
 
@@ -170,18 +188,18 @@ function validateEmailField(field) {
     const memberType = document.getElementById('memberType').value;
     
     if (!email) {
-        showFieldError(field, '邮箱不能为空');
+        showFieldError(field, t('register.validation.emailRequired', '邮箱不能为空'));
         return false;
     }
     
     if (!isValidEmail(email)) {
-        showFieldError(field, '邮箱格式不正确');
+        showFieldError(field, t('register.validation.emailFormat', '邮箱格式不正确'));
         return false;
     }
     
     // 学生会员和关联会员需要大学邮箱
     if ((memberType === 'STUDENT' || memberType === 'ASSOCIATE') && !isValidUniversityEmail(email)) {
-        showFieldError(field, '请使用大学或机构邮箱（.edu域名）');
+        showFieldError(field, t('register.validation.universityEmail', '请使用大学或机构邮箱（.edu域名）'));
         return false;
     }
     
@@ -198,7 +216,8 @@ function validatePasswordField(field) {
     const result = validatePassword(password);
     
     if (!result.valid) {
-        showFieldError(field, result.message);
+        const key = PASSWORD_MESSAGE_MAP[result.message] || 'register.validation.passwordGeneric';
+        showFieldError(field, t(key, result.message));
         return false;
     }
     
@@ -216,12 +235,12 @@ function validateConfirmPasswordField(field, passwordField) {
     const confirmPassword = field.value;
     
     if (!confirmPassword) {
-        showFieldError(field, '请再次输入密码');
+        showFieldError(field, t('register.validation.confirmRequired', '请再次输入密码'));
         return false;
     }
     
     if (password !== confirmPassword) {
-        showFieldError(field, '两次输入的密码不一致');
+        showFieldError(field, t('register.validation.confirmMismatch', '两次输入的密码不一致'));
         return false;
     }
     
@@ -245,7 +264,7 @@ function validateRegisterForm() {
     
     // 验证会员类型
     if (!memberType) {
-        alert('请选择会员类型');
+        alert(t('register.validation.memberType', '请选择会员类型'));
         return false;
     }
     
@@ -266,7 +285,7 @@ function validateRegisterForm() {
     
     // 验证姓名（可选）
     if (name && name.length < 2) {
-        showFieldError(document.getElementById('name'), '姓名至少2个字符');
+        showFieldError(document.getElementById('name'), t('register.validation.nameLength', '姓名至少2个字符'));
         isValid = false;
     }
     
@@ -282,7 +301,7 @@ async function submitRegisterForm() {
     
     // 禁用提交按钮
     submitButton.disabled = true;
-    submitButton.textContent = '注册中...';
+    submitButton.textContent = t('register.form.submitLoading', '注册中...');
     
     try {
         const formData = {
@@ -296,7 +315,11 @@ async function submitRegisterForm() {
         const response = await UserAPI.register(formData);
         
         if (response.success) {
-            alert('注册成功！' + (response.requiresVerification ? '请检查您的邮箱以完成验证。' : ''));
+            let successMessage = t('register.alert.success', '注册成功！');
+            if (response.requiresVerification) {
+                successMessage += t('register.alert.checkEmail', '请检查您的邮箱以完成验证。');
+            }
+            alert(successMessage);
             // 跳转到登录页面或验证页面
             if (response.requiresVerification) {
                 window.location.href = 'verification.html?email=' + encodeURIComponent(formData.email);
@@ -308,18 +331,18 @@ async function submitRegisterForm() {
     } catch (error) {
         console.error('注册失败:', error);
         
-        let errorMessage = '注册失败：';
+        let errorMessage = t('register.alert.errorPrefix', '注册失败：');
         if (error.type === 'NETWORK_ERROR') {
-            errorMessage = '网络连接失败，请检查网络连接或服务器是否运行';
+            errorMessage = t('register.alert.network', '网络连接失败，请检查网络连接或服务器是否运行');
         } else if (error.errors && Array.isArray(error.errors)) {
-            errorMessage = '数据验证失败：\n' + error.errors.join('\n');
+            errorMessage = t('register.alert.validation', '数据验证失败：') + '\n' + error.errors.join('\n');
         } else {
-            errorMessage += error.message || '未知错误';
+            errorMessage += error.message || t('register.alert.unknown', '未知错误');
         }
         
         alert(errorMessage);
         submitButton.disabled = false;
-        submitButton.textContent = '注册';
+        submitButton.textContent = t('register.form.submit', '注册');
     }
 }
 

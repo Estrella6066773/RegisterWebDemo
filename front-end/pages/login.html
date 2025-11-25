@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - 学生港湾</title>
+    <title data-i18n-key="login.meta.title">登录 - 学生港湾</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/pages/register.css">
@@ -13,21 +13,22 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="../index.html" class="logo">学生港湾</a>
+                <a href="../index.html" class="logo" data-i18n-key="common.nav.logo">学生港湾</a>
                 <nav class="nav">
-                    <a href="../index.html" class="nav-link">首页</a>
-                    <a href="items.html" class="nav-link">浏览宝贝</a>
-                    <a href="login.html" class="nav-link active" id="loginLink">登录</a>
-                    <a href="register.html" class="nav-link" id="registerLink">注册</a>
-                    <a href="profile.html" class="nav-link" id="profileLink" style="display: none;">个人资料</a>
+                    <a href="../index.html" class="nav-link" data-i18n-key="common.nav.home">首页</a>
+                    <a href="items.html" class="nav-link" data-i18n-key="common.nav.items">浏览宝贝</a>
+                    <a href="login.html" class="nav-link active" id="loginLink" data-i18n-key="common.nav.login">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink" data-i18n-key="common.nav.signup">注册</a>
+                    <a href="profile.html" class="nav-link" id="profileLink" style="display: none;" data-i18n-key="common.nav.profile">个人资料</a>
                     <div class="nav-dropdown" style="display: none;">
-                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <a href="profile.html" class="nav-link" data-i18n-key="common.nav.profileDropdown">个人中心 ▾</a>
                         <div class="dropdown-menu">
-                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
-                            <a href="post-item.html" class="dropdown-item">发布物品</a>
+                            <a href="my-items.html" class="dropdown-item" data-i18n-key="common.nav.myItems">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item" data-i18n-key="common.nav.postItem">发布物品</a>
                         </div>
                     </div>
-                    <a href="#" class="nav-link" id="logoutLink" style="display: none;">退出登录</a>
+                    <a href="#" class="nav-link" id="logoutLink" style="display: none;" data-i18n-key="common.nav.logout">退出登录</a>
+                    <button type="button" class="lang-toggle" id="languageToggle" aria-label="切换到英文">EN</button>
                 </nav>
             </div>
         </div>
@@ -39,32 +40,40 @@
             <div class="register-container">
                 <div class="register-card">
                     <div class="register-header">
-                        <h1 class="register-title">登录</h1>
-                        <p class="register-subtitle">欢迎回到学生港湾</p>
+                        <h1 class="register-title" data-i18n-key="login.hero.title">登录</h1>
+                        <p class="register-subtitle" data-i18n-key="login.hero.subtitle">欢迎回到学生港湾</p>
                     </div>
 
                     <!-- 登录表单 -->
                     <form id="loginForm" class="register-form">
                         <div class="form-group">
-                            <label for="email" class="form-label">邮箱地址 <span class="required">*</span></label>
+                            <label for="email" class="form-label">
+                                <span data-i18n-key="common.form.email">邮箱地址</span>
+                                <span class="required">*</span>
+                            </label>
                             <input 
                                 type="email" 
                                 id="email" 
                                 name="email" 
                                 class="form-control" 
                                 placeholder="请输入您的邮箱"
+                                data-i18n-placeholder-key="login.form.emailPlaceholder"
                                 required
                             >
                         </div>
 
                         <div class="form-group">
-                            <label for="password" class="form-label">密码 <span class="required">*</span></label>
+                            <label for="password" class="form-label">
+                                <span data-i18n-key="common.form.password">密码</span>
+                                <span class="required">*</span>
+                            </label>
                             <input 
                                 type="password" 
                                 id="password" 
                                 name="password" 
                                 class="form-control" 
                                 placeholder="请输入您的密码"
+                                data-i18n-placeholder-key="login.form.passwordPlaceholder"
                                 required
                             >
                         </div>
@@ -73,19 +82,20 @@
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <label style="display: flex; align-items: center; cursor: pointer;">
                                     <input type="checkbox" id="remember" style="margin-right: 8px;">
-                                    <span style="font-size: 14px;">记住我</span>
+                                    <span style="font-size: 14px;" data-i18n-key="login.form.remember">记住我</span>
                                 </label>
-                                <a href="#" style="font-size: 14px; color: var(--primary-color);">忘记密码？</a>
+                                <a href="#" style="font-size: 14px; color: var(--primary-color);" data-i18n-key="login.form.forgot">忘记密码？</a>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary btn-block">登录</button>
+                            <button type="submit" class="btn btn-primary btn-block" data-i18n-key="login.form.submit">登录</button>
                         </div>
 
                         <div class="text-center mt-md">
                             <p style="color: var(--text-secondary); font-size: 14px;">
-                                还没有账户？<a href="register.html" style="color: var(--primary-color);">立即注册</a>
+                                <span data-i18n-key="login.form.noAccount">还没有账户？</span>
+                                <a href="register.html" style="color: var(--primary-color);" data-i18n-key="login.form.goRegister">立即注册</a>
                             </p>
                         </div>
                     </form>
@@ -94,32 +104,34 @@
                     <div class="test-accounts-info" style="background-color: #f0f7ff; border: 1px solid #4A90E2; border-radius: 8px; padding: 16px; margin-top: 24px;">
                         <div style="display: flex; align-items: center; margin-bottom: 12px;">
                             <span style="font-size: 20px; margin-right: 8px;">🧪</span>
-                            <h3 style="margin: 0; font-size: 16px; color: var(--primary-color);">测试账号</h3>
+                            <h3 style="margin: 0; font-size: 16px; color: var(--primary-color);" data-i18n-key="login.test.title">测试账号</h3>
                         </div>
                         <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
-                            <p style="margin: 0 0 8px 0;">以下为预设测试账号示例，仅用于演示登录表单的一键填写功能：</p>
+                            <p style="margin: 0 0 8px 0;" data-i18n-key="login.test.description">以下为预设测试账号示例，仅用于演示登录表单的一键填写功能：</p>
                         </div>
                         <div class="test-accounts-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
                             <!-- 学生会员 1 -->
                             <div class="test-account-item" style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <div style="flex: 1;">
-                                        <div style="font-weight: 500; margin-bottom: 4px;">学生会员 1</div>
+                                        <div style="font-weight: 500; margin-bottom: 4px;" data-i18n-key="login.test.account.student1">学生会员 1</div>
                                         <div style="font-size: 12px; color: var(--text-secondary);">
-                                            邮箱: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">student@university.edu</code>
+                                            <span data-i18n-key="login.test.emailLabel">邮箱:</span>
+                                            <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">student@university.edu</code>
                                         </div>
                                         <div style="font-size: 12px; color: var(--text-secondary);">
-                                            密码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
+                                            <span data-i18n-key="login.test.passwordLabel">密码:</span>
+                                            <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('student@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;">一键填写</button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('student@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;" data-i18n-key="login.test.fill">一键填写</button>
                                 </div>
                             </div>
                             <!-- 关联会员 1 -->
                             <div class="test-account-item" style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <div style="flex: 1;">
-                                        <div style="font-weight: 500; margin-bottom: 4px;">关联会员 1</div>
+                                        <div style="font-weight: 500; margin-bottom: 4px;" data-i18n-key="login.test.account.associate1">关联会员 1</div>
                                         <div style="font-size: 12px; color: var(--text-secondary);">
                                             邮箱: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">associate@university.edu</code>
                                         </div>
@@ -127,14 +139,14 @@
                                             密码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('associate@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;">一键填写</button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('associate@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;" data-i18n-key="login.test.fill">一键填写</button>
                                 </div>
                             </div>
                             <!-- 学生会员 2 -->
                             <div class="test-account-item" style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <div style="flex: 1;">
-                                        <div style="font-weight: 500; margin-bottom: 4px;">学生会员 2</div>
+                                        <div style="font-weight: 500; margin-bottom: 4px;" data-i18n-key="login.test.account.student2">学生会员 2</div>
                                         <div style="font-size: 12px; color: var(--text-secondary);">
                                             邮箱: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">student2@university.edu</code>
                                         </div>
@@ -142,14 +154,14 @@
                                             密码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('student2@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;">一键填写</button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('student2@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;" data-i18n-key="login.test.fill">一键填写</button>
                                 </div>
                             </div>
                             <!-- 关联会员 2 -->
                             <div class="test-account-item" style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <div style="flex: 1;">
-                                        <div style="font-weight: 500; margin-bottom: 4px;">关联会员 2</div>
+                                        <div style="font-weight: 500; margin-bottom: 4px;" data-i18n-key="login.test.account.associate2">关联会员 2</div>
                                         <div style="font-size: 12px; color: var(--text-secondary);">
                                             邮箱: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">associate2@university.edu</code>
                                         </div>
@@ -157,14 +169,14 @@
                                             密码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('associate2@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;">一键填写</button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('associate2@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;" data-i18n-key="login.test.fill">一键填写</button>
                                 </div>
                             </div>
                             <!-- 通用测试账号 -->
                             <div class="test-account-item" style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <div style="flex: 1;">
-                                        <div style="font-weight: 500; margin-bottom: 4px;">通用测试账号</div>
+                                        <div style="font-weight: 500; margin-bottom: 4px;" data-i18n-key="login.test.account.generic">通用测试账号</div>
                                         <div style="font-size: 12px; color: var(--text-secondary);">
                                             邮箱: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">test@university.edu</code>
                                         </div>
@@ -172,7 +184,7 @@
                                             密码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">Test1234</code>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('test@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;">一键填写</button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="fillTestAccount('test@university.edu', 'Test1234')" style="margin-left: 12px; white-space: nowrap;" data-i18n-key="login.test.fill">一键填写</button>
                                 </div>
                             </div>
                         </div>
@@ -181,18 +193,20 @@
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <span style="font-size: 16px;">💡</span>
                                 <div style="flex: 1;">
-                                    <div style="font-size: 13px; color: #856404; font-weight: 500; margin-bottom: 4px;">重要提示</div>
+                                    <div style="font-size: 13px; color: #856404; font-weight: 500; margin-bottom: 4px;" data-i18n-key="login.tip.title">重要提示</div>
                                     <div style="font-size: 12px; color: #856404; line-height: 1.6;">
-                                        <p style="margin: 0 0 6px 0;">
+                                        <p style="margin: 0 0 6px 0;" data-i18n-key="login.tip.fakeAccounts">
                                             上述账号信息仅用于演示"一键填写"功能，这些账号在数据库中并不存在。
                                         </p>
                                         <p style="margin: 0 0 6px 0;">
-                                            <strong>测试流程：</strong>请先
-                                            <a href="register.html" style="color: var(--primary-color); font-weight: 500; text-decoration: underline;">前往注册页面</a>
-                                            手动注册您自己的测试账号，这是测试的重要环节。
+                                            <strong data-i18n-key="login.tip.flowLabel">测试流程：</strong>
+                                            <span data-i18n-key="login.tip.flowPrefix">请先</span>
+                                            <a href="register.html" class="link-underline" style="color: var(--primary-color); font-weight: 500; text-decoration: underline;" data-i18n-key="login.tip.flowLink">前往注册页面</a>
+                                            <span data-i18n-key="login.tip.flowSuffix">手动注册您自己的测试账号，这是测试的重要环节。</span>
                                         </p>
                                         <p style="margin: 0;">
-                                            <strong>注册要求：</strong>使用大学邮箱（.edu 域名），密码至少8位且包含字母和数字。
+                                            <strong data-i18n-key="login.tip.reqLabel">注册要求：</strong>
+                                            <span data-i18n-key="login.tip.requirements">使用大学邮箱（.edu 域名），密码至少8位且包含字母和数字。</span>
                                         </p>
                                     </div>
                                 </div>
@@ -207,11 +221,13 @@
     <!-- 页脚 -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+            <p data-i18n-key="common.footer.default">&copy; 2024 学生港湾. 保留所有权利.</p>
         </div>
     </footer>
 
     <!-- JavaScript -->
+    <script src="../js/utils/i18n.data.js"></script>
+    <script src="../js/utils/i18n.js"></script>
     <script src="../js/utils/validation.js"></script>
     <script src="../js/utils/auth.js"></script>
     <script src="../js/utils/api.js"></script>
@@ -232,7 +248,7 @@
             if (logoutLink) {
                 logoutLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (confirm('确定要退出登录吗？')) {
+                    if (confirm(I18n.t('common.logoutConfirm'))) {
                         clearAuth();
                         updateNavigation();
                         window.location.href = '../index.html';

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>邮箱验证 - 学生港湾</title>
+    <title data-i18n-key="verification.meta.title">邮箱验证 - 学生港湾</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/pages/register.css">
@@ -13,21 +13,22 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="../index.html" class="logo">学生港湾</a>
+                <a href="../index.html" class="logo" data-i18n-key="common.nav.logo">学生港湾</a>
                 <nav class="nav">
-                    <a href="../index.html" class="nav-link">首页</a>
-                    <a href="items.html" class="nav-link">浏览宝贝</a>
-                    <a href="login.html" class="nav-link" id="loginLink">登录</a>
-                    <a href="register.html" class="nav-link" id="registerLink">注册</a>
-                    <a href="profile.html" class="nav-link" id="profileLink" style="display: none;">个人资料</a>
+                    <a href="../index.html" class="nav-link" data-i18n-key="common.nav.home">首页</a>
+                    <a href="items.html" class="nav-link" data-i18n-key="common.nav.browse">浏览宝贝</a>
+                    <a href="login.html" class="nav-link" id="loginLink" data-i18n-key="common.nav.login">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink" data-i18n-key="common.nav.signup">注册</a>
+                    <a href="profile.html" class="nav-link" id="profileLink" style="display: none;" data-i18n-key="common.nav.profile">个人资料</a>
                     <div class="nav-dropdown" style="display: none;">
-                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <a href="profile.html" class="nav-link" data-i18n-key="common.nav.profileDropdown">个人中心 ▾</a>
                         <div class="dropdown-menu">
-                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
-                            <a href="post-item.html" class="dropdown-item">发布物品</a>
+                            <a href="my-items.html" class="dropdown-item" data-i18n-key="common.nav.myItems">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item" data-i18n-key="common.nav.postItem">发布物品</a>
                         </div>
                     </div>
-                    <a href="#" class="nav-link" id="logoutLink" style="display: none;">退出登录</a>
+                    <a href="#" class="nav-link" id="logoutLink" style="display: none;" data-i18n-key="common.nav.logout">退出登录</a>
+                    <button type="button" class="lang-toggle" id="languageToggle" data-i18n-aria-label-key="common.langToggle">EN</button>
                 </nav>
             </div>
         </div>
@@ -39,8 +40,8 @@
             <div class="register-container">
                 <div class="register-card">
                     <div class="register-header">
-                        <h1 class="register-title">邮箱验证</h1>
-                        <p class="register-subtitle">请验证您的邮箱地址以完成注册</p>
+                        <h1 class="register-title" data-i18n-key="verification.hero.title">邮箱验证</h1>
+                        <p class="register-subtitle" data-i18n-key="verification.hero.subtitle">请验证您的邮箱地址以完成注册</p>
                     </div>
 
                     <div id="verificationContent">
@@ -48,13 +49,13 @@
                         <div id="devModeNotice" class="dev-mode-notice" style="display: none;">
                             <div class="notice-title">
                                 <span>🔧</span>
-                                <span>开发模式 - 测试验证</span>
+                                <span data-i18n-key="verification.devMode.title">开发模式 - 测试验证</span>
                             </div>
                             <div class="notice-content">
-                                <p style="margin-bottom: 8px;">当前为前端开发模式，无法发送真实邮件。您可以使用以下测试链接来模拟验证流程：</p>
-                                <p style="margin-bottom: 8px;"><strong>测试验证链接：</strong></p>
-                                <a href="#" id="testVerificationLink" class="dev-link">点击这里模拟验证成功</a>
-                                <p style="margin-top: 12px; font-size: 12px; color: var(--text-secondary);">
+                                <p style="margin-bottom: 8px;" data-i18n-key="verification.devMode.description">当前为前端开发模式，无法发送真实邮件。您可以使用以下测试链接来模拟验证流程：</p>
+                                <p style="margin-bottom: 8px;"><strong data-i18n-key="verification.devMode.linkLabel">测试验证链接：</strong></p>
+                                <a href="#" id="testVerificationLink" class="dev-link" data-i18n-key="verification.devMode.linkText">点击这里模拟验证成功</a>
+                                <p style="margin-top: 12px; font-size: 12px; color: var(--text-secondary);" data-i18n-key="verification.devMode.hint">
                                     💡 提示：在实际部署后，用户会收到包含验证链接的真实邮件。
                                 </p>
                             </div>
@@ -63,34 +64,34 @@
                         <!-- 等待验证状态 -->
                         <div id="pendingState" class="text-center">
                             <div style="font-size: 64px; margin-bottom: 24px;">📧</div>
-                            <h2 style="margin-bottom: 16px;">验证邮件已发送</h2>
+                            <h2 style="margin-bottom: 16px;" data-i18n-key="verification.pending.title">验证邮件已发送</h2>
                             <p style="color: var(--text-secondary); margin-bottom: 24px;">
-                                我们已向 <strong id="verificationEmail"></strong> 发送了验证邮件
+                                <span data-i18n-key="verification.pending.sentPrefix">我们已向</span> <strong id="verificationEmail"></strong> <span data-i18n-key="verification.pending.sentSuffix">发送了验证邮件</span>
                             </p>
-                            <p style="color: var(--text-secondary); margin-bottom: 32px;">
+                            <p style="color: var(--text-secondary); margin-bottom: 32px;" data-i18n-key="verification.pending.instruction">
                                 请检查您的邮箱并点击验证链接。如果未收到邮件，请检查垃圾邮件文件夹。
                             </p>
-                            <button class="btn btn-secondary" id="resendBtn">重新发送验证邮件</button>
+                            <button class="btn btn-secondary" id="resendBtn" data-i18n-key="verification.pending.resend">重新发送验证邮件</button>
                         </div>
 
                         <!-- 验证成功状态 -->
                         <div id="successState" class="hidden text-center">
                             <div style="font-size: 64px; margin-bottom: 24px; color: var(--success-color);">✓</div>
-                            <h2 style="margin-bottom: 16px; color: var(--success-color);">验证成功！</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 32px;">
+                            <h2 style="margin-bottom: 16px; color: var(--success-color);" data-i18n-key="verification.success.title">验证成功！</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 32px;" data-i18n-key="verification.success.message">
                                 您的邮箱已验证成功，现在可以享受完整功能了。
                             </p>
-                            <a href="login.html" class="btn btn-primary">前往登录</a>
+                            <a href="login.html" class="btn btn-primary" data-i18n-key="verification.success.goLogin">前往登录</a>
                         </div>
 
                         <!-- 验证失败状态 -->
                         <div id="errorState" class="hidden text-center">
                             <div style="font-size: 64px; margin-bottom: 24px; color: var(--error-color);">✗</div>
-                            <h2 style="margin-bottom: 16px; color: var(--error-color);">验证失败</h2>
-                            <p style="color: var(--text-secondary); margin-bottom: 32px;" id="errorMessage">
+                            <h2 style="margin-bottom: 16px; color: var(--error-color);" data-i18n-key="verification.error.title">验证失败</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 32px;" id="errorMessage" data-i18n-key="verification.error.defaultMessage">
                                 验证链接无效或已过期。
                             </p>
-                            <button class="btn btn-primary" id="retryBtn">重新发送验证邮件</button>
+                            <button class="btn btn-primary" id="retryBtn" data-i18n-key="verification.error.retry">重新发送验证邮件</button>
                         </div>
                     </div>
                 </div>
@@ -101,11 +102,13 @@
     <!-- 页脚 -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+            <p data-i18n-key="common.footer.default">&copy; 2024 学生港湾. 保留所有权利.</p>
         </div>
     </footer>
 
     <!-- JavaScript -->
+    <script src="../js/utils/i18n.data.js"></script>
+    <script src="../js/utils/i18n.js"></script>
     <script src="../js/utils/auth.js"></script>
     <script src="../js/utils/api.js"></script>
     <script src="../js/utils/navigation.js"></script>
@@ -118,7 +121,7 @@
             if (logoutLink) {
                 logoutLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (confirm('确定要退出登录吗？')) {
+                    if (confirm(I18n.t('common.logoutConfirm'))) {
                         clearAuth();
                         updateNavigation();
                         window.location.href = '../index.html';
@@ -156,12 +159,12 @@
             // 重新发送验证邮件
             document.getElementById('resendBtn').addEventListener('click', async function() {
                 if (!email) {
-                    alert('无法获取邮箱地址');
+                    alert(I18n.t('verification.alert.noEmail', '无法获取邮箱地址'));
                     return;
                 }
                 
                 this.disabled = true;
-                this.textContent = '发送中...';
+                this.textContent = I18n.t('verification.pending.sending', '发送中...');
                 
                 try {
                     // 调用API（预留后端）
@@ -169,14 +172,14 @@
                     
                     // 模拟API调用
                     setTimeout(() => {
-                        alert('验证邮件已重新发送！');
+                        alert(I18n.t('verification.alert.resendSuccess', '验证邮件已重新发送！'));
                         this.disabled = false;
-                        this.textContent = '重新发送验证邮件';
+                        this.textContent = I18n.t('verification.pending.resend', '重新发送验证邮件');
                     }, 1000);
                 } catch (error) {
-                    alert('发送失败: ' + (error.message || '未知错误'));
+                    alert(I18n.t('verification.alert.resendFailed', '发送失败: {error}', { error: error.message || I18n.t('common.error.unknown', '未知错误') }));
                     this.disabled = false;
-                    this.textContent = '重新发送验证邮件';
+                    this.textContent = I18n.t('verification.pending.resend', '重新发送验证邮件');
                 }
             });
             
@@ -227,7 +230,7 @@
                 document.getElementById('pendingState').classList.add('hidden');
                 document.getElementById('successState').classList.add('hidden');
                 document.getElementById('errorState').classList.remove('hidden');
-                document.getElementById('errorMessage').textContent = error.message || '验证失败';
+                document.getElementById('errorMessage').textContent = error.message || I18n.t('verification.error.defaultMessage', '验证失败');
             }
         }
     </script>

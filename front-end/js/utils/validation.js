@@ -4,6 +4,10 @@
  * ============================================
  */
 
+function t(key, fallback = '') {
+    return (window.I18n && window.I18n.t) ? window.I18n.t(key, fallback) : fallback;
+}
+
 /**
  * 验证邮箱格式
  * @param {string} email - 邮箱地址
@@ -34,19 +38,19 @@ function isValidUniversityEmail(email) {
  */
 function validatePassword(password) {
     if (!password) {
-        return { valid: false, message: '密码不能为空' };
+        return { valid: false, message: t('validation.password.required', '密码不能为空') };
     }
     if (password.length < 8) {
-        return { valid: false, message: '密码长度至少8位' };
+        return { valid: false, message: t('validation.password.minLength', '密码长度至少8位') };
     }
     if (password.length > 20) {
-        return { valid: false, message: '密码长度不能超过20位' };
+        return { valid: false, message: t('validation.password.maxLength', '密码长度不能超过20位') };
     }
     // 检查是否包含字母和数字
     const hasLetter = /[a-zA-Z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
     if (!hasLetter || !hasNumber) {
-        return { valid: false, message: '密码必须包含字母和数字' };
+        return { valid: false, message: t('validation.password.letterAndNumber', '密码必须包含字母和数字') };
     }
     return { valid: true, message: '' };
 }
@@ -58,13 +62,13 @@ function validatePassword(password) {
  */
 function validateName(name) {
     if (!name || name.trim().length === 0) {
-        return { valid: false, message: '姓名不能为空' };
+        return { valid: false, message: t('validation.name.required', '姓名不能为空') };
     }
     if (name.length < 2) {
-        return { valid: false, message: '姓名至少2个字符' };
+        return { valid: false, message: t('validation.name.minLength', '姓名至少2个字符') };
     }
     if (name.length > 50) {
-        return { valid: false, message: '姓名不能超过50个字符' };
+        return { valid: false, message: t('validation.name.maxLength', '姓名不能超过50个字符') };
     }
     return { valid: true, message: '' };
 }
@@ -77,9 +81,17 @@ function validateName(name) {
  */
 function validateRequired(value, fieldName) {
     if (!value || value.trim().length === 0) {
-        return { valid: false, message: `${fieldName}不能为空` };
+        return { valid: false, message: formatMessage('validation.required', '{field}不能为空', { field: fieldName }) };
     }
     return { valid: true, message: '' };
+}
+
+function formatMessage(key, fallback, replacements = {}) {
+    let message = t(key, fallback);
+    for (const [placeholder, value] of Object.entries(replacements)) {
+        message = message.replace(`{${placeholder}}`, value);
+    }
+    return message;
 }
 
 /**
@@ -135,7 +147,7 @@ function validateForm(form, rules) {
         // 必填验证
         if (rule.required && !value) {
             fieldValid = false;
-            errorMessage = rule.requiredMessage || `${fieldName}不能为空`;
+            errorMessage = rule.requiredMessage || formatMessage('validation.required', '{field}不能为空', { field: fieldName });
         }
         
         // 自定义验证

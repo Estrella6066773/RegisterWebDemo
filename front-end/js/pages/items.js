@@ -8,6 +8,23 @@ let currentPage = 1;
 const pageSize = 12;
 let currentFilters = {};
 
+function t(key, fallback = '') {
+    if (window.I18n && typeof window.I18n.t === 'function') {
+        return I18n.t(key, fallback || key);
+    }
+    return fallback || key;
+}
+
+function formatMessage(key, fallback, replacements = {}) {
+    const template = t(key, fallback);
+    return template.replace(/\{(\w+)\}/g, (_, token) => {
+        if (Object.prototype.hasOwnProperty.call(replacements, token)) {
+            return replacements[token];
+        }
+        return `{${token}}`;
+    });
+}
+
 // 选择可用的 ItemAPI（优先使用前端模拟，其次真实后端）
 function getItemAPI() {
     if (typeof window !== 'undefined') {
@@ -149,7 +166,7 @@ async function loadItems() {
     
     if (!container) return;
 
-    container.innerHTML = '<div class="items-loading" style="text-align: center; padding: 40px; color: var(--text-secondary);"><p>正在加载物品...</p></div>';
+    container.innerHTML = `<div class="items-loading" style="text-align: center; padding: 40px; color: var(--text-secondary);"><p>${t('items.list.loadingItems', '正在加载物品...')}</p></div>`;
 
     try {
         const searchParams = {
@@ -165,15 +182,15 @@ async function loadItems() {
 
         // 更新结果数量
         if (resultsCount) {
-            resultsCount.textContent = `找到 ${total} 个物品`;
+            resultsCount.textContent = formatMessage('items.list.count', '找到 {count} 个物品', { count: total });
         }
 
         if (items.length === 0) {
             container.innerHTML = `
                 <div class="items-empty" style="grid-column: 1 / -1;">
                     <div class="items-empty-icon">🔍</div>
-                    <p>没有找到相关物品</p>
-                    <p style="font-size: 14px; margin-top: 8px;">试试调整搜索条件</p>
+                    <p>${t('items.list.emptyTitle', '没有找到相关物品')}</p>
+                    <p style="font-size: 14px; margin-top: 8px;">${t('items.list.emptySubtitle', '试试调整搜索条件')}</p>
                 </div>
             `;
             document.getElementById('pagination').style.display = 'none';
@@ -191,7 +208,7 @@ async function loadItems() {
         container.innerHTML = `
             <div class="items-empty" style="grid-column: 1 / -1;">
                 <div class="items-empty-icon">⚠️</div>
-                <p>加载失败，请稍后重试</p>
+                <p>${t('items.list.error', '加载失败，请稍后重试')}</p>
             </div>
         `;
         document.getElementById('pagination').style.display = 'none';
@@ -249,7 +266,7 @@ function renderPagination(totalPages) {
     // 上一页按钮
     html += `
         <button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">
-            上一页
+            ${t('items.pagination.prev', '上一页')}
         </button>
     `;
 
@@ -287,7 +304,7 @@ function renderPagination(totalPages) {
     // 下一页按钮
     html += `
         <button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">
-            下一页
+            ${t('items.pagination.next', '下一页')}
         </button>
     `;
 
@@ -331,12 +348,13 @@ function formatDate(dateString) {
     const diff = now - date;
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     
-    if (days === 0) return '今天';
-    if (days === 1) return '昨天';
-    if (days < 7) return `${days}天前`;
-    if (days < 30) return `${Math.floor(days / 7)}周前`;
-    
-    return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });
+    if (days === 0) return t('items.date.today', '今天');
+    if (days === 1) return t('items.date.yesterday', '昨天');
+    if (days < 7) return formatMessage('items.date.daysAgo', '{count}天前', { count: days });
+    if (days < 30) return formatMessage('items.date.weeksAgo', '{count}周前', { count: Math.floor(days / 7) });
+
+    const locale = I18n && I18n.getLang && I18n.getLang() === 'en' ? 'en-US' : 'zh-CN';
+    return date.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 function escapeHtml(text) {

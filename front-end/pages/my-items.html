@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的宝贝 - 学生港湾</title>
+    <title data-i18n-key="myItems.meta.title">我的宝贝 - 学生港湾</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/layout.css">
 </head>
@@ -12,21 +12,22 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="../index.html" class="logo">学生港湾</a>
+                <a href="../index.html" class="logo" data-i18n-key="common.nav.logo">学生港湾</a>
                 <nav class="nav">
-                    <a href="../index.html" class="nav-link">首页</a>
-                    <a href="items.html" class="nav-link">浏览宝贝</a>
-                    <a href="login.html" class="nav-link" id="loginLink" style="display: none;">登录</a>
-                    <a href="register.html" class="nav-link" id="registerLink" style="display: none;">注册</a>
-                    <a href="profile.html" class="nav-link" id="profileLink">个人资料</a>
+                    <a href="../index.html" class="nav-link" data-i18n-key="common.nav.home">首页</a>
+                    <a href="items.html" class="nav-link" data-i18n-key="common.nav.items">浏览宝贝</a>
+                    <a href="login.html" class="nav-link" id="loginLink" style="display: none;" data-i18n-key="common.nav.login">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink" style="display: none;" data-i18n-key="common.nav.signup">注册</a>
+                    <a href="profile.html" class="nav-link" id="profileLink" data-i18n-key="common.nav.profile">个人资料</a>
                     <div class="nav-dropdown">
-                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <a href="profile.html" class="nav-link" data-i18n-key="common.nav.profileDropdown">个人中心 ▾</a>
                         <div class="dropdown-menu">
-                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
-                            <a href="post-item.html" class="dropdown-item">发布物品</a>
+                            <a href="my-items.html" class="dropdown-item" data-i18n-key="common.nav.myItems">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item" data-i18n-key="common.nav.postItem">发布物品</a>
                         </div>
                     </div>
-                    <a href="#" class="nav-link" id="logoutLink">退出登录</a>
+                    <a href="#" class="nav-link" id="logoutLink" data-i18n-key="common.nav.logout">退出登录</a>
+                    <button type="button" class="lang-toggle" id="languageToggle" data-i18n-aria-label-key="common.langToggle">EN</button>
                 </nav>
             </div>
         </div>
@@ -36,15 +37,15 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1 class="page-title">我的宝贝</h1>
-                <p class="page-subtitle">在这里管理你发布的宝贝</p>
+                <h1 class="page-title" data-i18n-key="myItems.hero.title">我的宝贝</h1>
+                <p class="page-subtitle" data-i18n-key="myItems.hero.subtitle">在这里管理你发布的宝贝</p>
             </div>
 
             <div class="card" style="margin-bottom: var(--spacing-lg);">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div style="color:var(--text-secondary)">仅供本地练习，使用浏览器本地存储模拟</div>
+                    <div style="color:var(--text-secondary)" data-i18n-key="myItems.note.localStorage">仅供本地练习，使用浏览器本地存储模拟</div>
                     <div style="display:flex;gap:8px;">
-                        <button class="btn btn-secondary" id="refreshBtn">刷新</button>
+                        <button class="btn btn-secondary" id="refreshBtn" data-i18n-key="myItems.actions.refresh">刷新</button>
                     </div>
                 </div>
             </div>
@@ -52,7 +53,7 @@
             <div class="card">
                 <div id="myItemsList" class="items-grid">
                     <div class="items-loading" style="text-align:center;padding:40px;color:var(--text-secondary);">
-                        <p>正在加载您的宝贝...</p>
+                        <p data-i18n-key="myItems.loading">正在加载您的宝贝...</p>
                     </div>
                 </div>
             </div>
@@ -62,42 +63,42 @@
     <!-- 简易弹窗 -->
     <div id="editorModal" class="modal hidden" style="position:fixed;left:0;top:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);">
         <div class="modal-content" style="background:#fff;border-radius:10px;max-width:520px;width:92%;padding:20px;">
-            <h3 id="editorTitle" style="margin:0 0 12px 0;">编辑宝贝</h3>
+            <h3 id="editorTitle" style="margin:0 0 12px 0;" data-i18n-key="myItems.edit.title">编辑宝贝</h3>
             <div class="form-group">
-                <label class="form-label">标题</label>
-                <input id="f_title" class="form-control" placeholder="请输入标题">
+                <label class="form-label" data-i18n-key="myItems.edit.titleLabel">标题</label>
+                <input id="f_title" class="form-control" data-i18n-placeholder-key="myItems.edit.titlePlaceholder" placeholder="请输入标题">
             </div>
             <div class="form-group">
-                <label class="form-label">价格</label>
+                <label class="form-label" data-i18n-key="myItems.edit.priceLabel">价格</label>
                 <input id="f_price" type="number" class="form-control" min="0">
             </div>
             <div class="form-group">
-                <label class="form-label">类别</label>
+                <label class="form-label" data-i18n-key="myItems.edit.categoryLabel">类别</label>
                 <select id="f_category" class="form-control">
-                    <option value="TEXTBOOK">教材</option>
-                    <option value="ELECTRONICS">电子产品</option>
-                    <option value="FURNITURE">家具</option>
-                    <option value="APPAREL">服装</option>
-                    <option value="SPORTS">体育器材</option>
+                    <option value="TEXTBOOK" data-i18n-key="postItem.category.textbook">教材</option>
+                    <option value="ELECTRONICS" data-i18n-key="postItem.category.electronics">电子产品</option>
+                    <option value="FURNITURE" data-i18n-key="postItem.category.furniture">家具</option>
+                    <option value="APPAREL" data-i18n-key="postItem.category.apparel">服装</option>
+                    <option value="SPORTS" data-i18n-key="postItem.category.sports">体育器材</option>
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">状况</label>
+                <label class="form-label" data-i18n-key="myItems.edit.conditionLabel">状况</label>
                 <select id="f_condition" class="form-control">
-                    <option value="NEW">全新</option>
-                    <option value="LIKE_NEW">几乎全新</option>
-                    <option value="GOOD">良好</option>
-                    <option value="FAIR">一般</option>
-                    <option value="POOR">较差</option>
+                    <option value="NEW" data-i18n-key="postItem.condition.new">全新</option>
+                    <option value="LIKE_NEW" data-i18n-key="postItem.condition.likeNew">几乎全新</option>
+                    <option value="GOOD" data-i18n-key="postItem.condition.good">良好</option>
+                    <option value="FAIR" data-i18n-key="postItem.condition.fair">一般</option>
+                    <option value="POOR" data-i18n-key="postItem.condition.poor">较差</option>
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">描述</label>
+                <label class="form-label" data-i18n-key="myItems.edit.descriptionLabel">描述</label>
                 <textarea id="f_desc" class="form-control" rows="3"></textarea>
             </div>
             <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
-                <button class="btn btn-secondary" id="cancelEdit">取消</button>
-                <button class="btn btn-primary" id="saveEdit">保存</button>
+                <button class="btn btn-secondary" id="cancelEdit" data-i18n-key="common.actions.cancel">取消</button>
+                <button class="btn btn-primary" id="saveEdit" data-i18n-key="common.actions.save">保存</button>
             </div>
         </div>
     </div>
@@ -105,11 +106,13 @@
     <!-- 页脚 -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+            <p data-i18n-key="common.footer.default">&copy; 2024 学生港湾. 保留所有权利.</p>
         </div>
     </footer>
 
     <!-- JavaScript -->
+    <script src="../js/utils/i18n.data.js"></script>
+    <script src="../js/utils/i18n.js"></script>
     <script src="../js/utils/auth.js"></script>
     <script src="../js/utils/api.js"></script>
     <script src="../js/utils/navigation.js"></script>
@@ -124,7 +127,7 @@
             if (logoutLink) {
                 logoutLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (confirm('确定要退出登录吗？')) {
+                    if (confirm(I18n.t('common.logoutConfirm'))) {
                         clearAuth();
                         updateNavigation();
                         window.location.href = '../index.html';

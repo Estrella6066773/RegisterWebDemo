@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>物品详情 - 学生港湾</title>
+    <title data-i18n-key="itemDetail.meta.title">物品详情 - 学生港湾</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/pages/item-detail.css">
@@ -13,21 +13,22 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="../index.html" class="logo">学生港湾</a>
+                <a href="../index.html" class="logo" data-i18n-key="common.nav.logo">学生港湾</a>
                 <nav class="nav">
-                    <a href="../index.html" class="nav-link">首页</a>
-                    <a href="items.html" class="nav-link">浏览宝贝</a>
-                    <a href="login.html" class="nav-link" id="loginLink">登录</a>
-                    <a href="register.html" class="nav-link" id="registerLink">注册</a>
-                    <a href="profile.html" class="nav-link" id="profileLink" style="display: none;">个人资料</a>
+                    <a href="../index.html" class="nav-link" data-i18n-key="common.nav.home">首页</a>
+                    <a href="items.html" class="nav-link" data-i18n-key="common.nav.items">浏览宝贝</a>
+                    <a href="login.html" class="nav-link" id="loginLink" data-i18n-key="common.nav.login">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink" data-i18n-key="common.nav.signup">注册</a>
+                    <a href="profile.html" class="nav-link" id="profileLink" style="display: none;" data-i18n-key="common.nav.profile">个人资料</a>
                     <div class="nav-dropdown" style="display: none;">
-                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <a href="profile.html" class="nav-link" data-i18n-key="common.nav.profileDropdown">个人中心 ▾</a>
                         <div class="dropdown-menu">
-                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
-                            <a href="post-item.html" class="dropdown-item">发布物品</a>
+                            <a href="my-items.html" class="dropdown-item" data-i18n-key="common.nav.myItems">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item" data-i18n-key="common.nav.postItem">发布物品</a>
                         </div>
                     </div>
-                    <a href="#" class="nav-link" id="logoutLink" style="display: none;">退出登录</a>
+                    <a href="#" class="nav-link" id="logoutLink" style="display: none;" data-i18n-key="common.nav.logout">退出登录</a>
+                    <button type="button" class="lang-toggle" id="languageToggle" data-i18n-aria-label-key="common.langToggle">EN</button>
                 </nav>
             </div>
         </div>
@@ -39,7 +40,7 @@
             <div id="itemDetailContainer">
                 <!-- 加载状态 -->
                 <div class="loading-state">
-                    <p>正在加载物品详情...</p>
+                    <p data-i18n-key="itemDetail.loading">正在加载物品详情...</p>
                 </div>
             </div>
         </div>
@@ -48,11 +49,13 @@
     <!-- 页脚 -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 学生港湾. 保留所有权利.</p>
+            <p data-i18n-key="common.footer.default">&copy; 2025 学生港湾. 保留所有权利.</p>
         </div>
     </footer>
 
     <!-- JavaScript -->
+    <script src="../js/utils/i18n.data.js"></script>
+    <script src="../js/utils/i18n.js"></script>
     <script src="../js/utils/auth.js"></script>
     <script src="../js/utils/api.js"></script>
     <script src="../js/utils/navigation.js"></script>
@@ -67,7 +70,7 @@
             if (logoutLink) {
                 logoutLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (confirm('确定要退出登录吗？')) {
+                    if (confirm(I18n.t('common.logoutConfirm'))) {
                         clearAuth();
                         updateNavigation();
                         window.location.reload();

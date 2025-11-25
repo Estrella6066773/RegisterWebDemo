@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学生港湾 - 学生二手物品交易平台</title>
+    <title data-i18n-key="home.meta.title">学生港湾 - 学生二手物品交易平台</title>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/layout.css">
 </head>
@@ -12,21 +12,22 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="index.html" class="logo">学生港湾</a>
+                <a href="index.html" class="logo" data-i18n-key="common.nav.logo">学生港湾</a>
                 <nav class="nav">
-                    <a href="index.html" class="nav-link active">首页</a>
-                    <a href="pages/items.html" class="nav-link">浏览宝贝</a>
-                    <a href="pages/login.html" class="nav-link" id="loginLink">登录</a>
-                    <a href="pages/register.html" class="nav-link" id="registerLink">注册</a>
-                    <a href="pages/profile.html" class="nav-link" id="profileLink" style="display: none;">个人资料</a>
+                    <a href="index.html" class="nav-link active" data-i18n-key="common.nav.home">首页</a>
+                    <a href="pages/items.html" class="nav-link" data-i18n-key="common.nav.items">浏览宝贝</a>
+                    <a href="pages/login.html" class="nav-link" id="loginLink" data-i18n-key="common.nav.login">登录</a>
+                    <a href="pages/register.html" class="nav-link" id="registerLink" data-i18n-key="common.nav.signup">注册</a>
+                    <a href="pages/profile.html" class="nav-link" id="profileLink" style="display: none;" data-i18n-key="common.nav.profile">个人资料</a>
                     <div class="nav-dropdown" style="display: none;">
-                        <a href="pages/profile.html" class="nav-link">个人中心 ▾</a>
+                        <a href="pages/profile.html" class="nav-link" data-i18n-key="common.nav.profileDropdown">个人中心 ▾</a>
                         <div class="dropdown-menu">
-                            <a href="pages/my-items.html" class="dropdown-item">我的宝贝</a>
-                            <a href="pages/post-item.html" class="dropdown-item">发布物品</a>
+                            <a href="pages/my-items.html" class="dropdown-item" data-i18n-key="common.nav.myItems">我的宝贝</a>
+                            <a href="pages/post-item.html" class="dropdown-item" data-i18n-key="common.nav.postItem">发布物品</a>
                         </div>
                     </div>
-                    <a href="#" class="nav-link" id="logoutLink" style="display: none;">退出登录</a>
+                    <a href="#" class="nav-link" id="logoutLink" style="display: none;" data-i18n-key="common.nav.logout">退出登录</a>
+                    <button type="button" class="lang-toggle" id="languageToggle" aria-label="切换到英文">EN</button>
                 </nav>
             </div>
         </div>
@@ -37,8 +38,8 @@
         <div class="container">
             <!-- 页面标题 -->
             <div class="page-header text-center">
-                <h1 class="page-title">欢迎来到学生港湾</h1>
-                <p class="page-subtitle">专为学生打造的二手物品交易平台</p>
+                <h1 class="page-title" data-i18n-key="home.hero.title">欢迎来到学生港湾</h1>
+                <p class="page-subtitle" data-i18n-key="home.hero.subtitle">专为学生打造的二手物品交易平台</p>
             </div>
 
             <!-- 搜索栏 -->
@@ -52,17 +53,18 @@
                                 id="homeSearchInput"
                                 class="search-input" 
                                 placeholder="搜索课程教材、电子产品、家具等..."
+                                data-i18n-placeholder-key="home.search.placeholder"
                                 autocomplete="off"
                             >
-                            <button type="submit" class="btn btn-primary search-btn">搜索</button>
+                            <button type="submit" class="btn btn-primary search-btn" data-i18n-key="home.search.action">搜索</button>
                         </div>
                         <div class="search-quick-filters">
-                            <span class="search-filter-label">快速筛选：</span>
-                            <a href="pages/items.html?category=TEXTBOOK" class="search-filter-tag">📚 教材</a>
-                            <a href="pages/items.html?category=ELECTRONICS" class="search-filter-tag">💻 电子产品</a>
-                            <a href="pages/items.html?category=FURNITURE" class="search-filter-tag">🪑 家具</a>
-                            <a href="pages/items.html?category=APPAREL" class="search-filter-tag">👕 服装</a>
-                            <a href="pages/items.html?category=SPORTS" class="search-filter-tag">⚽ 体育器材</a>
+                            <span class="search-filter-label" data-i18n-key="home.search.quickLabel">快速筛选：</span>
+                            <a href="pages/items.html?category=TEXTBOOK" class="search-filter-tag" data-i18n-key="home.search.filter.textbook">📚 教材</a>
+                            <a href="pages/items.html?category=ELECTRONICS" class="search-filter-tag" data-i18n-key="home.search.filter.electronics">💻 电子产品</a>
+                            <a href="pages/items.html?category=FURNITURE" class="search-filter-tag" data-i18n-key="home.search.filter.furniture">🪑 家具</a>
+                            <a href="pages/items.html?category=APPAREL" class="search-filter-tag" data-i18n-key="home.search.filter.apparel">👕 服装</a>
+                            <a href="pages/items.html?category=SPORTS" class="search-filter-tag" data-i18n-key="home.search.filter.sports">⚽ 体育器材</a>
                         </div>
                     </form>
                 </div>
@@ -72,8 +74,8 @@
             <div class="card" style="margin-bottom: var(--spacing-xl); overflow: hidden;">
                 <div id="heroCarousel" style="position: relative; width: 100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-color);">
                     <div class="carousel-track" style="display: flex; width: 100%; height: 100%; transition: transform 0.5s ease;"></div>
-                    <button class="carousel-btn prev" aria-label="prev" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;">‹</button>
-                    <button class="carousel-btn next" aria-label="next" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;">›</button>
+                    <button class="carousel-btn prev" aria-label="上一张" data-i18n-aria-label-key="home.carousel.prev" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;">‹</button>
+                    <button class="carousel-btn next" aria-label="下一张" data-i18n-aria-label-key="home.carousel.next" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;">›</button>
                     <div class="carousel-dots" style="position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:6px;"></div>
                 </div>
             </div>
@@ -81,39 +83,39 @@
             <!-- 热门物品预览 -->
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h2 style="font-size: 24px; margin: 0;">热门物品</h2>
-                    <a href="pages/items.html" class="btn btn-secondary" style="font-size: 14px;">查看全部 →</a>
+                    <h2 style="font-size: 24px; margin: 0;" data-i18n-key="home.featured.title">热门物品</h2>
+                    <a href="pages/items.html" class="btn btn-secondary" style="font-size: 14px;" data-i18n-key="home.featured.viewAll">查看全部 →</a>
                 </div>
                 <div id="featuredItems" class="items-grid">
                     <!-- 物品将通过JavaScript动态加载 -->
                     <div class="items-loading" style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                        <p>正在加载热门物品...</p>
+                        <p data-i18n-key="home.featured.loading">正在加载热门物品...</p>
                     </div>
                 </div>
             </div>
 
             <!-- 功能介绍 -->
             <div class="card">
-                <h2 style="margin-bottom: 24px; font-size: 24px;">平台特色</h2>
+                <h2 style="margin-bottom: 24px; font-size: 24px;" data-i18n-key="home.features.title">平台特色</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
                     <div>
                         <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
-                        <h3 style="margin-bottom: 8px; font-size: 18px;">物品发现</h3>
-                        <p style="color: var(--text-secondary); font-size: 14px;">
+                        <h3 style="margin-bottom: 8px; font-size: 18px;" data-i18n-key="home.features.discovery.title">物品发现</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px;" data-i18n-key="home.features.discovery.desc">
                             高效搜索功能，快速找到您需要的课程教材、电子产品等
                         </p>
                     </div>
                     <div>
                         <div style="font-size: 32px; margin-bottom: 8px;">🛡️</div>
-                        <h3 style="margin-bottom: 8px; font-size: 18px;">信任与安全</h3>
-                        <p style="color: var(--text-secondary); font-size: 14px;">
+                        <h3 style="margin-bottom: 8px; font-size: 18px;" data-i18n-key="home.features.safety.title">信任与安全</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px;" data-i18n-key="home.features.safety.desc">
                             大学邮箱验证，完整的信任指标，让交易更安心
                         </p>
                     </div>
                     <div>
                         <div style="font-size: 32px; margin-bottom: 8px;">⭐</div>
-                        <h3 style="margin-bottom: 8px; font-size: 18px;">评分系统</h3>
-                        <p style="color: var(--text-secondary); font-size: 14px;">
+                        <h3 style="margin-bottom: 8px; font-size: 18px;" data-i18n-key="home.features.rating.title">评分系统</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px;" data-i18n-key="home.features.rating.desc">
                             透明的评分历史，帮助您做出更好的交易决策
                         </p>
                     </div>
@@ -122,32 +124,32 @@
 
             <!-- 会员类型介绍 -->
             <div class="card">
-                <h2 style="margin-bottom: 24px; font-size: 24px;">会员类型</h2>
+                <h2 style="margin-bottom: 24px; font-size: 24px;" data-i18n-key="home.membership.title">会员类型</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
                     <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 24px;">
                         <div style="display: flex; align-items: center; margin-bottom: 16px;">
-                            <span class="badge badge-member-student" style="margin-right: 12px;">学生会员</span>
+                            <span class="badge badge-member-student" style="margin-right: 12px;" data-i18n-key="home.membership.student.badge">学生会员</span>
                         </div>
-                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;" data-i18n-key="home.membership.student.desc">
                             通过大学邮箱验证，享受完整功能
                         </p>
                         <ul style="list-style: none; padding: 0; font-size: 14px; color: var(--text-secondary);">
-                            <li style="margin-bottom: 8px;">✓ 浏览物品</li>
-                            <li style="margin-bottom: 8px;">✓ 发布物品</li>
-                            <li style="margin-bottom: 8px;">✓ 购买物品</li>
+                            <li style="margin-bottom: 8px;" data-i18n-key="home.membership.perk.browse">✓ 浏览物品</li>
+                            <li style="margin-bottom: 8px;" data-i18n-key="home.membership.perk.post">✓ 发布物品</li>
+                            <li style="margin-bottom: 8px;" data-i18n-key="home.membership.perk.buy">✓ 购买物品</li>
                         </ul>
                     </div>
                     <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 24px;">
                         <div style="display: flex; align-items: center; margin-bottom: 16px;">
-                            <span class="badge badge-member-associate" style="margin-right: 12px;">关联会员</span>
+                            <span class="badge badge-member-associate" style="margin-right: 12px;" data-i18n-key="home.membership.associate.badge">关联会员</span>
                         </div>
-                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;" data-i18n-key="home.membership.associate.desc">
                             教职工专用，通过机构邮箱验证
                         </p>
                         <ul style="list-style: none; padding: 0; font-size: 14px; color: var(--text-secondary);">
-                            <li style="margin-bottom: 8px;">✓ 浏览物品</li>
-                            <li style="margin-bottom: 8px;">✓ 发布物品</li>
-                            <li style="margin-bottom: 8px;">✓ 购买物品</li>
+                            <li style="margin-bottom: 8px;" data-i18n-key="home.membership.perk.browse">✓ 浏览物品</li>
+                            <li style="margin-bottom: 8px;" data-i18n-key="home.membership.perk.post">✓ 发布物品</li>
+                            <li style="margin-bottom: 8px;" data-i18n-key="home.membership.perk.buy">✓ 购买物品</li>
                         </ul>
                     </div>
                 </div>
@@ -155,13 +157,13 @@
 
             <!-- 行动号召 - 仅未登录时显示 -->
             <div class="card text-center" id="callToActionSection">
-                <h2 style="margin-bottom: 16px; font-size: 24px;">准备开始了吗？</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                <h2 style="margin-bottom: 16px; font-size: 24px;" data-i18n-key="home.cta.title">准备开始了吗？</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 24px;" data-i18n-key="home.cta.subtitle">
                     立即注册，加入学生港湾，开始您的二手物品交易之旅
                 </p>
                 <div style="display: flex; gap: 16px; justify-content: center;">
-                    <a href="pages/register.html" class="btn btn-primary">立即注册</a>
-                    <a href="pages/login.html" class="btn btn-secondary">已有账户？登录</a>
+                    <a href="pages/register.html" class="btn btn-primary" data-i18n-key="home.cta.primary">立即注册</a>
+                    <a href="pages/login.html" class="btn btn-secondary" data-i18n-key="home.cta.secondary">已有账户？登录</a>
                 </div>
             </div>
         </div>
@@ -170,11 +172,13 @@
     <!-- 页脚 -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+            <p data-i18n-key="common.footer.default">&copy; 2024 学生港湾. 保留所有权利.</p>
         </div>
     </footer>
 
     <!-- JavaScript -->
+    <script src="js/utils/i18n.data.js"></script>
+    <script src="js/utils/i18n.js"></script>
     <script src="js/utils/auth.js"></script>
     <script src="js/utils/api.js"></script>
     <script src="js/pages/index.js"></script>
@@ -262,7 +266,7 @@
             if (logoutLink) {
                 logoutLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (confirm('确定要退出登录吗？')) {
+                    if (confirm(I18n.t('common.logoutConfirm'))) {
                         clearAuth();
                         window.location.reload();
                     }

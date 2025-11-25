@@ -4,6 +4,18 @@
  * ============================================
  */
 
+function t(key, fallback = '') {
+    return window.I18n ? window.I18n.t(key, fallback) : fallback;
+}
+
+function formatMessage(key, fallback, replacements = {}) {
+    let message = t(key, fallback);
+    for (const [placeholder, value] of Object.entries(replacements)) {
+        message = message.replace(`{${placeholder}}`, value);
+    }
+    return message;
+}
+
 // 获取URL参数中的物品ID
 function getItemId() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -33,8 +45,8 @@ async function loadItemDetail() {
     if (!itemId) {
         container.innerHTML = `
             <div class="error-state">
-                <p>❌ 物品ID无效</p>
-                <a href="items.html" class="btn btn-primary" style="margin-top: 16px;">返回浏览</a>
+                <p>❌ ${t('itemDetail.error.invalidId', '物品ID无效')}</p>
+                <a href="items.html" class="btn btn-primary" style="margin-top: 16px;">${t('itemDetail.actions.backToBrowse', '返回浏览')}</a>
             </div>
         `;
         return;
@@ -58,8 +70,8 @@ async function loadItemDetail() {
         console.error('加载物品详情失败:', error);
         container.innerHTML = `
             <div class="error-state">
-                <p>❌ 加载失败：${error.message || '请稍后重试'}</p>
-                <a href="items.html" class="btn btn-primary" style="margin-top: 16px;">返回浏览</a>
+                <p>❌ ${t('itemDetail.error.loadFailed', '加载失败：')}${error.message || t('itemDetail.error.retry', '请稍后重试')}</p>
+                <a href="items.html" class="btn btn-primary" style="margin-top: 16px;">${t('itemDetail.actions.backToBrowse', '返回浏览')}</a>
             </div>
         `;
     }
@@ -71,11 +83,11 @@ function renderItemDetail(item) {
     
     // 获取类别名称
     const categoryNames = {
-        'TEXTBOOK': '📚 教材',
-        'ELECTRONICS': '💻 电子产品',
-        'FURNITURE': '🪑 家具',
-        'APPAREL': '👕 服装',
-        'SPORTS': '⚽ 体育器材',
+        'TEXTBOOK': `📚 ${t('itemDetail.category.textbook', '教材')}`,
+        'ELECTRONICS': `💻 ${t('itemDetail.category.electronics', '电子产品')}`,
+        'FURNITURE': `🪑 ${t('itemDetail.category.furniture', '家具')}`,
+        'APPAREL': `👕 ${t('itemDetail.category.apparel', '服装')}`,
+        'SPORTS': `⚽ ${t('itemDetail.category.sports', '体育器材')}`,
     };
 
     // 获取状况信息
@@ -101,7 +113,7 @@ function renderItemDetail(item) {
             ${thumbnails.length > 0 ? `
                 <div class="item-thumbnails">
                     ${thumbnails.map((img, index) => `
-                        <img src="${img}" alt="缩略图 ${index + 2}" class="item-thumbnail" onclick="changeMainImage('${img}')">
+                        <img src="${img}" alt="${t('itemDetail.image.thumbnail', '缩略图')} ${index + 2}" class="item-thumbnail" onclick="changeMainImage('${img}')">
                     `).join('')}
                 </div>
             ` : ''}
@@ -128,7 +140,7 @@ function renderItemDetail(item) {
                         </div>
                         <div class="item-meta-item">
                             <span>👁️</span>
-                            <span>${item.viewCount || 0} 次浏览</span>
+                            <span>${formatMessage('itemDetail.meta.views', '{count} 次浏览', { count: item.viewCount || 0 })}</span>
                         </div>
                         ${postDate ? `
                             <div class="item-meta-item">
@@ -145,8 +157,8 @@ function renderItemDetail(item) {
                 </div>
 
                 <div class="item-description">
-                    <h2 class="item-description-title">物品描述</h2>
-                    <div class="item-description-content">${escapeHtml(item.description || '暂无描述')}</div>
+                    <h2 class="item-description-title">${t('itemDetail.description.title', '物品描述')}</h2>
+                    <div class="item-description-content">${escapeHtml(item.description || t('itemDetail.description.empty', '暂无描述'))}</div>
                 </div>
 
                 ${detailsHtml}
@@ -156,53 +168,53 @@ function renderItemDetail(item) {
                 ${sellerHtml}
                 
                 <div class="sidebar-card">
-                    <h3 class="sidebar-card-title">操作</h3>
+                    <h3 class="sidebar-card-title">${t('itemDetail.actions.title', '操作')}</h3>
                     <div class="item-actions">
                         ${isAuthenticated() ? `
                             <button class="btn btn-primary btn-contact" onclick="contactSeller('${item.seller?.id || ''}')">
-                                💬 联系卖家
+                                💬 ${t('itemDetail.actions.contactSeller', '联系卖家')}
                             </button>
                             ${item.seller?.id === getCurrentUserId() ? `
                                 <div style="display:flex;flex-direction:column;gap:8px;">
-                                    <div style="font-size:14px;color:var(--text-secondary);">当前状态：<b id="statusText">${getStatusText(item.status)}</b></div>
+                                    <div style="font-size:14px;color:var(--text-secondary);">${t('itemDetail.status.current', '当前状态：')}<b id="statusText">${getStatusText(item.status)}</b></div>
                                     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                                        <button class="btn btn-secondary" onclick="updateStatus('${item.id}','RESERVED')">标记为已预定</button>
-                                        <button class="btn btn-secondary" onclick="updateStatus('${item.id}','AVAILABLE')">标记为可售</button>
-                                        <button class="btn btn-secondary" onclick="updateStatus('${item.id}','SOLD')">标记为已售出</button>
+                                        <button class="btn btn-secondary" onclick="updateStatus('${item.id}','RESERVED')">${t('itemDetail.actions.markReserved', '标记为已预定')}</button>
+                                        <button class="btn btn-secondary" onclick="updateStatus('${item.id}','AVAILABLE')">${t('itemDetail.actions.markAvailable', '标记为可售')}</button>
+                                        <button class="btn btn-secondary" onclick="updateStatus('${item.id}','SOLD')">${t('itemDetail.actions.markSold', '标记为已售出')}</button>
                                     </div>
                                 </div>
                             ` : `
                                 <button class="btn btn-secondary" onclick="toggleWatch('${item.id}')">
-                                    ⭐ 加入/取消关注
+                                    ⭐ ${t('itemDetail.actions.toggleWatch', '加入/取消关注')}
                                 </button>
                             `}
                         ` : `
                             <a href="login.html" class="btn btn-primary btn-contact">
-                                🔐 登录后联系卖家
+                                🔐 ${t('itemDetail.actions.loginToContact', '登录后联系卖家')}
                             </a>
                         `}
                         <a href="items.html" class="btn btn-secondary">
-                            ← 返回浏览
+                            ← ${t('itemDetail.actions.backToBrowse', '返回浏览')}
                         </a>
                     </div>
                 </div>
 
                 <div class="sidebar-card">
-                    <h3 class="sidebar-card-title">买家评价</h3>
+                    <h3 class="sidebar-card-title">${t('itemDetail.reviews.title', '买家评价')}</h3>
                     <div id="reviewsContainer" style="display:flex;flex-direction:column;gap:12px;"></div>
                     ${item.status === 'SOLD' && item.seller?.id !== getCurrentUserId() && isAuthenticated() ? `
                         <div style="margin-top:12px;">
-                            <div style="font-size:14px;color:var(--text-secondary);margin-bottom:6px;">我已购买，发表评价</div>
+                            <div style="font-size:14px;color:var(--text-secondary);margin-bottom:6px;">${t('itemDetail.reviews.postTitle', '我已购买，发表评价')}</div>
                             <div style="display:flex;flex-direction:column;gap:8px;">
                                 <select id="reviewRating" class="form-control" style="max-width:180px;">
-                                    <option value="5">5 - 非常满意</option>
-                                    <option value="4">4 - 满意</option>
-                                    <option value="3">3 - 一般</option>
-                                    <option value="2">2 - 不太满意</option>
-                                    <option value="1">1 - 很不满意</option>
+                                    <option value="5">5 - ${t('itemDetail.reviews.rating5', '非常满意')}</option>
+                                    <option value="4">4 - ${t('itemDetail.reviews.rating4', '满意')}</option>
+                                    <option value="3">3 - ${t('itemDetail.reviews.rating3', '一般')}</option>
+                                    <option value="2">2 - ${t('itemDetail.reviews.rating2', '不太满意')}</option>
+                                    <option value="1">1 - ${t('itemDetail.reviews.rating1', '很不满意')}</option>
                                 </select>
-                                <textarea id="reviewComment" rows="3" class="form-control" maxlength="1000" placeholder="写点评价（最多1000字）"></textarea>
-                                <button class="btn btn-primary" onclick="submitReview('${item.id}')">提交评价</button>
+                                <textarea id="reviewComment" rows="3" class="form-control" maxlength="1000" placeholder="${t('itemDetail.reviews.commentPlaceholder', '写点评价（最多1000字）')}"></textarea>
+                                <button class="btn btn-primary" onclick="submitReview('${item.id}')">${t('itemDetail.reviews.submit', '提交评价')}</button>
                             </div>
                         </div>
                     ` : ''}
@@ -224,41 +236,41 @@ function renderItemDetails(item) {
     
     // 根据类别添加特定字段
     if (category === 'TEXTBOOK') {
-        if (item.isbn) fields.push({ label: 'ISBN', value: item.isbn });
-        if (item.courseCode) fields.push({ label: '课程代码', value: item.courseCode });
-        if (item.moduleName) fields.push({ label: '模块名称', value: item.moduleName });
-        if (item.edition) fields.push({ label: '版次', value: item.edition });
-        if (item.author) fields.push({ label: '作者', value: item.author });
+        if (item.isbn) fields.push({ label: t('itemDetail.fields.isbn', 'ISBN'), value: item.isbn });
+        if (item.courseCode) fields.push({ label: t('itemDetail.fields.courseCode', '课程代码'), value: item.courseCode });
+        if (item.moduleName) fields.push({ label: t('itemDetail.fields.moduleName', '模块名称'), value: item.moduleName });
+        if (item.edition) fields.push({ label: t('itemDetail.fields.edition', '版次'), value: item.edition });
+        if (item.author) fields.push({ label: t('itemDetail.fields.author', '作者'), value: item.author });
     } else if (category === 'ELECTRONICS') {
-        if (item.brand) fields.push({ label: '品牌', value: item.brand });
-        if (item.model) fields.push({ label: '型号', value: item.model });
-        if (item.warrantyStatus) fields.push({ label: '保修状态', value: item.warrantyStatus });
-        if (item.purchaseDate) fields.push({ label: '购买日期', value: item.purchaseDate });
-        if (item.accessories) fields.push({ label: '包含配件', value: item.accessories });
+        if (item.brand) fields.push({ label: t('itemDetail.fields.brand', '品牌'), value: item.brand });
+        if (item.model) fields.push({ label: t('itemDetail.fields.model', '型号'), value: item.model });
+        if (item.warrantyStatus) fields.push({ label: t('itemDetail.fields.warrantyStatus', '保修状态'), value: item.warrantyStatus });
+        if (item.purchaseDate) fields.push({ label: t('itemDetail.fields.purchaseDate', '购买日期'), value: item.purchaseDate });
+        if (item.accessories) fields.push({ label: t('itemDetail.fields.accessories', '包含配件'), value: item.accessories });
     } else if (category === 'FURNITURE') {
-        if (item.itemType) fields.push({ label: '物品类型', value: item.itemType });
-        if (item.size) fields.push({ label: '尺寸', value: item.size });
-        if (item.material) fields.push({ label: '材质', value: item.material });
-        if (item.assemblyRequired) fields.push({ label: '组装情况', value: item.assemblyRequired });
-        if (item.conditionDetails) fields.push({ label: '状况详情', value: item.conditionDetails });
+        if (item.itemType) fields.push({ label: t('itemDetail.fields.itemType', '物品类型'), value: item.itemType });
+        if (item.size) fields.push({ label: t('itemDetail.fields.size', '尺寸'), value: item.size });
+        if (item.material) fields.push({ label: t('itemDetail.fields.material', '材质'), value: item.material });
+        if (item.assemblyRequired) fields.push({ label: t('itemDetail.fields.assemblyRequired', '组装情况'), value: item.assemblyRequired });
+        if (item.conditionDetails) fields.push({ label: t('itemDetail.fields.conditionDetails', '状况详情'), value: item.conditionDetails });
     } else if (category === 'APPAREL') {
-        if (item.size) fields.push({ label: '尺码', value: item.size });
-        if (item.brand) fields.push({ label: '品牌', value: item.brand });
-        if (item.material) fields.push({ label: '材质', value: item.material });
-        if (item.color) fields.push({ label: '颜色', value: item.color });
-        if (item.gender) fields.push({ label: '性别', value: item.gender });
+        if (item.size) fields.push({ label: t('itemDetail.fields.sizeApparel', '尺码'), value: item.size });
+        if (item.brand) fields.push({ label: t('itemDetail.fields.brand', '品牌'), value: item.brand });
+        if (item.material) fields.push({ label: t('itemDetail.fields.material', '材质'), value: item.material });
+        if (item.color) fields.push({ label: t('itemDetail.fields.color', '颜色'), value: item.color });
+        if (item.gender) fields.push({ label: t('itemDetail.fields.gender', '性别'), value: item.gender });
     } else if (category === 'SPORTS') {
-        if (item.brand) fields.push({ label: '品牌', value: item.brand });
-        if (item.size) fields.push({ label: '尺寸', value: item.size });
-        if (item.sportType) fields.push({ label: '运动类型', value: item.sportType });
-        if (item.conditionDetails) fields.push({ label: '状况详情', value: item.conditionDetails });
+        if (item.brand) fields.push({ label: t('itemDetail.fields.brand', '品牌'), value: item.brand });
+        if (item.size) fields.push({ label: t('itemDetail.fields.size', '尺寸'), value: item.size });
+        if (item.sportType) fields.push({ label: t('itemDetail.fields.sportType', '运动类型'), value: item.sportType });
+        if (item.conditionDetails) fields.push({ label: t('itemDetail.fields.conditionDetails', '状况详情'), value: item.conditionDetails });
     }
 
     if (fields.length === 0) return '';
 
     return `
         <div class="item-details">
-            <h2 class="item-details-title">详细信息</h2>
+            <h2 class="item-details-title">${t('itemDetail.details.title', '详细信息')}</h2>
             <div class="item-details-grid">
                 ${fields.map(field => `
                     <div class="item-detail-item">
@@ -275,22 +287,22 @@ function renderItemDetails(item) {
 function renderSellerInfo(seller) {
     return `
         <div class="sidebar-card">
-            <h3 class="sidebar-card-title">卖家信息</h3>
+            <h3 class="sidebar-card-title">${t('itemDetail.seller.title', '卖家信息')}</h3>
             <div class="seller-info">
                 <div class="seller-avatar">
                     ${seller.name ? seller.name.charAt(0).toUpperCase() : '👤'}
                 </div>
                 <div class="seller-details">
-                    <div class="seller-name">${escapeHtml(seller.name || '匿名用户')}</div>
+                    <div class="seller-name">${escapeHtml(seller.name || t('itemDetail.seller.anonymous', '匿名用户'))}</div>
                     <div class="seller-rating">
                         <span>⭐</span>
-                        <span>${seller.averageRating || 0} (${seller.ratingCount || 0} 评价)</span>
+                        <span>${seller.averageRating || 0} ${formatMessage('itemDetail.seller.ratings', '({count} 评价)', { count: seller.ratingCount || 0 })}</span>
                     </div>
                 </div>
             </div>
             ${seller.verified ? `
                 <div style="margin-top: 12px;">
-                    <span class="badge badge-verified">✓ 已验证</span>
+                    <span class="badge badge-verified">✓ ${t('itemDetail.seller.verified', '已验证')}</span>
                 </div>
             ` : ''}
         </div>
@@ -316,48 +328,52 @@ function changeMainImage(imageUrl) {
 // 联系卖家
 function contactSeller(sellerId) {
     if (!sellerId) {
-        alert('卖家信息不可用');
+        alert(t('itemDetail.alert.sellerUnavailable', '卖家信息不可用'));
         return;
     }
     // TODO: 实现联系卖家功能
-    alert('联系卖家功能开发中...');
+    alert(t('itemDetail.alert.contactInDevelopment', '联系卖家功能开发中...'));
 }
 
 // 编辑物品
 function editItem(itemId) {
     // TODO: 实现编辑功能
-    alert('编辑功能开发中...');
+    alert(t('itemDetail.alert.editInDevelopment', '编辑功能开发中...'));
 }
 
 // 删除物品
 async function deleteItem(itemId) {
-    if (!confirm('确定要删除这个物品吗？此操作不可恢复。')) {
+    if (!confirm(t('itemDetail.confirm.delete', '确定要删除这个物品吗？此操作不可恢复。'))) {
         return;
     }
 
     try {
         await ItemAPI.deleteItem(itemId);
-        alert('物品已删除');
+        alert(t('itemDetail.alert.deleted', '物品已删除'));
         window.location.href = 'items.html';
     } catch (error) {
         console.error('删除物品失败:', error);
-        alert('删除失败：' + (error.message || '请稍后重试'));
+        alert(t('itemDetail.alert.deleteFailed', '删除失败：') + (error.message || t('itemDetail.error.retry', '请稍后重试')));
     }
 }
 
 // 工具函数
 function getStatusText(status) {
-    const map = { AVAILABLE: '可售', RESERVED: '已预定（待取货）', SOLD: '已售出' };
-    return map[status] || status || '可售';
+    const map = {
+        AVAILABLE: t('itemDetail.status.available', '可售'),
+        RESERVED: t('itemDetail.status.reserved', '已预定（待取货）'),
+        SOLD: t('itemDetail.status.sold', '已售出')
+    };
+    return map[status] || status || t('itemDetail.status.available', '可售');
 }
 
 function getConditionInfo(condition) {
     const map = {
-        'NEW': { text: '全新', class: 'condition-new' },
-        'LIKE_NEW': { text: '几乎全新', class: 'condition-like-new' },
-        'GOOD': { text: '良好', class: 'condition-good' },
-        'FAIR': { text: '一般', class: 'condition-fair' },
-        'POOR': { text: '较差', class: 'condition-poor' },
+        'NEW': { text: t('itemDetail.condition.new', '全新'), class: 'condition-new' },
+        'LIKE_NEW': { text: t('itemDetail.condition.likeNew', '几乎全新'), class: 'condition-like-new' },
+        'GOOD': { text: t('itemDetail.condition.good', '良好'), class: 'condition-good' },
+        'FAIR': { text: t('itemDetail.condition.fair', '一般'), class: 'condition-fair' },
+        'POOR': { text: t('itemDetail.condition.poor', '较差'), class: 'condition-poor' },
     };
     return map[condition] || { text: condition, class: '' };
 }
@@ -394,10 +410,10 @@ function toggleWatch(itemId) {
     const idx = list.indexOf(itemId);
     if (idx >= 0) {
         list.splice(idx, 1);
-        alert('已取消关注');
+        alert(t('itemDetail.alert.unwatched', '已取消关注'));
     } else {
         list.push(itemId);
-        alert('已加入关注列表');
+        alert(t('itemDetail.alert.watched', '已加入关注列表'));
     }
     localStorage.setItem(key, JSON.stringify(list));
 }
@@ -407,9 +423,9 @@ async function updateStatus(itemId, status) {
     try {
         await getItemAPI().updateItemStatus(itemId, status);
         document.getElementById('statusText').textContent = getStatusText(status);
-        alert('状态已更新为：' + getStatusText(status));
+        alert(t('itemDetail.alert.statusUpdated', '状态已更新为：') + getStatusText(status));
     } catch (e) {
-        alert('更新失败：' + (e.message || '请稍后再试'));
+        alert(t('itemDetail.alert.updateFailed', '更新失败：') + (e.message || t('itemDetail.error.retry', '请稍后再试')));
     }
 }
 
@@ -421,12 +437,12 @@ async function loadReviews(itemId) {
         const box = document.getElementById('reviewsContainer');
         if (!box) return;
         if (reviews.length === 0) {
-            box.innerHTML = '<div style="color:var(--text-secondary);font-size:14px;">暂无评价</div>';
+            box.innerHTML = `<div style="color:var(--text-secondary);font-size:14px;">${t('itemDetail.reviews.empty', '暂无评价')}</div>`;
             return;
         }
         box.innerHTML = reviews.map(r => `
             <div style="border:1px solid var(--border-color);border-radius:8px;padding:10px;">
-                <div style="font-size:14px;margin-bottom:4px;">评分：${'⭐'.repeat(r.rating)} (${r.rating})</div>
+                <div style="font-size:14px;margin-bottom:4px;">${t('itemDetail.reviews.ratingLabel', '评分：')}${'⭐'.repeat(r.rating)} (${r.rating})</div>
                 <div style="font-size:14px;color:var(--text-primary);white-space:pre-wrap;">${escapeHtml(r.comment || '')}</div>
                 <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">${new Date(r.createdAt).toLocaleString('zh-CN')}</div>
             </div>
@@ -442,11 +458,11 @@ async function submitReview(itemId) {
     const comment = (document.getElementById('reviewComment').value || '').trim();
     try {
         await getItemAPI().addReview(itemId, { rating, comment });
-        alert('评价提交成功！');
+        alert(t('itemDetail.alert.reviewSubmitted', '评价提交成功！'));
         document.getElementById('reviewComment').value = '';
         loadReviews(itemId);
     } catch (e) {
-        alert('提交失败：' + (e.message || '请稍后再试'));
+        alert(t('itemDetail.alert.reviewFailed', '提交失败：') + (e.message || t('itemDetail.error.retry', '请稍后再试')));
     }
 }
 

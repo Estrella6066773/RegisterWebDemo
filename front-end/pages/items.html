@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>浏览宝贝 - 学生港湾</title>
+    <title data-i18n-key="items.meta.title">浏览宝贝 - 学生港湾</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/pages/items.css">
@@ -13,21 +13,22 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="../index.html" class="logo">学生港湾</a>
+                <a href="../index.html" class="logo" data-i18n-key="common.nav.logo">学生港湾</a>
                 <nav class="nav">
-                    <a href="../index.html" class="nav-link">首页</a>
-                    <a href="items.html" class="nav-link active">浏览宝贝</a>
-                    <a href="login.html" class="nav-link" id="loginLink">登录</a>
-                    <a href="register.html" class="nav-link" id="registerLink">注册</a>
-                    <a href="profile.html" class="nav-link" id="profileLink" style="display: none;">个人资料</a>
+                    <a href="../index.html" class="nav-link" data-i18n-key="common.nav.home">首页</a>
+                    <a href="items.html" class="nav-link active" data-i18n-key="common.nav.items">浏览宝贝</a>
+                    <a href="login.html" class="nav-link" id="loginLink" data-i18n-key="common.nav.login">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink" data-i18n-key="common.nav.signup">注册</a>
+                    <a href="profile.html" class="nav-link" id="profileLink" style="display: none;" data-i18n-key="common.nav.profile">个人资料</a>
                     <div class="nav-dropdown" style="display: none;">
-                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <a href="profile.html" class="nav-link" data-i18n-key="common.nav.profileDropdown">个人中心 ▾</a>
                         <div class="dropdown-menu">
-                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
-                            <a href="post-item.html" class="dropdown-item">发布物品</a>
+                            <a href="my-items.html" class="dropdown-item" data-i18n-key="common.nav.myItems">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item" data-i18n-key="common.nav.postItem">发布物品</a>
                         </div>
                     </div>
-                    <a href="#" class="nav-link" id="logoutLink" style="display: none;">退出登录</a>
+                    <a href="#" class="nav-link" id="logoutLink" style="display: none;" data-i18n-key="common.nav.logout">退出登录</a>
+                    <button type="button" class="lang-toggle" id="languageToggle" aria-label="切换到英文">EN</button>
                 </nav>
             </div>
         </div>
@@ -38,8 +39,8 @@
         <div class="container">
             <!-- 页面标题 -->
             <div class="page-header">
-                <h1 class="page-title">浏览宝贝</h1>
-                <p class="page-subtitle">找到您需要的二手物品</p>
+                <h1 class="page-title" data-i18n-key="items.hero.title">浏览宝贝</h1>
+                <p class="page-subtitle" data-i18n-key="items.hero.subtitle">找到您需要的二手物品</p>
             </div>
 
             <!-- 搜索和筛选区域 -->
@@ -52,17 +53,18 @@
                             id="searchKeyword"
                             class="search-input" 
                             placeholder="搜索课程教材、电子产品、家具等..."
+                            data-i18n-placeholder-key="home.search.placeholder"
                             autocomplete="off"
                         >
-                        <button type="submit" class="btn btn-primary search-btn">搜索</button>
+                        <button type="submit" class="btn btn-primary search-btn" data-i18n-key="home.search.action">搜索</button>
                     </div>
                     <div class="search-quick-filters">
-                        <span class="search-filter-label">快速筛选：</span>
-                        <a href="?category=TEXTBOOK" class="search-filter-tag" data-category="TEXTBOOK">📚 教材</a>
-                        <a href="?category=ELECTRONICS" class="search-filter-tag" data-category="ELECTRONICS">💻 电子产品</a>
-                        <a href="?category=FURNITURE" class="search-filter-tag" data-category="FURNITURE">🪑 家具</a>
-                        <a href="?category=APPAREL" class="search-filter-tag" data-category="APPAREL">👕 服装</a>
-                        <a href="?category=SPORTS" class="search-filter-tag" data-category="SPORTS">⚽ 体育器材</a>
+                        <span class="search-filter-label" data-i18n-key="home.search.quickLabel">快速筛选：</span>
+                        <a href="?category=TEXTBOOK" class="search-filter-tag" data-category="TEXTBOOK" data-i18n-key="home.search.filter.textbook">📚 教材</a>
+                        <a href="?category=ELECTRONICS" class="search-filter-tag" data-category="ELECTRONICS" data-i18n-key="home.search.filter.electronics">💻 电子产品</a>
+                        <a href="?category=FURNITURE" class="search-filter-tag" data-category="FURNITURE" data-i18n-key="home.search.filter.furniture">🪑 家具</a>
+                        <a href="?category=APPAREL" class="search-filter-tag" data-category="APPAREL" data-i18n-key="home.search.filter.apparel">👕 服装</a>
+                        <a href="?category=SPORTS" class="search-filter-tag" data-category="SPORTS" data-i18n-key="home.search.filter.sports">⚽ 体育器材</a>
                     </div>
                 </form>
             </div>
@@ -71,90 +73,90 @@
                 <!-- 筛选侧边栏 -->
                 <aside class="filters-sidebar">
                     <div class="filter-section">
-                        <div class="filter-title">类别</div>
+                        <div class="filter-title" data-i18n-key="items.filters.category.title">类别</div>
                         <div class="filter-options">
                             <label class="filter-checkbox">
                                 <input type="checkbox" name="category" value="TEXTBOOK">
-                                <span>📚 教材</span>
+                                <span data-i18n-key="home.search.filter.textbook">📚 教材</span>
                             </label>
                             <label class="filter-checkbox">
                                 <input type="checkbox" name="category" value="ELECTRONICS">
-                                <span>💻 电子产品</span>
+                                <span data-i18n-key="home.search.filter.electronics">💻 电子产品</span>
                             </label>
                             <label class="filter-checkbox">
                                 <input type="checkbox" name="category" value="FURNITURE">
-                                <span>🪑 家具</span>
+                                <span data-i18n-key="home.search.filter.furniture">🪑 家具</span>
                             </label>
                             <label class="filter-checkbox">
                                 <input type="checkbox" name="category" value="APPAREL">
-                                <span>👕 服装</span>
+                                <span data-i18n-key="home.search.filter.apparel">👕 服装</span>
                             </label>
                             <label class="filter-checkbox">
                                 <input type="checkbox" name="category" value="SPORTS">
-                                <span>⚽ 体育器材</span>
+                                <span data-i18n-key="home.search.filter.sports">⚽ 体育器材</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="filter-section">
-                        <div class="filter-title">价格范围</div>
+                        <div class="filter-title" data-i18n-key="items.filters.price.title">价格范围</div>
                         <div class="price-range-inputs">
-                            <input type="number" id="minPrice" placeholder="最低" min="0">
+                            <input type="number" id="minPrice" placeholder="最低" min="0" data-i18n-placeholder-key="items.filters.price.min">
                             <span>-</span>
-                            <input type="number" id="maxPrice" placeholder="最高" min="0">
+                            <input type="number" id="maxPrice" placeholder="最高" min="0" data-i18n-placeholder-key="items.filters.price.max">
                         </div>
                     </div>
 
                     <div class="filter-section">
-                        <div class="filter-title">物品状况</div>
+                        <div class="filter-title" data-i18n-key="items.filters.condition.title">物品状况</div>
                         <div class="filter-options">
                             <label class="filter-checkbox">
                                 <input type="checkbox" name="condition" value="NEW">
-                                <span>全新</span>
+                                <span data-i18n-key="items.filters.condition.new">全新</span>
                             </label>
                             <label class="filter-checkbox">
                                 <input type="checkbox" name="condition" value="LIKE_NEW">
-                                <span>几乎全新</span>
+                                <span data-i18n-key="items.filters.condition.likeNew">几乎全新</span>
                             </label>
                             <label class="filter-checkbox">
                                 <input type="checkbox" name="condition" value="GOOD">
-                                <span>良好</span>
+                                <span data-i18n-key="items.filters.condition.good">良好</span>
                             </label>
                             <label class="filter-checkbox">
                                 <input type="checkbox" name="condition" value="FAIR">
-                                <span>一般</span>
+                                <span data-i18n-key="items.filters.condition.fair">一般</span>
                             </label>
                             <label class="filter-checkbox">
                                 <input type="checkbox" name="condition" value="POOR">
-                                <span>较差</span>
+                                <span data-i18n-key="items.filters.condition.poor">较差</span>
                             </label>
                         </div>
                     </div>
 
-                    <button type="button" id="applyFilters" class="btn btn-primary btn-block">应用筛选</button>
-                    <button type="button" id="resetFilters" class="btn btn-secondary btn-block" style="margin-top: var(--spacing-sm);">重置</button>
+                    <button type="button" id="applyFilters" class="btn btn-primary btn-block" data-i18n-key="items.filters.actions.apply">应用筛选</button>
+                    <button type="button" id="resetFilters" class="btn btn-secondary btn-block" style="margin-top: var(--spacing-sm);" data-i18n-key="items.filters.actions.reset">重置</button>
                 </aside>
 
                 <!-- 物品列表区域 -->
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
-                        <div id="resultsCount" style="color: var(--text-secondary); font-size: 14px;">
+                        <div id="resultsCount" style="color: var(--text-secondary); font-size: 14px;" data-i18n-key="items.list.loading">
                             正在加载...
                         </div>
                         <div style="display: flex; gap: var(--spacing-sm); align-items: center;">
-                            <label style="font-size: 14px; color: var(--text-secondary);">排序：</label>
+                            <label style="font-size: 14px; color: var(--text-secondary);" data-i18n-key="items.sort.label">排序：</label>
                             <select id="sortBy" class="form-control" style="width: auto; padding: 6px 12px; font-size: 14px;">
-                                <option value="newest">最新发布</option>
-                                <option value="price_asc">价格：低到高</option>
-                                <option value="price_desc">价格：高到低</option>
-                                <option value="views">最多浏览</option>
+                                <option value="newest" data-i18n-key="items.sort.newest">最新发布</option>
+                                <option value="price_asc" data-i18n-key="items.sort.priceAsc">价格：低到高</option>
+                                <option value="price_desc" data-i18n-key="items.sort.priceDesc">价格：高到低</option>
+                                <option value="views" data-i18n-key="items.sort.views">最多浏览</option>
                             </select>
                         </div>
                     </div>
 
                     <div id="itemsList" class="items-grid">
                         <div class="items-loading" style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                            <p>正在加载物品...</p>
+                            <p data-i18n-key="items.list.loadingItems">正在加载物品...</p>
                         </div>
                     </div>
 
@@ -170,11 +172,13 @@
     <!-- 页脚 -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+            <p data-i18n-key="common.footer.default">&copy; 2024 学生港湾. 保留所有权利.</p>
         </div>
     </footer>
 
     <!-- JavaScript -->
+    <script src="../js/utils/i18n.data.js"></script>
+    <script src="../js/utils/i18n.js"></script>
     <script src="../js/utils/auth.js"></script>
     <script src="../js/utils/api.js"></script>
     <script src="../js/utils/navigation.js"></script>
@@ -189,7 +193,7 @@
             if (logoutLink) {
                 logoutLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (confirm('确定要退出登录吗？')) {
+                    if (confirm(I18n.t('common.logoutConfirm'))) {
                         clearAuth();
                         updateNavigation();
                         window.location.reload();

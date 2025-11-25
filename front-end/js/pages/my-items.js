@@ -20,8 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const list = document.getElementById('myItemsList');
     const modal = document.getElementById('editorModal');
 
+    function t(key, fallback = '') {
+        return window.I18n ? window.I18n.t(key, fallback) : fallback;
+    }
+
     async function load() {
-        list.innerHTML = '<div class="items-loading" style="text-align:center;padding:40px;color:var(--text-secondary);"><p>加载中...</p></div>';
+        list.innerHTML = `<div class="items-loading" style="text-align:center;padding:40px;color:var(--text-secondary);"><p>${t('myItems.loading', '正在加载您的宝贝...')}</p></div>`;
         try {
             const resp = await getItemAPI().getMyItems();
             const items = resp.data || resp.items || [];
@@ -29,21 +33,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 list.innerHTML = `
                     <div class="items-empty" style="grid-column: 1 / -1;">
                         <div class="items-empty-icon">📦</div>
-                        <p>还没有发布宝贝</p>
-                        <p style="font-size:14px;color:var(--text-secondary);">点击右上角“发布宝贝”试试</p>
+                        <p>${t('myItems.empty.title', '还没有发布宝贝')}</p>
+                        <p style="font-size:14px;color:var(--text-secondary);">${t('myItems.empty.hint', '点击右上角"发布宝贝"试试')}</p>
                     </div>`;
                 return;
             }
             list.innerHTML = items.map(renderCard).join('');
         } catch (e) {
-            list.innerHTML = `<div class="items-empty" style="grid-column: 1 / -1;"><div class="items-empty-icon">⚠️</div><p>加载失败</p></div>`;
+            list.innerHTML = `<div class="items-empty" style="grid-column: 1 / -1;"><div class="items-empty-icon">⚠️</div><p>${t('myItems.error.loadFailed', '加载失败')}</p></div>`;
         }
     }
 
     function renderCard(it) {
         const img = (it.images && it.images[0]) || 'https://picsum.photos/seed/fallback/800/600';
         const status = it.status || 'AVAILABLE';
-        const statusText = { AVAILABLE: '可售', RESERVED: '已预定', SOLD: '已售出' }[status] || status;
+        const statusMap = {
+            AVAILABLE: t('myItems.status.available', '可售'),
+            RESERVED: t('myItems.status.reserved', '已预定'),
+            SOLD: t('myItems.status.sold', '已售出')
+        };
+        const statusText = statusMap[status] || status;
         return `
             <div class="item-card" style="position:relative;">
                 <a href="item-detail.html?id=${it.id}" style="text-decoration:none;color:inherit;">
@@ -53,15 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 class="item-title">${escapeHtml(it.title)}</h3>
                     <div class="item-price">¥${it.price || 0}</div>
                     <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-secondary);">
-                        <span>状态：${statusText}</span>
-                        <span>浏览：${it.viewCount || 0}</span>
+                        <span>${t('myItems.card.status', '状态：')}${statusText}</span>
+                        <span>${t('myItems.card.views', '浏览：')}${it.viewCount || 0}</span>
                     </div>
                     <div style="display:flex;gap:8px;margin-top:8px;">
-                        <button class="btn btn-secondary" data-edit="${it.id}">编辑</button>
-                        <button class="btn btn-secondary" data-status="RESERVED" data-id="${it.id}">标记预定</button>
-                        <button class="btn btn-secondary" data-status="AVAILABLE" data-id="${it.id}">标记可售</button>
-                        <button class="btn btn-secondary" data-status="SOLD" data-id="${it.id}">标记已售</button>
-                        <button class="btn btn-secondary" data-del="${it.id}">删除</button>
+                        <button class="btn btn-secondary" data-edit="${it.id}">${t('myItems.actions.edit', '编辑')}</button>
+                        <button class="btn btn-secondary" data-status="RESERVED" data-id="${it.id}">${t('myItems.actions.markReserved', '标记预定')}</button>
+                        <button class="btn btn-secondary" data-status="AVAILABLE" data-id="${it.id}">${t('myItems.actions.markAvailable', '标记可售')}</button>
+                        <button class="btn btn-secondary" data-status="SOLD" data-id="${it.id}">${t('myItems.actions.markSold', '标记已售')}</button>
+                        <button class="btn btn-secondary" data-del="${it.id}">${t('myItems.actions.delete', '删除')}</button>
                     </div>
                 </div>
             </div>`;
@@ -72,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (newBtn) {
         newBtn.addEventListener('click', () => {
             editingId = null;
-            document.getElementById('editorTitle').textContent = '发布宝贝';
+            document.getElementById('editorTitle').textContent = t('myItems.edit.new', '发布宝贝');
             document.getElementById('f_title').value = '';
             document.getElementById('f_price').value = '';
             document.getElementById('f_category').value = 'TEXTBOOK';
@@ -100,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.classList.add('hidden');
             load();
         } catch (e) {
-            alert('保存失败：' + (e.message || '请稍后重试'));
+            alert(t('myItems.alert.saveFailed', '保存失败：') + (e.message || t('myItems.alert.retry', '请稍后重试')));
         }
     });
 
@@ -119,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await getItemAPI().getItemDetail(editId);
                 const it = res.item || res.data || res;
                 editingId = it.id;
-                document.getElementById('editorTitle').textContent = '编辑宝贝';
+                document.getElementById('editorTitle').textContent = t('myItems.edit.title', '编辑宝贝');
                 document.getElementById('f_title').value = it.title || '';
                 document.getElementById('f_price').value = it.price || 0;
                 document.getElementById('f_category').value = it.category || 'TEXTBOOK';
@@ -128,12 +137,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.classList.remove('hidden');
             } catch {}
         } else if (delId) {
-            if (confirm('确定删除该宝贝吗？')) {
+            if (confirm(t('myItems.confirm.delete', '确定删除该宝贝吗？'))) {
                 try {
                     await getItemAPI().deleteItem(delId);
                     load();
                 } catch (err) {
-                    alert('删除失败：' + (err.message || '请稍后再试'));
+                    alert(t('myItems.alert.deleteFailed', '删除失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
                 }
             }
         } else if (status && idForStatus) {
@@ -141,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await getItemAPI().updateItemStatus(idForStatus, status);
                 load();
             } catch (err) {
-                alert('更新状态失败：' + (err.message || '请稍后再试'));
+                alert(t('myItems.alert.statusFailed', '更新状态失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
             }
         }
     });

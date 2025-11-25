@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人资料 - 学生港湾</title>
+    <title data-i18n-key="profile.meta.title">个人资料 - 学生港湾</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/pages/profile.css">
@@ -13,21 +13,22 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="../index.html" class="logo">学生港湾</a>
+                <a href="../index.html" class="logo" data-i18n-key="common.nav.logo">学生港湾</a>
                 <nav class="nav">
-                    <a href="../index.html" class="nav-link">首页</a>
-                    <a href="items.html" class="nav-link">浏览宝贝</a>
-                    <a href="login.html" class="nav-link" id="loginLink" style="display: none;">登录</a>
-                    <a href="register.html" class="nav-link" id="registerLink" style="display: none;">注册</a>
-                    <a href="profile.html" class="nav-link active" id="profileLink">个人资料</a>
+                    <a href="../index.html" class="nav-link" data-i18n-key="common.nav.home">首页</a>
+                    <a href="items.html" class="nav-link" data-i18n-key="common.nav.items">浏览宝贝</a>
+                    <a href="login.html" class="nav-link" id="loginLink" style="display: none;" data-i18n-key="common.nav.login">登录</a>
+                    <a href="register.html" class="nav-link" id="registerLink" style="display: none;" data-i18n-key="common.nav.signup">注册</a>
+                    <a href="profile.html" class="nav-link active" id="profileLink" data-i18n-key="common.nav.profile">个人资料</a>
                     <div class="nav-dropdown">
-                        <a href="profile.html" class="nav-link">个人中心 ▾</a>
+                        <a href="profile.html" class="nav-link" data-i18n-key="common.nav.profileDropdown">个人中心 ▾</a>
                         <div class="dropdown-menu">
-                            <a href="my-items.html" class="dropdown-item">我的宝贝</a>
-                            <a href="post-item.html" class="dropdown-item">发布物品</a>
+                            <a href="my-items.html" class="dropdown-item" data-i18n-key="common.nav.myItems">我的宝贝</a>
+                            <a href="post-item.html" class="dropdown-item" data-i18n-key="common.nav.postItem">发布物品</a>
                         </div>
                     </div>
-                    <a href="#" class="nav-link" id="logoutLink">退出登录</a>
+                    <a href="#" class="nav-link" id="logoutLink" data-i18n-key="common.nav.logout">退出登录</a>
+                    <button type="button" class="lang-toggle" id="languageToggle" data-i18n-aria-label-key="common.langToggle">EN</button>
                 </nav>
             </div>
         </div>
@@ -39,23 +40,23 @@
             <div class="profile-container">
                 <!-- 资料头部 -->
                 <div class="profile-header">
-                    <img src="../images/default-avatar.png" alt="头像" class="profile-avatar" id="profileAvatar">
+                    <img src="../images/default-avatar.png" data-i18n-alt-key="profile.avatar.alt" alt="头像" class="profile-avatar" id="profileAvatar">
                     <div class="profile-info">
-                        <h1 class="profile-name" id="profileName">加载中...</h1>
-                        <p class="profile-email" id="profileEmail">加载中...</p>
+                        <h1 class="profile-name" id="profileName" data-i18n-key="profile.loading">加载中...</h1>
+                        <p class="profile-email" id="profileEmail" data-i18n-key="profile.loading">加载中...</p>
                         <div class="profile-meta">
                             <div class="profile-meta-item">
-                                <span>会员类型：</span>
+                                <span data-i18n-key="profile.meta.memberType">会员类型：</span>
                                 <span class="badge badge-member-student" id="profileMemberType">学生会员</span>
                             </div>
                             <div class="profile-meta-item">
-                                <span>加入日期：</span>
-                                <span id="profileJoinDate">加载中...</span>
+                                <span data-i18n-key="profile.meta.joinDate">加入日期：</span>
+                                <span id="profileJoinDate" data-i18n-key="profile.loading">加载中...</span>
                             </div>
                         </div>
                     </div>
                     <div class="profile-actions">
-                        <button class="btn btn-secondary" id="editProfileBtn">编辑资料</button>
+                        <button class="btn btn-secondary" id="editProfileBtn" data-i18n-key="profile.actions.edit">编辑资料</button>
                     </div>
                 </div>
 
@@ -67,7 +68,7 @@
                 <!-- 资料完整度 -->
                 <div class="profile-completeness">
                     <div class="completeness-header">
-                        <h3 class="section-title">资料完整度</h3>
+                        <h3 class="section-title" data-i18n-key="profile.completeness.title">资料完整度</h3>
                         <div class="completeness-percentage">0%</div>
                     </div>
                     <div class="completeness-progress">
@@ -83,7 +84,7 @@
                 <!-- 详细资料 -->
                 <div class="profile-details">
                     <div class="details-section">
-                        <h3 class="section-title">基本信息</h3>
+                        <h3 class="section-title" data-i18n-key="profile.details.basicInfo">基本信息</h3>
                         <div class="details-grid" id="profileDetails">
                             <!-- 动态生成 -->
                         </div>
@@ -92,14 +93,14 @@
 
                 <!-- 评分历史 -->
                 <div class="rating-history">
-                    <h3 class="section-title">评分历史</h3>
+                    <h3 class="section-title" data-i18n-key="profile.rating.title">评分历史</h3>
                     <div class="rating-summary">
                         <div class="rating-average">0.0</div>
                         <div>
                             <div class="rating-stars">
                                 <!-- 动态生成 -->
                             </div>
-                            <div class="rating-count">基于 0 条评价</div>
+                            <div class="rating-count" data-i18n-key="profile.rating.basedOn">基于 0 条评价</div>
                         </div>
                     </div>
                 </div>
@@ -111,52 +112,52 @@
     <div class="modal" id="editProfileModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>编辑资料</h2>
+                <h2 data-i18n-key="profile.edit.title">编辑资料</h2>
                 <button class="modal-close" id="closeEditModal">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="editProfileForm">
                     <!-- 头像上传 -->
                     <div class="form-group">
-                        <label>头像</label>
+                        <label data-i18n-key="profile.edit.avatar">头像</label>
                         <div class="avatar-upload-container">
-                            <img src="../images/default-avatar.png" alt="头像预览" id="avatarPreview" class="avatar-preview">
+                            <img src="../images/default-avatar.png" data-i18n-alt-key="profile.avatar.previewAlt" alt="头像预览" id="avatarPreview" class="avatar-preview">
                             <div class="avatar-upload-controls">
                                 <input type="file" id="avatarInput" accept="image/*" style="display: none;">
-                                <button type="button" class="btn btn-secondary btn-sm" id="selectAvatarBtn">选择头像</button>
-                                <button type="button" class="btn btn-text btn-sm" id="removeAvatarBtn" style="display: none;">移除</button>
+                                <button type="button" class="btn btn-secondary btn-sm" id="selectAvatarBtn" data-i18n-key="profile.edit.selectAvatar">选择头像</button>
+                                <button type="button" class="btn btn-text btn-sm" id="removeAvatarBtn" style="display: none;" data-i18n-key="profile.edit.removeAvatar">移除</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- 姓名 -->
                     <div class="form-group">
-                        <label for="editName">姓名 <span class="required">*</span></label>
-                        <input type="text" id="editName" name="name" placeholder="请输入姓名" required>
-                        <small class="form-help">姓名是必填项，至少2个字符</small>
+                        <label for="editName" data-i18n-key="profile.edit.nameLabel">姓名 <span class="required">*</span></label>
+                        <input type="text" id="editName" name="name" data-i18n-placeholder-key="profile.edit.namePlaceholder" placeholder="请输入姓名" required>
+                        <small class="form-help" data-i18n-key="profile.edit.nameHelp">姓名是必填项，至少2个字符</small>
                     </div>
 
                     <!-- 大学 -->
                     <div class="form-group">
-                        <label for="editUniversity">大学</label>
-                        <input type="text" id="editUniversity" name="university" placeholder="请输入大学名称">
+                        <label for="editUniversity" data-i18n-key="profile.edit.universityLabel">大学</label>
+                        <input type="text" id="editUniversity" name="university" data-i18n-placeholder-key="profile.edit.universityPlaceholder" placeholder="请输入大学名称">
                     </div>
 
                     <!-- 入学年份 -->
                     <div class="form-group">
-                        <label for="editEnrollmentYear">入学年份</label>
-                        <input type="number" id="editEnrollmentYear" name="enrollmentYear" placeholder="例如：2024" min="1900" max="2100">
+                        <label for="editEnrollmentYear" data-i18n-key="profile.edit.enrollmentLabel">入学年份</label>
+                        <input type="number" id="editEnrollmentYear" name="enrollmentYear" data-i18n-placeholder-key="profile.edit.enrollmentPlaceholder" placeholder="例如：2024" min="1900" max="2100">
                     </div>
 
                     <!-- 个人简介 -->
                     <div class="form-group">
-                        <label for="editBio">个人简介</label>
-                        <textarea id="editBio" name="bio" rows="4" placeholder="介绍一下自己..."></textarea>
+                        <label for="editBio" data-i18n-key="profile.edit.bioLabel">个人简介</label>
+                        <textarea id="editBio" name="bio" rows="4" data-i18n-placeholder-key="profile.edit.bioPlaceholder" placeholder="介绍一下自己..."></textarea>
                     </div>
 
                     <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelEditBtn">取消</button>
-                        <button type="submit" class="btn btn-primary">保存</button>
+                        <button type="button" class="btn btn-secondary" id="cancelEditBtn" data-i18n-key="common.actions.cancel">取消</button>
+                        <button type="submit" class="btn btn-primary" data-i18n-key="common.actions.save">保存</button>
                     </div>
                 </form>
             </div>
@@ -166,11 +167,13 @@
     <!-- 页脚 -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 学生港湾. 保留所有权利.</p>
+            <p data-i18n-key="common.footer.default">&copy; 2024 学生港湾. 保留所有权利.</p>
         </div>
     </footer>
 
     <!-- JavaScript -->
+    <script src="../js/utils/i18n.data.js"></script>
+    <script src="../js/utils/i18n.js"></script>
     <script src="../js/utils/validation.js"></script>
     <script src="../js/utils/auth.js"></script>
     <script src="../js/utils/api.js"></script>
@@ -185,7 +188,7 @@
             if (logoutLink) {
                 logoutLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (confirm('确定要退出登录吗？')) {
+                    if (confirm(I18n.t('common.logoutConfirm'))) {
                         clearAuth();
                         updateNavigation();
                         window.location.href = '../index.html';

@@ -35,6 +35,28 @@
     align-items: center;
 }
 
+.lang-toggle {
+    border: 1px solid var(--border-color);
+    background-color: var(--white);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 48px;
+}
+
+.nav .lang-toggle {
+    margin-left: auto;
+}
+
+.lang-toggle:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
 .nav-dropdown {
     position: relative;
 }

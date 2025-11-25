@@ -4,6 +4,18 @@
  * ============================================
  */
 
+function t(key, fallback = '') {
+    return window.I18n ? window.I18n.t(key, fallback) : fallback;
+}
+
+function formatMessage(key, fallback, replacements = {}) {
+    let message = t(key, fallback);
+    for (const [placeholder, value] of Object.entries(replacements)) {
+        message = message.replace(`{${placeholder}}`, value);
+    }
+    return message;
+}
+
 // 等待DOM加载完成
 document.addEventListener('DOMContentLoaded', function() {
     initProfilePage();
@@ -41,21 +53,21 @@ async function loadUserProfile() {
             // 渲染资料
             renderProfile(response.data);
         } else {
-            throw new Error(response.message || '获取资料失败');
+            throw new Error(response.message || t('profile.error.loadFailed', '获取资料失败'));
         }
         
     } catch (error) {
         console.error('加载资料失败:', error);
         
-        let errorMessage = '加载资料失败：';
+        let errorMessage = t('profile.error.loadFailedPrefix', '加载资料失败：');
         if (error.type === 'NETWORK_ERROR') {
-            errorMessage = '网络连接失败，请检查网络连接';
+            errorMessage = t('profile.error.network', '网络连接失败，请检查网络连接');
         } else if (error.type === 'AUTH_ERROR') {
-            errorMessage = '登录已过期，请重新登录';
+            errorMessage = t('profile.error.auth', '登录已过期，请重新登录');
             setTimeout(() => window.location.href = 'login.html', 2000);
             return;
         } else {
-            errorMessage += error.message || '未知错误';
+            errorMessage += error.message || t('profile.error.unknown', '未知错误');
         }
         
         alert(errorMessage);
@@ -103,18 +115,18 @@ function renderProfileHeader(profile) {
     
     if (avatar) {
         avatar.src = profile.avatar ? (profile.avatar.startsWith('http') ? profile.avatar : profile.avatar) : '../images/default-avatar.png';
-        avatar.alt = profile.name || '用户头像';
+        avatar.alt = profile.name || t('profile.avatar.alt', '用户头像');
     }
     
     if (name) {
-        name.textContent = profile.name || '未设置姓名';
+        name.textContent = profile.name || t('profile.name.notSet', '未设置姓名');
         // 清除旧的验证徽章
         const oldBadge = name.querySelector('.badge');
         if (oldBadge) oldBadge.remove();
         // 添加验证徽章
         const badge = document.createElement('span');
         badge.className = profile.verified ? 'badge badge-verified' : 'badge badge-unverified';
-        badge.textContent = profile.verified ? '已验证' : '未验证';
+        badge.textContent = profile.verified ? t('profile.verified.yes', '已验证') : t('profile.verified.no', '未验证');
         name.appendChild(badge);
     }
     
@@ -140,24 +152,24 @@ function renderTrustIndicators(profile) {
     const indicators = [
         {
             icon: profile.verified ? '✓' : '✗',
-            value: profile.verified ? '已验证' : '未验证',
-            label: '验证状态',
+            value: profile.verified ? t('profile.trust.verified', '已验证') : t('profile.trust.unverified', '未验证'),
+            label: t('profile.trust.verificationStatus', '验证状态'),
             color: profile.verified ? 'var(--success-color)' : 'var(--text-disabled)',
         },
         {
             icon: '📅',
             value: formatDate(profile.joinDate),
-            label: '加入日期',
+            label: t('profile.trust.joinDate', '加入日期'),
         },
         {
             icon: '💰',
             value: profile.successfulTransactions || 0,
-            label: '成功交易',
+            label: t('profile.trust.successfulTransactions', '成功交易'),
         },
         {
             icon: '⭐',
             value: profile.averageRating ? profile.averageRating.toFixed(1) : '0.0',
-            label: '平均评分',
+            label: t('profile.trust.averageRating', '平均评分'),
         },
     ];
     
@@ -181,11 +193,11 @@ function renderTrustIndicators(profile) {
  */
 function renderProfileCompleteness(profile) {
     const completenessItems = [
-        { key: 'avatar', label: '头像', completed: !!profile.avatar },
-        { key: 'name', label: '姓名', completed: !!profile.name },
-        { key: 'bio', label: '个人简介', completed: !!profile.bio },
-        { key: 'university', label: '大学', completed: !!profile.university },
-        { key: 'enrollmentYear', label: '入学年份', completed: !!profile.enrollmentYear },
+        { key: 'avatar', label: t('profile.completeness.avatar', '头像'), completed: !!profile.avatar },
+        { key: 'name', label: t('profile.completeness.name', '姓名'), completed: !!profile.name },
+        { key: 'bio', label: t('profile.completeness.bio', '个人简介'), completed: !!profile.bio },
+        { key: 'university', label: t('profile.completeness.university', '大学'), completed: !!profile.university },
+        { key: 'enrollmentYear', label: t('profile.completeness.enrollmentYear', '入学年份'), completed: !!profile.enrollmentYear },
     ];
     
     // 使用后端返回的完整度百分比，如果没有则计算
@@ -232,12 +244,13 @@ function renderProfileCompleteness(profile) {
  * @param {Object} profile - 用户资料
  */
 function renderProfileDetails(profile) {
+    const notSetText = t('profile.details.notSet', '未设置');
     const details = [
-        { label: '邮箱', value: profile.email },
-        { label: '会员类型', value: getMemberTypeName(profile.memberType) },
-        { label: '大学', value: profile.university || '未设置' },
-        { label: '入学年份', value: profile.enrollmentYear || '未设置' },
-        { label: '个人简介', value: profile.bio || '未设置' },
+        { label: t('profile.details.email', '邮箱'), value: profile.email },
+        { label: t('profile.details.memberType', '会员类型'), value: getMemberTypeName(profile.memberType) },
+        { label: t('profile.details.university', '大学'), value: profile.university || notSetText },
+        { label: t('profile.details.enrollmentYear', '入学年份'), value: profile.enrollmentYear || notSetText },
+        { label: t('profile.details.bio', '个人简介'), value: profile.bio || notSetText },
     ];
     
     const detailsContainer = document.querySelector('.details-grid');
@@ -245,8 +258,8 @@ function renderProfileDetails(profile) {
         detailsContainer.innerHTML = details.map(detail => `
             <div class="detail-item">
                 <div class="detail-label">${detail.label}</div>
-                <div class="detail-value ${!detail.value || detail.value === '未设置' ? 'empty' : ''}">
-                    ${detail.value || '未设置'}
+                <div class="detail-value ${!detail.value || detail.value === notSetText ? 'empty' : ''}">
+                    ${detail.value || notSetText}
                 </div>
             </div>
         `).join('');
@@ -279,7 +292,7 @@ function renderRatingHistory(profile) {
     // 更新评分数量
     const countElement = document.querySelector('.rating-count');
     if (countElement) {
-        countElement.textContent = `基于 ${ratingCount} 条评价`;
+        countElement.textContent = formatMessage('profile.rating.basedOn', '基于 {count} 条评价', { count: ratingCount });
     }
 }
 
@@ -289,11 +302,11 @@ function renderRatingHistory(profile) {
  * @returns {string}
  */
 function formatDate(date) {
-    if (!date) return '未知';
+    if (!date) return t('profile.date.unknown', '未知');
     // 如果是数字（时间戳），直接使用
     // 如果是字符串，先尝试解析
     const d = typeof date === 'number' ? new Date(date) : new Date(date);
-    if (isNaN(d.getTime())) return '未知';
+    if (isNaN(d.getTime())) return t('profile.date.unknown', '未知');
     return d.toLocaleDateString('zh-CN', {
         year: 'numeric',
         month: 'long',
@@ -308,10 +321,10 @@ function formatDate(date) {
  */
 function getMemberTypeName(memberType) {
     const names = {
-        'STUDENT': '学生会员',
-        'ASSOCIATE': '关联会员',
+        'STUDENT': t('profile.memberType.student', '学生会员'),
+        'ASSOCIATE': t('profile.memberType.associate', '关联会员'),
     };
-    return names[memberType] || '未知';
+    return names[memberType] || t('profile.memberType.unknown', '未知');
 }
 
 /**
@@ -390,14 +403,14 @@ function initEditProfile() {
             // 验证必填字段
             const nameInput = document.getElementById('editName');
             if (nameInput && !nameInput.value.trim()) {
-                alert('姓名是必填项，请填写姓名');
+                alert(t('profile.validation.nameRequired', '姓名是必填项，请填写姓名'));
                 nameInput.focus();
                 return;
             }
             
             // 验证姓名长度
             if (nameInput && nameInput.value.trim().length < 2) {
-                alert('姓名至少需要2个字符');
+                alert(t('profile.validation.nameMinLength', '姓名至少需要2个字符'));
                 nameInput.focus();
                 return;
             }
@@ -471,7 +484,7 @@ async function saveProfile() {
         // 禁用提交按钮
         if (submitBtn) {
             submitBtn.disabled = true;
-            submitBtn.textContent = '保存中...';
+            submitBtn.textContent = t('profile.form.saving', '保存中...');
         }
 
         let avatarUrl = currentProfile?.avatar || null;
@@ -499,14 +512,14 @@ async function saveProfile() {
                 if (uploadResponse.success && uploadResponse.data) {
                     avatarUrl = uploadResponse.data.url;
                 } else {
-                    throw new Error(uploadResponse.message || '上传失败');
+                    throw new Error(uploadResponse.message || t('profile.alert.uploadFailed', '上传失败'));
                 }
             } catch (error) {
                 console.error('头像上传失败:', error);
-                alert('头像上传失败：' + (error.message || '未知错误'));
+                alert(t('profile.alert.avatarUploadFailed', '头像上传失败：') + (error.message || t('profile.alert.unknown', '未知错误')));
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = '保存';
+                    submitBtn.textContent = t('profile.form.save', '保存');
                 }
                 return;
             }
@@ -525,21 +538,21 @@ async function saveProfile() {
         const response = await UserAPI.updateProfile(updateData);
 
         if (response.success) {
-            alert('资料更新成功！');
+            alert(t('profile.alert.updateSuccess', '资料更新成功！'));
             closeEditModal();
             // 重新加载资料
             await loadUserProfile();
         } else {
-            throw new Error(response.message || '更新失败');
+            throw new Error(response.message || t('profile.alert.updateFailed', '更新失败'));
         }
     } catch (error) {
         console.error('保存资料失败:', error);
-        alert('保存失败：' + (error.message || '未知错误'));
+        alert(t('profile.alert.saveFailed', '保存失败：') + (error.message || t('profile.alert.unknown', '未知错误')));
     } finally {
         const submitBtn = document.querySelector('#editProfileForm button[type="submit"]');
         if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.textContent = '保存';
+            submitBtn.textContent = t('profile.form.save', '保存');
         }
     }
 }
