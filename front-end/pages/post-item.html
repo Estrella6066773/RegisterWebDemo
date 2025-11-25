@@ -8,31 +8,9 @@
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/pages/post-item.css">
 </head>
-<body>
+<body data-nav-active="browse">
     <!-- 头部导航 -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="../index.html" class="logo" data-i18n-key="common.nav.logo">学生港湾</a>
-                <nav class="nav">
-                    <a href="../index.html" class="nav-link" data-i18n-key="common.nav.home">首页</a>
-                    <a href="items.html" class="nav-link" data-i18n-key="common.nav.items">浏览宝贝</a>
-                    <a href="login.html" class="nav-link" id="loginLink" style="display: none;" data-i18n-key="common.nav.login">登录</a>
-                    <a href="register.html" class="nav-link" id="registerLink" style="display: none;" data-i18n-key="common.nav.signup">注册</a>
-                    <a href="profile.html" class="nav-link" id="profileLink" data-i18n-key="common.nav.profile">个人资料</a>
-                    <div class="nav-dropdown">
-                        <a href="profile.html" class="nav-link" data-i18n-key="common.nav.profileDropdown">个人中心 ▾</a>
-                        <div class="dropdown-menu">
-                            <a href="my-items.html" class="dropdown-item" data-i18n-key="common.nav.myItems">我的宝贝</a>
-                            <a href="post-item.html" class="dropdown-item active" data-i18n-key="common.nav.postItem">发布物品</a>
-                        </div>
-                    </div>
-                    <a href="#" class="nav-link" id="logoutLink" data-i18n-key="common.nav.logout">退出登录</a>
-                    <button type="button" class="lang-toggle" id="languageToggle" data-i18n-aria-label-key="common.langToggle">EN</button>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <header id="siteHeader"></header>
 
     <!-- 主内容 -->
     <main class="main-content">
@@ -175,6 +153,7 @@
     <script src="../js/utils/i18n.data.js"></script>
     <script src="../js/utils/i18n.js"></script>
     <script src="../js/utils/auth.js"></script>
+    <script src="../js/utils/navbar.js"></script>
     <script src="../js/utils/api.js"></script>
     <script src="../js/utils/navigation.js"></script>
     <script src="../js/utils/validation.js"></script>
@@ -182,25 +161,10 @@
     <script>
         // 检查登录状态
         document.addEventListener('DOMContentLoaded', function() {
-            updateNavigation();
-            
             if (!isAuthenticated()) {
                 alert(I18n.t('postItem.alert.loginRequired', '请先登录后再发布物品'));
                 window.location.href = 'login.html';
                 return;
-            }
-            
-            // 退出登录
-            const logoutLink = document.getElementById('logoutLink');
-            if (logoutLink) {
-                logoutLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (confirm(I18n.t('common.logoutConfirm'))) {
-                        clearAuth();
-                        updateNavigation();
-                        window.location.href = '../index.html';
-                    }
-                });
             }
         });
     </script>

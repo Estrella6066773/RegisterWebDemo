@@ -7,9 +7,10 @@
 
 (function () {
     const STORAGE_KEY = 'appLang';
-    const DEFAULT_LANG = 'zh';
+    const DEFAULT_LANG = 'en';
     const SUPPORTED_LANGS = ['zh', 'en'];
     const TEXT_MAP = window.I18N_TEXT_MAP || {};
+    const PRESERVE_ATTR = 'data-i18n-preserve';
 
     const MESSAGE_MAP = {
         zh: {
@@ -53,6 +54,7 @@
     function cacheDefaultTexts() {
         const elements = document.querySelectorAll('[data-i18n-en], [data-i18n-zh], [data-i18n-key]');
         elements.forEach((el) => {
+            if (el.hasAttribute(PRESERVE_ATTR)) return;
             if (!el.hasAttribute('data-i18n-zh')) {
                 el.setAttribute('data-i18n-zh', getElementContent(el).trim());
             }
@@ -74,6 +76,7 @@
     function applyAttributeTranslations(attrName) {
         const selector = `[data-i18n-${attrName}-zh], [data-i18n-${attrName}-en], [data-i18n-${attrName}-key]`;
         document.querySelectorAll(selector).forEach((el) => {
+            if (el.hasAttribute(PRESERVE_ATTR)) return;
             const zhAttr = `data-i18n-${attrName}-zh`;
             const enAttr = `data-i18n-${attrName}-en`;
             const keyAttr = `data-i18n-${attrName}-key`;
@@ -115,6 +118,7 @@
 
         const elements = document.querySelectorAll('[data-i18n-zh], [data-i18n-en], [data-i18n-key]');
         elements.forEach((el) => {
+            if (el.hasAttribute(PRESERVE_ATTR)) return;
             const key = el.getAttribute('data-i18n-key');
             if (key) {
                 if (currentLang === 'zh') {
@@ -189,11 +193,13 @@
      */
     function initToggleButton() {
         const toggle = document.getElementById('languageToggle');
-        if (!toggle) return;
+        if (!toggle || toggle.dataset.i18nBound === 'true') return;
         toggle.addEventListener('click', () => {
             const nextLang = currentLang === 'zh' ? 'en' : 'zh';
             setLanguage(nextLang, true);
         });
+        toggle.dataset.i18nBound = 'true';
+        updateToggleButton();
     }
 
     /**
@@ -251,6 +257,10 @@
 
     if (typeof document !== 'undefined') {
         document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('navbar:rendered', () => {
+            initToggleButton();
+            updateToggleButton();
+        });
     }
 
     window.I18n = {
@@ -258,6 +268,19 @@
         setLang: (lang) => setLanguage(lang, true),
         t: translate,
         refresh: applyTranslations,
+        preserve: (target) => {
+            if (!target) return;
+            const elements = Array.isArray(target) || NodeList.prototype.isPrototypeOf(target)
+                ? target
+                : typeof target === 'string'
+                    ? document.querySelectorAll(target)
+                    : [target];
+            elements.forEach((el) => {
+                if (el && el.setAttribute) {
+                    el.setAttribute(PRESERVE_ATTR, 'true');
+                }
+            });
+        },
     };
 })();
 

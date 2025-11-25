@@ -5,6 +5,60 @@
  * ============================================
  */
 
+let navigationInitialized = false;
+
+function getLabelText(element, isLoggedIn) {
+    if (!element) return '';
+    
+    const lang = (typeof I18n !== 'undefined' && typeof I18n.getLang === 'function')
+        ? I18n.getLang()
+        : 'en';
+        
+    const baseAttr = isLoggedIn ? 'labelLoggedIn' : 'labelLoggedOut';
+    const langAttr = `${baseAttr}${lang === 'zh' ? 'Zh' : 'En'}`;
+    
+    if (element.dataset[langAttr]) {
+        return element.dataset[langAttr];
+    }
+    
+    if (element.dataset[baseAttr]) {
+        return element.dataset[baseAttr];
+    }
+    
+    if (typeof I18n !== 'undefined' && typeof I18n.t === 'function') {
+        const fallbackKey = isLoggedIn ? 'common.nav.profile' : 'common.nav.login';
+        return I18n.t(fallbackKey);
+    }
+    
+    return isLoggedIn ? 'Profile' : 'Log In';
+}
+
+function toggleAuthElements(isLoggedIn) {
+    const loggedInElements = document.querySelectorAll('[data-auth="logged-in"]');
+    const loggedOutElements = document.querySelectorAll('[data-auth="logged-out"]');
+    
+    loggedInElements.forEach(el => {
+        el.style.display = isLoggedIn ? '' : 'none';
+    });
+    
+    loggedOutElements.forEach(el => {
+        el.style.display = isLoggedIn ? 'none' : '';
+    });
+}
+
+function updateProfileMenu(isLoggedIn) {
+    const profileMenuLabel = document.getElementById('profileMenuLabel');
+    const profileMenuToggle = document.getElementById('profileMenuToggle');
+    
+    if (profileMenuLabel) {
+        profileMenuLabel.textContent = getLabelText(profileMenuLabel, isLoggedIn);
+    }
+    
+    if (profileMenuToggle) {
+        profileMenuToggle.setAttribute('href', isLoggedIn ? '/pages/profile.html' : '/pages/login.html');
+    }
+}
+
 /**
  * 更新导航栏显示状态
  * 根据登录状态显示/隐藏相应的导航项
@@ -16,46 +70,45 @@ function updateNavigation() {
     }
     
     const isLoggedIn = isAuthenticated();
-    
-    // 获取导航元素
-    const loginLink = document.getElementById('loginLink');
-    const registerLink = document.getElementById('registerLink');
-    const profileLink = document.getElementById('profileLink');
-    const profileDropdown = document.querySelector('.nav-dropdown');
+    toggleAuthElements(isLoggedIn);
+    updateProfileMenu(isLoggedIn);
+}
+
+function bindLogoutHandler() {
     const logoutLink = document.getElementById('logoutLink');
+    if (!logoutLink) return false;
     
-    if (isLoggedIn) {
-        // 已登录：隐藏登录和注册按钮，显示个人中心和退出登录
-        if (loginLink) loginLink.style.display = 'none';
-        if (registerLink) registerLink.style.display = 'none';
-        if (profileLink) profileLink.style.display = 'block';
-        if (profileDropdown) profileDropdown.style.display = 'block';
-        if (logoutLink) logoutLink.style.display = 'block';
-    } else {
-        // 未登录：显示登录和注册按钮，隐藏个人中心和退出登录
-        if (loginLink) loginLink.style.display = 'block';
-        if (registerLink) registerLink.style.display = 'block';
-        if (profileLink) profileLink.style.display = 'none';
-        if (profileDropdown) profileDropdown.style.display = 'none';
-        if (logoutLink) logoutLink.style.display = 'none';
-    }
+    logoutLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        const confirmText = (typeof I18n !== 'undefined' && typeof I18n.t === 'function')
+            ? I18n.t('common.logoutConfirm')
+            : '确定要退出登录吗？';
+        
+        if (typeof clearAuth === 'function' && confirm(confirmText)) {
+            clearAuth();
+            updateNavigation();
+            window.location.href = '/pages/login.html';
+        }
+    });
+    
+    return true;
 }
 
 /**
  * 初始化导航（页面加载时调用）
  */
 function initNavigation() {
-    // 更新导航显示
     updateNavigation();
     
-    // 监听登录状态变化（如果使用事件）
-    // 当用户登录或登出时，可以调用 updateNavigation() 更新导航
+    if (!navigationInitialized) {
+        navigationInitialized = bindLogoutHandler();
+    }
 }
 
-// 页面加载时自动初始化导航
+// 页面加载或导航渲染时初始化
 if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', function() {
-        initNavigation();
-    });
+    document.addEventListener('DOMContentLoaded', initNavigation);
+    document.addEventListener('navbar:rendered', initNavigation);
 }
 

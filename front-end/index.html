@@ -7,31 +7,9 @@
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/layout.css">
 </head>
-<body>
+<body data-nav-active="home">
     <!-- 头部导航 -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo" data-i18n-key="common.nav.logo">学生港湾</a>
-                <nav class="nav">
-                    <a href="index.html" class="nav-link active" data-i18n-key="common.nav.home">首页</a>
-                    <a href="pages/items.html" class="nav-link" data-i18n-key="common.nav.items">浏览宝贝</a>
-                    <a href="pages/login.html" class="nav-link" id="loginLink" data-i18n-key="common.nav.login">登录</a>
-                    <a href="pages/register.html" class="nav-link" id="registerLink" data-i18n-key="common.nav.signup">注册</a>
-                    <a href="pages/profile.html" class="nav-link" id="profileLink" style="display: none;" data-i18n-key="common.nav.profile">个人资料</a>
-                    <div class="nav-dropdown" style="display: none;">
-                        <a href="pages/profile.html" class="nav-link" data-i18n-key="common.nav.profileDropdown">个人中心 ▾</a>
-                        <div class="dropdown-menu">
-                            <a href="pages/my-items.html" class="dropdown-item" data-i18n-key="common.nav.myItems">我的宝贝</a>
-                            <a href="pages/post-item.html" class="dropdown-item" data-i18n-key="common.nav.postItem">发布物品</a>
-                        </div>
-                    </div>
-                    <a href="#" class="nav-link" id="logoutLink" style="display: none;" data-i18n-key="common.nav.logout">退出登录</a>
-                    <button type="button" class="lang-toggle" id="languageToggle" aria-label="切换到英文">EN</button>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <header id="siteHeader"></header>
 
     <!-- 主内容 -->
     <main class="main-content">
@@ -180,7 +158,9 @@
     <script src="js/utils/i18n.data.js"></script>
     <script src="js/utils/i18n.js"></script>
     <script src="js/utils/auth.js"></script>
+    <script src="js/utils/navbar.js"></script>
     <script src="js/utils/api.js"></script>
+    <script src="js/utils/navigation.js"></script>
     <script src="js/pages/index.js"></script>
     <script>
         // 简易轮播实现（依赖 mock 数据中的前5个宝贝）
@@ -238,40 +218,11 @@
         });
     </script>
     <script>
-        // 根据登录状态更新导航和内容
+        // 根据登录状态更新首页 CTA 显示
         document.addEventListener('DOMContentLoaded', function() {
-            const isLoggedIn = isAuthenticated();
-            if (isLoggedIn) {
-                document.getElementById('loginLink').classList.add('hidden');
-                document.getElementById('registerLink').classList.add('hidden');
-                document.getElementById('profileLink').classList.remove('hidden');
-                document.getElementById('logoutLink').classList.remove('hidden');
-                const callToAction = document.getElementById('callToActionSection');
-                if (callToAction) {
-                    callToAction.classList.add('hidden');
-                }
-            } else {
-                document.getElementById('loginLink').classList.remove('hidden');
-                document.getElementById('registerLink').classList.remove('hidden');
-                document.getElementById('profileLink').classList.add('hidden');
-                document.getElementById('logoutLink').classList.add('hidden');
-                const callToAction = document.getElementById('callToActionSection');
-                if (callToAction) {
-                    callToAction.classList.remove('hidden');
-                }
-            }
-            
-            // 退出登录
-            const logoutLink = document.getElementById('logoutLink');
-            if (logoutLink) {
-                logoutLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (confirm(I18n.t('common.logoutConfirm'))) {
-                        clearAuth();
-                        window.location.reload();
-                    }
-                });
-            }
+            const callToAction = document.getElementById('callToActionSection');
+            if (!callToAction || typeof isAuthenticated === 'undefined') return;
+            callToAction.classList.toggle('hidden', isAuthenticated());
         });
     </script>
 </body>

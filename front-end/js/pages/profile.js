@@ -8,6 +8,12 @@ function t(key, fallback = '') {
     return window.I18n ? window.I18n.t(key, fallback) : fallback;
 }
 
+function preserveElement(element) {
+    if (element && window.I18n && typeof window.I18n.preserve === 'function') {
+        window.I18n.preserve(element);
+    }
+}
+
 function formatMessage(key, fallback, replacements = {}) {
     let message = t(key, fallback);
     for (const [placeholder, value] of Object.entries(replacements)) {
@@ -120,18 +126,18 @@ function renderProfileHeader(profile) {
     
     if (name) {
         name.textContent = profile.name || t('profile.name.notSet', '未设置姓名');
-        // 清除旧的验证徽章
         const oldBadge = name.querySelector('.badge');
         if (oldBadge) oldBadge.remove();
-        // 添加验证徽章
         const badge = document.createElement('span');
         badge.className = profile.verified ? 'badge badge-verified' : 'badge badge-unverified';
         badge.textContent = profile.verified ? t('profile.verified.yes', '已验证') : t('profile.verified.no', '未验证');
         name.appendChild(badge);
+        preserveElement(name);
     }
     
     if (email) {
         email.textContent = profile.email || '';
+        preserveElement(email);
     }
     
     if (memberType) {
@@ -141,6 +147,7 @@ function renderProfileHeader(profile) {
     
     if (joinDate) {
         joinDate.textContent = formatDate(profile.joinDate);
+        preserveElement(joinDate);
     }
 }
 
@@ -246,23 +253,28 @@ function renderProfileCompleteness(profile) {
 function renderProfileDetails(profile) {
     const notSetText = t('profile.details.notSet', '未设置');
     const details = [
-        { label: t('profile.details.email', '邮箱'), value: profile.email },
-        { label: t('profile.details.memberType', '会员类型'), value: getMemberTypeName(profile.memberType) },
-        { label: t('profile.details.university', '大学'), value: profile.university || notSetText },
-        { label: t('profile.details.enrollmentYear', '入学年份'), value: profile.enrollmentYear || notSetText },
-        { label: t('profile.details.bio', '个人简介'), value: profile.bio || notSetText },
+        { label: t('profile.details.email', '邮箱'), value: profile.email, preserve: !!profile.email },
+        { label: t('profile.details.memberType', '会员类型'), value: getMemberTypeName(profile.memberType), preserve: false },
+        { label: t('profile.details.university', '大学'), value: profile.university, preserve: !!profile.university },
+        { label: t('profile.details.enrollmentYear', '入学年份'), value: profile.enrollmentYear, preserve: !!profile.enrollmentYear },
+        { label: t('profile.details.bio', '个人简介'), value: profile.bio, preserve: !!profile.bio },
     ];
     
     const detailsContainer = document.querySelector('.details-grid');
     if (detailsContainer) {
-        detailsContainer.innerHTML = details.map(detail => `
-            <div class="detail-item">
-                <div class="detail-label">${detail.label}</div>
-                <div class="detail-value ${!detail.value || detail.value === notSetText ? 'empty' : ''}">
-                    ${detail.value || notSetText}
+        detailsContainer.innerHTML = details.map(detail => {
+            const hasValue = detail.value !== undefined && detail.value !== null && detail.value !== '';
+            const valueText = hasValue ? detail.value : notSetText;
+            const preserveAttr = detail.preserve && hasValue ? ' data-i18n-preserve="true"' : '';
+            return `
+                <div class="detail-item">
+                    <div class="detail-label">${detail.label}</div>
+                    <div class="detail-value ${hasValue ? '' : 'empty'}"${preserveAttr}>
+                        ${valueText}
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 }
 
