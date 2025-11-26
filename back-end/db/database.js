@@ -39,6 +39,33 @@ function getDatabase() {
  * 初始化数据库表结构
  * 使用 Promise 链确保表按顺序创建
  */
+function ensureColumnExists(tableName, columnName, definition) {
+    const database = getDatabase();
+    return new Promise((resolve, reject) => {
+        database.all(`PRAGMA table_info(${tableName})`, (err, rows) => {
+            if (err) {
+                console.error(`Error checking ${tableName}.${columnName}:`, err);
+                return reject(err);
+            }
+
+            const columnExists = rows.some(row => row.name === columnName);
+            if (columnExists) {
+                return resolve();
+            }
+
+            const alterSQL = `ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${definition}`;
+            database.run(alterSQL, (alterErr) => {
+                if (alterErr) {
+                    console.error(`Error adding column ${columnName} to ${tableName}:`, alterErr);
+                    return reject(alterErr);
+                }
+                console.log(`✅ Added missing column ${columnName} to ${tableName}`);
+                resolve();
+            });
+        });
+    });
+}
+
 function initDatabase() {
     return new Promise((resolve, reject) => {
         const database = getDatabase();
@@ -129,6 +156,42 @@ function initDatabase() {
                 FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
             )
         `, 'Items table'))
+        .then(async () => {
+            const itemColumns = [
+                { name: 'status', definition: "TEXT NOT NULL DEFAULT 'AVAILABLE' CHECK(status IN ('AVAILABLE', 'RESERVED', 'SOLD'))" },
+                { name: 'view_count', definition: 'INTEGER DEFAULT 0' },
+                { name: 'images', definition: 'TEXT' },
+                { name: 'isbn', definition: 'TEXT' },
+                { name: 'course_code', definition: 'TEXT' },
+                { name: 'module_name', definition: 'TEXT' },
+                { name: 'edition', definition: 'TEXT' },
+                { name: 'author', definition: 'TEXT' },
+                { name: 'brand', definition: 'TEXT' },
+                { name: 'model_number', definition: 'TEXT' },
+                { name: 'warranty_status', definition: 'TEXT' },
+                { name: 'original_purchase_date', definition: 'TEXT' },
+                { name: 'accessories_included', definition: 'TEXT' },
+                { name: 'item_type', definition: 'TEXT' },
+                { name: 'dimensions', definition: 'TEXT' },
+                { name: 'material', definition: 'TEXT' },
+                { name: 'assembly_required', definition: 'INTEGER DEFAULT 0' },
+                { name: 'condition_details', definition: 'TEXT' },
+                { name: 'size', definition: 'TEXT' },
+                { name: 'clothing_brand', definition: 'TEXT' },
+                { name: 'material_type', definition: 'TEXT' },
+                { name: 'color', definition: 'TEXT' },
+                { name: 'gender', definition: 'TEXT' },
+                { name: 'sports_brand', definition: 'TEXT' },
+                { name: 'size_dimensions', definition: 'TEXT' },
+                { name: 'sport_type', definition: 'TEXT' },
+                { name: 'sports_condition_details', definition: 'TEXT' }
+            ];
+
+            for (const column of itemColumns) {
+                // eslint-disable-next-line no-await-in-loop
+                await ensureColumnExists('items', column.name, column.definition);
+            }
+        })
         .then(() => runSQL(`
             CREATE TABLE IF NOT EXISTS ratings (
                 id TEXT PRIMARY KEY,

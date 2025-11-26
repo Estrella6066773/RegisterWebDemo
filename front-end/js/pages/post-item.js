@@ -16,41 +16,58 @@ function formatMessage(key, fallback, replacements = {}) {
     return message;
 }
 
+function translateField(key, fallback = '') {
+    if (!key) return fallback || '';
+    const currentLang = (window.I18n && typeof window.I18n.getLang === 'function')
+        ? window.I18n.getLang()
+        : 'en';
+    const textMap = window.I18N_TEXT_MAP || {};
+    const langMap = textMap[currentLang] || {};
+    if (Object.prototype.hasOwnProperty.call(langMap, key)) {
+        return langMap[key];
+    }
+    const defaultMap = textMap.en || {};
+    if (Object.prototype.hasOwnProperty.call(defaultMap, key)) {
+        return defaultMap[key];
+    }
+    return fallback || key;
+}
+
 // 类别特定字段配置
 const categoryFields = {
     TEXTBOOK: [
-        { name: 'isbn', labelKey: 'postItem.fields.isbn', placeholderKey: 'postItem.fields.isbnPlaceholder', type: 'text' },
-        { name: 'courseCode', labelKey: 'postItem.fields.courseCode', placeholderKey: 'postItem.fields.courseCodePlaceholder', type: 'text' },
-        { name: 'moduleName', labelKey: 'postItem.fields.moduleName', placeholderKey: 'postItem.fields.moduleNamePlaceholder', type: 'text' },
-        { name: 'edition', labelKey: 'postItem.fields.edition', placeholderKey: 'postItem.fields.editionPlaceholder', type: 'text' },
-        { name: 'author', labelKey: 'postItem.fields.author', placeholderKey: 'postItem.fields.authorPlaceholder', type: 'text' },
+        { name: 'isbn', labelKey: 'postItem.fields.isbn', placeholderKey: 'postItem.fields.isbnPlaceholder', helpKey: 'postItem.fields.isbnHelp', type: 'text', maxLength: 20 },
+        { name: 'courseCode', labelKey: 'postItem.fields.courseCode', placeholderKey: 'postItem.fields.courseCodePlaceholder', helpKey: 'postItem.fields.courseCodeHelp', type: 'text', maxLength: 20 },
+        { name: 'moduleName', labelKey: 'postItem.fields.moduleName', placeholderKey: 'postItem.fields.moduleNamePlaceholder', helpKey: 'postItem.fields.moduleNameHelp', type: 'text', maxLength: 100 },
+        { name: 'edition', labelKey: 'postItem.fields.edition', placeholderKey: 'postItem.fields.editionPlaceholder', helpKey: 'postItem.fields.editionHelp', type: 'text', maxLength: 50 },
+        { name: 'author', labelKey: 'postItem.fields.author', placeholderKey: 'postItem.fields.authorPlaceholder', helpKey: 'postItem.fields.authorHelp', type: 'text', maxLength: 100 },
     ],
     ELECTRONICS: [
-        { name: 'brand', labelKey: 'postItem.fields.brand', placeholderKey: 'postItem.fields.brandPlaceholder', type: 'text' },
-        { name: 'model', labelKey: 'postItem.fields.model', placeholderKey: 'postItem.fields.modelPlaceholder', type: 'text' },
-        { name: 'warrantyStatus', labelKey: 'postItem.fields.warrantyStatus', type: 'select', optionKeys: ['postItem.fields.warrantyIn', 'postItem.fields.warrantyOut', 'postItem.fields.warrantyNone'] },
-        { name: 'purchaseDate', labelKey: 'postItem.fields.purchaseDate', type: 'date' },
-        { name: 'accessories', labelKey: 'postItem.fields.accessories', placeholderKey: 'postItem.fields.accessoriesPlaceholder', type: 'text' },
+        { name: 'brand', labelKey: 'postItem.fields.brand', placeholderKey: 'postItem.fields.brandPlaceholder', helpKey: 'postItem.fields.brandHelp', type: 'text', maxLength: 50 },
+        { name: 'model', labelKey: 'postItem.fields.model', placeholderKey: 'postItem.fields.modelPlaceholder', helpKey: 'postItem.fields.modelHelp', type: 'text', maxLength: 100 },
+        { name: 'warrantyStatus', labelKey: 'postItem.fields.warrantyStatus', helpKey: 'postItem.fields.warrantyStatusHelp', type: 'select', optionKeys: ['postItem.fields.warrantyIn', 'postItem.fields.warrantyOut', 'postItem.fields.warrantyNone'] },
+        { name: 'purchaseDate', labelKey: 'postItem.fields.purchaseDate', helpKey: 'postItem.fields.purchaseDateHelp', type: 'date' },
+        { name: 'accessories', labelKey: 'postItem.fields.accessories', placeholderKey: 'postItem.fields.accessoriesPlaceholder', helpKey: 'postItem.fields.accessoriesHelp', type: 'text', maxLength: 200, fullWidth: true },
     ],
     FURNITURE: [
-        { name: 'itemType', labelKey: 'postItem.fields.itemType', placeholderKey: 'postItem.fields.itemTypePlaceholder', type: 'text' },
-        { name: 'size', labelKey: 'postItem.fields.size', placeholderKey: 'postItem.fields.sizePlaceholder', type: 'text' },
-        { name: 'material', labelKey: 'postItem.fields.material', placeholderKey: 'postItem.fields.materialPlaceholder', type: 'text' },
-        { name: 'assemblyRequired', labelKey: 'postItem.fields.assemblyRequired', type: 'select', optionKeys: ['postItem.fields.assemblyYes', 'postItem.fields.assemblyNo', 'postItem.fields.assemblyDone'] },
-        { name: 'conditionDetails', labelKey: 'postItem.fields.conditionDetails', placeholderKey: 'postItem.fields.conditionDetailsPlaceholder', type: 'textarea' },
+        { name: 'itemType', labelKey: 'postItem.fields.itemType', placeholderKey: 'postItem.fields.itemTypePlaceholder', helpKey: 'postItem.fields.itemTypeHelp', type: 'text', maxLength: 50 },
+        { name: 'size', labelKey: 'postItem.fields.size', placeholderKey: 'postItem.fields.sizePlaceholder', helpKey: 'postItem.fields.sizeHelp', type: 'text', maxLength: 100 },
+        { name: 'material', labelKey: 'postItem.fields.material', placeholderKey: 'postItem.fields.materialPlaceholder', helpKey: 'postItem.fields.materialHelp', type: 'text', maxLength: 100 },
+        { name: 'assemblyRequired', labelKey: 'postItem.fields.assemblyRequired', helpKey: 'postItem.fields.assemblyRequiredHelp', type: 'select', optionKeys: ['postItem.fields.assemblyYes', 'postItem.fields.assemblyNo', 'postItem.fields.assemblyDone'] },
+        { name: 'conditionDetails', labelKey: 'postItem.fields.conditionDetails', placeholderKey: 'postItem.fields.conditionDetailsPlaceholder', helpKey: 'postItem.fields.conditionDetailsHelp', type: 'textarea', maxLength: 500, fullWidth: true },
     ],
     APPAREL: [
-        { name: 'size', labelKey: 'postItem.fields.sizeApparel', placeholderKey: 'postItem.fields.sizeApparelPlaceholder', type: 'text' },
-        { name: 'brand', labelKey: 'postItem.fields.brand', placeholderKey: 'postItem.fields.brandPlaceholder', type: 'text' },
-        { name: 'material', labelKey: 'postItem.fields.material', placeholderKey: 'postItem.fields.materialPlaceholder', type: 'text' },
-        { name: 'color', labelKey: 'postItem.fields.color', placeholderKey: 'postItem.fields.colorPlaceholder', type: 'text' },
-        { name: 'gender', labelKey: 'postItem.fields.gender', type: 'select', optionKeys: ['postItem.fields.genderMale', 'postItem.fields.genderFemale', 'postItem.fields.genderNeutral'] },
+        { name: 'size', labelKey: 'postItem.fields.sizeApparel', placeholderKey: 'postItem.fields.sizeApparelPlaceholder', helpKey: 'postItem.fields.sizeApparelHelp', type: 'text', maxLength: 20 },
+        { name: 'brand', labelKey: 'postItem.fields.brand', placeholderKey: 'postItem.fields.brandPlaceholder', helpKey: 'postItem.fields.brandHelp', type: 'text', maxLength: 50 },
+        { name: 'material', labelKey: 'postItem.fields.material', placeholderKey: 'postItem.fields.materialPlaceholder', helpKey: 'postItem.fields.materialHelp', type: 'text', maxLength: 100 },
+        { name: 'color', labelKey: 'postItem.fields.color', placeholderKey: 'postItem.fields.colorPlaceholder', helpKey: 'postItem.fields.colorHelp', type: 'text', maxLength: 50 },
+        { name: 'gender', labelKey: 'postItem.fields.gender', helpKey: 'postItem.fields.genderHelp', type: 'select', optionKeys: ['postItem.fields.genderMale', 'postItem.fields.genderFemale', 'postItem.fields.genderNeutral'] },
     ],
     SPORTS: [
-        { name: 'brand', labelKey: 'postItem.fields.brand', placeholderKey: 'postItem.fields.brandPlaceholder', type: 'text' },
-        { name: 'size', labelKey: 'postItem.fields.size', placeholderKey: 'postItem.fields.sizeSportsPlaceholder', type: 'text' },
-        { name: 'sportType', labelKey: 'postItem.fields.sportType', placeholderKey: 'postItem.fields.sportTypePlaceholder', type: 'text' },
-        { name: 'conditionDetails', labelKey: 'postItem.fields.conditionDetails', placeholderKey: 'postItem.fields.conditionDetailsPlaceholder', type: 'textarea' },
+        { name: 'brand', labelKey: 'postItem.fields.brand', placeholderKey: 'postItem.fields.brandPlaceholder', helpKey: 'postItem.fields.brandHelp', type: 'text', maxLength: 50 },
+        { name: 'size', labelKey: 'postItem.fields.size', placeholderKey: 'postItem.fields.sizeSportsPlaceholder', helpKey: 'postItem.fields.sizeSportsHelp', type: 'text', maxLength: 50 },
+        { name: 'sportType', labelKey: 'postItem.fields.sportType', placeholderKey: 'postItem.fields.sportTypePlaceholder', helpKey: 'postItem.fields.sportTypeHelp', type: 'text', maxLength: 100 },
+        { name: 'conditionDetails', labelKey: 'postItem.fields.conditionDetails', placeholderKey: 'postItem.fields.conditionDetailsPlaceholder', helpKey: 'postItem.fields.conditionDetailsHelp', type: 'textarea', maxLength: 500, fullWidth: true },
     ],
 };
 
@@ -68,6 +85,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // 图片上传
     uploadTrigger.addEventListener('click', () => imageInput.click());
     imageInput.addEventListener('change', handleImageSelect);
+
+    // 详细信息区域折叠/展开
+    const categoryFieldsToggle = document.getElementById('categoryFieldsToggle');
+    if (categoryFieldsToggle) {
+        categoryFieldsToggle.addEventListener('click', function() {
+            const section = document.getElementById('categoryFields');
+            if (section) {
+                section.classList.toggle('collapsed');
+            }
+        });
+    }
 });
 
 // 处理类别变化
@@ -83,55 +111,105 @@ function handleCategoryChange() {
     }
 
     categoryFieldsSection.style.display = 'block';
+    // 默认展开详细信息区域
+    categoryFieldsSection.classList.remove('collapsed');
     const fields = categoryFields[category];
     
-    categoryFieldsContent.innerHTML = fields.map(field => {
-        const label = t(field.labelKey, field.name);
-        if (field.type === 'select') {
-            const options = (field.optionKeys || []).map(key => {
-                const value = key.split('.').pop();
-                const text = t(key, value);
-                return `<option value="${value}">${text}</option>`;
-            }).join('');
-            return `
-                <div class="form-group category-field-group">
-                    <label for="${field.name}" class="form-label">${label}</label>
-                    <select id="${field.name}" name="${field.name}" class="form-control">
-                        <option value="">${t('postItem.fields.selectPlaceholder', '请选择')}</option>
-                        ${options}
-                    </select>
-                </div>
-            `;
-        } else if (field.type === 'textarea') {
-            const placeholder = field.placeholderKey ? t(field.placeholderKey, '') : '';
-            return `
-                <div class="form-group category-field-group">
-                    <label for="${field.name}" class="form-label">${label}</label>
-                    <textarea 
-                        id="${field.name}" 
-                        name="${field.name}" 
-                        class="form-control" 
-                        rows="3"
-                        placeholder="${placeholder}"
-                    ></textarea>
-                </div>
-            `;
-        } else {
-            const placeholder = field.placeholderKey ? t(field.placeholderKey, '') : '';
-            return `
-                <div class="form-group category-field-group">
-                    <label for="${field.name}" class="form-label">${label}</label>
-                    <input 
-                        type="${field.type}" 
-                        id="${field.name}" 
-                        name="${field.name}" 
-                        class="form-control" 
-                        placeholder="${placeholder}"
-                    >
-                </div>
-            `;
-        }
-    }).join('');
+    // 延迟一下再绑定事件，确保DOM已更新
+    setTimeout(() => {
+        // 绑定字符计数事件
+        fields.forEach(field => {
+            if (field.type === 'textarea' && field.maxLength) {
+                const textarea = document.getElementById(field.name);
+                const counter = document.getElementById(`${field.name}_counter`);
+                if (textarea && counter) {
+                    textarea.addEventListener('input', function() {
+                        counter.textContent = this.value.length;
+                        if (this.value.length > field.maxLength * 0.9) {
+                            counter.style.color = 'var(--error-color, #ff4d4f)';
+                        } else {
+                            counter.style.color = 'var(--text-secondary)';
+                        }
+                    });
+                }
+            }
+        });
+    }, 100);
+    
+    // 使用网格布局，两列显示
+    categoryFieldsContent.innerHTML = `
+        <div class="category-fields-grid">
+            ${fields.map(field => {
+                const label = translateField(field.labelKey, field.name);
+                const placeholderText = translateField(field.placeholderKey, field.placeholderFallback || '');
+                const helpKey = field.helpKey || `postItem.fields.${field.name}Help`;
+                const helpText = translateField(helpKey, field.helpFallback || '');
+                const isRequired = field.required || false;
+                
+                let fieldHtml = '';
+                if (field.type === 'select') {
+                    const options = (field.optionKeys || []).map(key => {
+                        const value = key.split('.').pop();
+                        const text = translateField(key, value);
+                        return `<option value="${value}">${text}</option>`;
+                    }).join('');
+                    fieldHtml = `
+                        <select id="${field.name}" name="${field.name}" class="form-control">
+                            <option value="">${translateField('postItem.fields.selectPlaceholder', '请选择')}</option>
+                            ${options}
+                        </select>
+                    `;
+                } else if (field.type === 'textarea') {
+                    const maxLength = field.maxLength || '';
+                    fieldHtml = `
+                        <textarea 
+                            id="${field.name}" 
+                            name="${field.name}" 
+                            class="form-control" 
+                            rows="4"
+                            placeholder="${placeholderText}"
+                            ${maxLength ? `maxlength="${maxLength}"` : ''}
+                        ></textarea>
+                        ${maxLength ? `<div class="char-counter"><span id="${field.name}_counter">0</span> / ${maxLength}</div>` : ''}
+                    `;
+                } else if (field.type === 'date') {
+                    fieldHtml = `
+                        <input 
+                            type="date" 
+                            id="${field.name}" 
+                            name="${field.name}" 
+                            class="form-control" 
+                            placeholder="${placeholderText}"
+                            max="${new Date().toISOString().split('T')[0]}"
+                        >
+                    `;
+                } else {
+                    const maxLength = field.maxLength || '';
+                    fieldHtml = `
+                        <input 
+                            type="${field.type}" 
+                            id="${field.name}" 
+                            name="${field.name}" 
+                            class="form-control" 
+                            placeholder="${placeholderText}"
+                            ${maxLength ? `maxlength="${maxLength}"` : ''}
+                        >
+                    `;
+                }
+                
+                return `
+                    <div class="category-field-item ${field.fullWidth ? 'full-width' : ''}">
+                        <label for="${field.name}" class="form-label">
+                            ${label}
+                            ${isRequired ? '<span class="required">*</span>' : ''}
+                        </label>
+                        ${fieldHtml}
+                        ${helpText ? `<div class="form-help">${helpText}</div>` : ''}
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
 }
 
 // 处理图片选择
@@ -221,13 +299,34 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
 
     // 收集表单数据
     const formData = new FormData(e.target);
+    const priceValue = formData.get('price');
+    const priceNum = priceValue ? parseFloat(priceValue) : null;
+    
     const itemData = {
-        category: formData.get('category'),
-        title: formData.get('title'),
-        description: formData.get('description'),
-        price: parseFloat(formData.get('price')),
-        condition: formData.get('condition'),
+        category: formData.get('category') || '',
+        title: (formData.get('title') || '').trim(),
+        description: (formData.get('description') || '').trim(),
+        price: priceNum,
+        condition: formData.get('condition') || '',
     };
+    
+    // 前端基础验证
+    if (!itemData.title) {
+        alert(t('postItem.alert.titleRequired', '请输入物品标题'));
+        return;
+    }
+    if (!itemData.category) {
+        alert(t('postItem.alert.categoryRequired', '请选择物品类别'));
+        return;
+    }
+    if (priceNum === null || isNaN(priceNum) || priceNum < 0) {
+        alert(t('postItem.alert.priceInvalid', '请输入有效的价格（大于等于0）'));
+        return;
+    }
+    if (!itemData.condition) {
+        alert(t('postItem.alert.conditionRequired', '请选择物品状况'));
+        return;
+    }
 
     // 收集类别特定字段
     const category = itemData.category;
@@ -301,9 +400,20 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
             errorMessage = t('postItem.alert.auth', '登录已过期，请重新登录');
             setTimeout(() => window.location.href = 'login.html', 2000);
         } else if (error.errors && Array.isArray(error.errors)) {
-            errorMessage = t('postItem.alert.validation', '数据验证失败：\n') + error.errors.join('\n');
+            // 显示详细的验证错误
+            const errorList = error.errors.map(err => `• ${err}`).join('\n');
+            errorMessage = t('postItem.alert.validation', '数据验证失败：\n') + '\n' + errorList;
+        } else if (error.message) {
+            // 尝试从响应中获取错误信息
+            const responseData = error.response || {};
+            if (responseData.errors && Array.isArray(responseData.errors)) {
+                const errorList = responseData.errors.map(err => `• ${err}`).join('\n');
+                errorMessage = t('postItem.alert.validation', '数据验证失败：\n') + '\n' + errorList;
+            } else {
+                errorMessage += error.message;
+            }
         } else {
-            errorMessage += error.message || t('postItem.alert.retry', '请稍后重试');
+            errorMessage += t('postItem.alert.retry', '请稍后重试');
         }
         
         alert(errorMessage);

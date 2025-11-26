@@ -11,12 +11,21 @@ function getItemAPI() {
         async updateItem() { return { item: null }; },
         async deleteItem() { return { ok: true }; },
         async updateItemStatus() { return { ok: true }; },
+        async getItemDetail() { return { data: null }; },
     };
 }
 
 let editingId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 检查登录状态
+    if (!isAuthenticated()) {
+        const t = (key, fallback) => window.I18n ? window.I18n.t(key, fallback) : fallback;
+        alert(t('myItems.alert.loginRequired', '请先登录后再查看我的物品'));
+        window.location.href = 'login.html';
+        return;
+    }
+
     const list = document.getElementById('myItemsList');
     const modal = document.getElementById('editorModal');
 
@@ -45,7 +54,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderCard(it) {
-        const img = (it.images && it.images[0]) || 'https://picsum.photos/seed/fallback/800/600';
+        // 处理图片URL - 如果是相对路径，确保以/开头
+        let img = 'https://picsum.photos/seed/fallback/800/600';
+        if (it.images && Array.isArray(it.images) && it.images.length > 0) {
+            img = it.images[0];
+            // 如果是相对路径且不是以/开头，添加/
+            if (img && !img.startsWith('http') && !img.startsWith('/')) {
+                img = '/' + img;
+            }
+        } else if (it.images && typeof it.images === 'string') {
+            // 处理字符串格式的图片
+            try {
+                const parsed = JSON.parse(it.images);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    img = parsed[0];
+                    if (img && !img.startsWith('http') && !img.startsWith('/')) {
+                        img = '/' + img;
+                    }
+                }
+            } catch (e) {
+                // 解析失败，使用默认图片
+            }
+        }
         const status = it.status || 'AVAILABLE';
         const statusMap = {
             AVAILABLE: t('myItems.status.available', '可售'),
@@ -127,6 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const res = await getItemAPI().getItemDetail(editId);
                 const it = res.item || res.data || res;
+                if (!it || !it.id) {
+                    throw new Error('无法获取物品详情');
+                }
                 editingId = it.id;
                 document.getElementById('editorTitle').textContent = t('myItems.edit.title', '编辑宝贝');
                 document.getElementById('f_title').value = it.title || '';
@@ -135,7 +168,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('f_condition').value = it.condition || 'GOOD';
                 document.getElementById('f_desc').value = it.description || '';
                 modal.classList.remove('hidden');
-            } catch {}
+            } catch (err) {
+                console.error('获取物品详情失败:', err);
+                alert(t('myItems.alert.loadDetailFailed', '获取物品详情失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
+            }
         } else if (delId) {
             if (confirm(t('myItems.confirm.delete', '确定删除该宝贝吗？'))) {
                 try {

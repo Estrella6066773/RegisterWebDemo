@@ -22,7 +22,9 @@ router.get('/search', (req, res) => {
     const db = getDatabase();
     const offset = (parseInt(page) - 1) * parseInt(pageSize);
 
-    let query = 'SELECT * FROM items WHERE status != "DELETED"';
+    // 兼容旧数据：早期插入的记录 status 可能为 NULL
+    // 使用 IFNULL(status, 'AVAILABLE')，将 NULL 视为 AVAILABLE
+    let query = "SELECT * FROM items WHERE IFNULL(status, 'AVAILABLE') != 'DELETED'";
     const params = [];
 
     if (keyword) {
@@ -74,7 +76,7 @@ router.get('/search', (req, res) => {
         }
 
         // 获取总数
-        let countQuery = 'SELECT COUNT(*) as total FROM items WHERE status != "DELETED"';
+        let countQuery = "SELECT COUNT(*) as total FROM items WHERE IFNULL(status, 'AVAILABLE') != 'DELETED'";
         const countParams = [];
         if (keyword) {
             countQuery += ' AND (title LIKE ? OR description LIKE ?)';
@@ -178,7 +180,7 @@ router.get('/featured', (req, res) => {
 
     db.all(
         `SELECT * FROM items 
-        WHERE status = 'AVAILABLE' 
+        WHERE IFNULL(status, 'AVAILABLE') = 'AVAILABLE' 
         ORDER BY view_count DESC, post_date DESC 
         LIMIT ?`,
         [limit],
@@ -226,8 +228,9 @@ router.get('/:id', (req, res) => {
             });
         }
 
-        // 获取卖家信息
-        db.get('SELECT id, name, email, member_type, verified, average_rating FROM users WHERE id = ?', [item.seller_id], (err, seller) => {
+        // 获取卖家信息（当前 users 表中没有 average_rating 字段，
+        // 评分统计通过 ratings 表单独维护，如有需要可后续通过聚合查询计算）
+        db.get('SELECT id, name, email, member_type, verified FROM users WHERE id = ?', [item.seller_id], (err, seller) => {
             if (err) {
                 console.error('Database error:', err);
             }
@@ -278,27 +281,34 @@ router.post('/', authenticateToken, validateItem, (req, res) => {
     // 准备数据
     const imagesJson = images && Array.isArray(images) ? JSON.stringify(images) : '[]';
 
+    const columns = [
+        'id', 'seller_id', 'title', 'description', 'category', 'price', 'condition', 'status',
+        'images', 'view_count',
+        'isbn', 'course_code', 'module_name', 'edition', 'author',
+        'brand', 'model_number', 'warranty_status', 'original_purchase_date', 'accessories_included',
+        'item_type', 'dimensions', 'material', 'assembly_required', 'condition_details',
+        'size', 'clothing_brand', 'material_type', 'color', 'gender',
+        'sports_brand', 'size_dimensions', 'sport_type', 'sports_condition_details',
+        'post_date', 'created_at', 'updated_at'
+    ];
+
+    const placeholders = columns.map(() => '?').join(', ');
+    const values = [
+        itemId, req.user.userId, title, description || null, category, parseFloat(price), condition, 'AVAILABLE',
+        imagesJson, 0,
+        isbn || null, course_code || null, module_name || null, edition || null, author || null,
+        brand || null, model_number || null, warranty_status || null, original_purchase_date || null, accessories_included || null,
+        item_type || null, dimensions || null, material || null, assembly_required ? 1 : 0, condition_details || null,
+        size || null, clothing_brand || null, material_type || null, color || null, gender || null,
+        sports_brand || null, size_dimensions || null, sport_type || null, sports_condition_details || null,
+        now, now, now
+    ];
+
+    const insertSQL = `INSERT INTO items (${columns.join(', ')}) VALUES (${placeholders})`;
+
     db.run(
-        `INSERT INTO items (
-            id, seller_id, title, description, category, price, condition, status,
-            images, view_count,
-            isbn, course_code, module_name, edition, author,
-            brand, model_number, warranty_status, original_purchase_date, accessories_included,
-            item_type, dimensions, material, assembly_required, condition_details,
-            size, clothing_brand, material_type, color, gender,
-            sports_brand, size_dimensions, sport_type, sports_condition_details,
-            post_date, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-            itemId, req.user.userId, title, description || null, category, parseFloat(price), condition, 'AVAILABLE',
-            imagesJson, 0,
-            isbn || null, course_code || null, module_name || null, edition || null, author || null,
-            brand || null, model_number || null, warranty_status || null, original_purchase_date || null, accessories_included || null,
-            item_type || null, dimensions || null, material || null, assembly_required ? 1 : 0, condition_details || null,
-            size || null, clothing_brand || null, material_type || null, color || null, gender || null,
-            sports_brand || null, size_dimensions || null, sport_type || null, sports_condition_details || null,
-            now, now, now
-        ],
+        insertSQL,
+        values,
         function(err) {
             if (err) {
                 console.error('Database error:', err);
@@ -495,10 +505,10 @@ router.get('/my', authenticateToken, (req, res) => {
     const params = [req.user.userId];
 
     if (status) {
-        query += ' AND status = ?';
+        query += ' AND IFNULL(status, \'AVAILABLE\') = ?';
         params.push(status);
     } else {
-        query += ' AND status != "DELETED"';
+        query += ' AND IFNULL(status, \'AVAILABLE\') != "DELETED"';
     }
 
     query += ' ORDER BY post_date DESC LIMIT ? OFFSET ?';

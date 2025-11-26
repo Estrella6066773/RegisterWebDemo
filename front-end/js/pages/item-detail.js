@@ -243,10 +243,13 @@ function renderItemDetails(item) {
         if (item.author) fields.push({ label: t('itemDetail.fields.author', '作者'), value: item.author });
     } else if (category === 'ELECTRONICS') {
         if (item.brand) fields.push({ label: t('itemDetail.fields.brand', '品牌'), value: item.brand });
-        if (item.model) fields.push({ label: t('itemDetail.fields.model', '型号'), value: item.model });
+        const modelValue = item.model || item.modelNumber;
+        if (modelValue) fields.push({ label: t('itemDetail.fields.model', '型号'), value: modelValue });
         if (item.warrantyStatus) fields.push({ label: t('itemDetail.fields.warrantyStatus', '保修状态'), value: item.warrantyStatus });
-        if (item.purchaseDate) fields.push({ label: t('itemDetail.fields.purchaseDate', '购买日期'), value: item.purchaseDate });
-        if (item.accessories) fields.push({ label: t('itemDetail.fields.accessories', '包含配件'), value: item.accessories });
+        const purchaseDateValue = item.purchaseDate || item.originalPurchaseDate;
+        if (purchaseDateValue) fields.push({ label: t('itemDetail.fields.purchaseDate', '购买日期'), value: purchaseDateValue });
+        const accessoriesValue = item.accessories || item.accessoriesIncluded;
+        if (accessoriesValue) fields.push({ label: t('itemDetail.fields.accessories', '包含配件'), value: accessoriesValue });
     } else if (category === 'FURNITURE') {
         if (item.itemType) fields.push({ label: t('itemDetail.fields.itemType', '物品类型'), value: item.itemType });
         if (item.size) fields.push({ label: t('itemDetail.fields.size', '尺寸'), value: item.size });

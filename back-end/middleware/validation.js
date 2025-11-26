@@ -32,7 +32,7 @@ function validateItem(req, res, next) {
     }
 
     // 验证价格
-    if (price === undefined || price === null) {
+    if (price === undefined || price === null || price === '') {
         errors.push('价格为必填项');
     } else {
         const priceNum = parseFloat(price);

@@ -96,6 +96,16 @@
     <script src="../js/utils/api.js"></script>
     <script src="../js/utils/navigation.js"></script>
     <script src="../js/pages/my-items.js"></script>
+    <script>
+        // 检查登录状态
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!isAuthenticated()) {
+                alert(I18n.t('myItems.alert.loginRequired', '请先登录后再查看我的物品'));
+                window.location.href = 'login.html';
+                return;
+            }
+        });
+    </script>
 </body>
 </html>
 

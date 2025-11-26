@@ -52,6 +52,12 @@ async function apiRequest(endpoint, options = {}) {
             // 根据状态码分类错误
             const error = new Error(data.message || `请求失败: ${response.status}`);
             error.status = response.status;
+            // 保留验证错误数组
+            if (data.errors && Array.isArray(data.errors)) {
+                error.errors = data.errors;
+            }
+            // 保留原始响应数据
+            error.response = data;
             
             if (response.status === 401) {
                 error.type = 'AUTH_ERROR';
@@ -67,6 +73,10 @@ async function apiRequest(endpoint, options = {}) {
                 error.message = '服务器错误，请稍后重试';
             } else {
                 error.type = 'CLIENT_ERROR';
+                // 对于400错误，保留原始错误消息
+                if (response.status === 400 && data.message) {
+                    error.message = data.message;
+                }
             }
             
             throw error;
@@ -446,5 +456,11 @@ const UploadAPI = {
  */
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { UserAPI, ItemAPI, UploadAPI, apiRequest };
+} else {
+    // 浏览器环境 - 设置全局变量
+    window.UserAPI = UserAPI;
+    window.ItemAPI = ItemAPI;
+    window.UploadAPI = UploadAPI;
+    window.apiRequest = apiRequest;
 }
 

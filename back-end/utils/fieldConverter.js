@@ -115,9 +115,13 @@ function convertItemDataFromFrontend(itemData) {
     const fieldMap = {
         courseCode: 'course_code',
         moduleName: 'module_name',
+        // 电子产品字段：兼容简单命名和更语义化命名
+        model: 'model_number',
         modelNumber: 'model_number',
         warrantyStatus: 'warranty_status',
+        purchaseDate: 'original_purchase_date',
         originalPurchaseDate: 'original_purchase_date',
+        accessories: 'accessories_included',
         accessoriesIncluded: 'accessories_included',
         itemType: 'item_type',
         assemblyRequired: 'assembly_required',

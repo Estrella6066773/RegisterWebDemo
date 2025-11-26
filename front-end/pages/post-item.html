@@ -100,9 +100,15 @@
                     </div>
 
                     <!-- 类别特定字段 -->
-                    <div id="categoryFields" class="form-section" style="display: none;">
-                        <h2 class="section-title" data-i18n-key="postItem.form.detailsInfo">详细信息</h2>
-                        <div id="categoryFieldsContent">
+                    <div id="categoryFields" class="form-section collapsible-section" style="display: none;">
+                        <h2 class="section-title collapsible-header" id="categoryFieldsToggle">
+                            <span data-i18n-key="postItem.form.detailsInfo">详细信息</span>
+                            <span class="collapse-icon">▼</span>
+                        </h2>
+                        <div class="section-description" data-i18n-key="postItem.form.detailsDescription" style="margin-bottom: var(--spacing-lg); color: var(--text-secondary); font-size: 14px;">
+                            请填写以下详细信息，帮助买家更好地了解您的物品。所有字段均为可选，但填写完整信息可以提高物品的吸引力。
+                        </div>
+                        <div id="categoryFieldsContent" class="collapsible-content">
                             <!-- 动态加载的字段 -->
                         </div>
                     </div>

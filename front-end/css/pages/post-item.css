@@ -139,13 +139,51 @@
     background-color: rgba(255, 77, 79, 0.8);
 }
 
-/* 类别特定字段 */
-.category-field-group {
-    margin-bottom: var(--spacing-lg);
+/* 类别特定字段 - 网格布局 */
+.category-fields-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
 }
 
-.category-field-group:last-child {
-    margin-bottom: 0;
+.category-field-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.category-field-item .form-label {
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.category-field-item .form-control {
+    width: 100%;
+}
+
+.category-field-item .form-help {
+    margin-top: var(--spacing-xs);
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* 字符计数 */
+.char-counter {
+    margin-top: var(--spacing-xs);
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+.char-counter span {
+    font-weight: 500;
+}
+
+/* 全宽字段（如textarea） */
+.category-field-item.full-width {
+    grid-column: 1 / -1;
 }
 
 /* 表单操作按钮 */
@@ -161,6 +199,59 @@
 .btn-lg {
     padding: var(--spacing-md) var(--spacing-xl);
     font-size: 16px;
+}
+
+/* 可折叠区域 */
+.collapsible-section {
+    position: relative;
+}
+
+.collapsible-header {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.collapsible-header:hover {
+    color: var(--primary-color);
+}
+
+.collapse-icon {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    color: var(--text-secondary);
+}
+
+.collapsible-section.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+
+.collapsible-content {
+    max-height: 2000px;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+}
+
+.collapsible-section.collapsed .collapsible-content {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* 优化表单字段间距 */
+.category-field-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.category-field-group:last-child {
+    margin-bottom: 0;
 }
 
 /* 响应式 */
@@ -183,6 +274,11 @@
 
     .form-actions .btn {
         width: 100%;
+    }
+
+    .category-fields-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
     }
 }
 
