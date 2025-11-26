@@ -1,0 +1,24 @@
+window.I18N_TEXT_MAP.zh = Object.assign({}, window.I18N_TEXT_MAP.zh, {
+    'postItem.form.detailsDescription': '请填写以下详细信息，帮助买家更好地了解您的物品。所有字段均为可选，但填写完整信息可以提高物品的吸引力。',
+    'postItem.fields.isbnHelp': '请输入13位 ISBN 编号',
+    'postItem.fields.courseCodeHelp': '输入课程代码（例如 CS101、MATH201）',
+    'postItem.fields.moduleNameHelp': '输入完整的课程或模块名称',
+    'postItem.fields.editionHelp': '输入版本号或版本描述',
+    'postItem.fields.authorHelp': '输入作者姓名',
+    'postItem.fields.brandHelp': '输入品牌或制造商名称',
+    'postItem.fields.modelHelp': '输入型号或产品名称',
+    'postItem.fields.warrantyStatusHelp': '选择当前保修状态',
+    'postItem.fields.purchaseDateHelp': '选择首次购买的日期',
+    'postItem.fields.accessoriesHelp': '列出包含的配件（如充电器、连接线、包装盒）',
+    'postItem.fields.itemTypeHelp': '说明家具类型（如书桌、椅子、床）',
+    'postItem.fields.sizeHelp': '填写尺寸（长度×宽度×高度）或尺码信息',
+    'postItem.fields.materialHelp': '填写材质组成',
+    'postItem.fields.assemblyRequiredHelp': '说明是否需要组装',
+    'postItem.fields.conditionDetailsHelp': '详细描述物品状况、磨损程度等信息',
+    'postItem.fields.sizeApparelHelp': '填写服装尺码（如 S、M、L、XL）',
+    'postItem.fields.colorHelp': '填写主要颜色',
+    'postItem.fields.genderHelp': '选择适用性别',
+    'postItem.fields.sizeSportsHelp': '填写尺寸或规格信息',
+    'postItem.fields.sportTypeHelp': '填写适用的运动类型'
+});
+
