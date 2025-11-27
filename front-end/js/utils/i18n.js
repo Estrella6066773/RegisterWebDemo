@@ -122,12 +122,19 @@
             const key = el.getAttribute('data-i18n-key');
             if (key) {
                 if (currentLang === 'zh') {
+                    // 中文：优先使用 data-i18n-zh 属性，如果没有则从 TEXT_MAP 获取
                     const zhValue = el.getAttribute('data-i18n-zh');
-                    if (zhValue !== null) {
+                    if (zhValue !== null && zhValue !== '') {
                         setElementContent(el, zhValue);
+                    } else {
+                        const mappedValue = getTextFromMap(key, 'zh');
+                        if (mappedValue !== null) {
+                            setElementContent(el, mappedValue);
+                        }
                     }
                 } else {
-                    const mappedValue = getTextFromMap(key);
+                    // 英文：从 TEXT_MAP 获取
+                    const mappedValue = getTextFromMap(key, 'en');
                     if (mappedValue !== null) {
                         setElementContent(el, mappedValue);
                     }
@@ -135,6 +142,7 @@
                 return;
             }
 
+            // 处理只有 data-i18n-zh 或 data-i18n-en 属性的元素
             const targetAttr = `data-i18n-${currentLang}`;
             const value = el.getAttribute(targetAttr);
             if (value !== null) {
@@ -214,12 +222,23 @@
             persistLanguage(lang);
         }
         applyTranslations();
+        // 触发语言切换事件，让其他模块可以响应
+        document.dispatchEvent(new CustomEvent('i18n:languageChanged', { 
+            detail: { lang: currentLang } 
+        }));
     }
 
     /**
      * 获取动态消息
      */
     function translate(key, fallback = '') {
+        // 首先尝试从 TEXT_MAP 中获取（包含所有翻译）
+        const textFromMap = getTextFromMap(key, currentLang);
+        if (textFromMap !== null) {
+            return textFromMap;
+        }
+
+        // 如果 TEXT_MAP 中没有，尝试从 MESSAGE_MAP 中获取
         const segments = key.split('.');
         let cursor = MESSAGE_MAP[currentLang];
         for (const segment of segments) {
@@ -232,8 +251,14 @@
 
         if (typeof cursor === 'string') return cursor;
 
-        // 使用中文作为默认回退
-        let zhCursor = MESSAGE_MAP[DEFAULT_LANG];
+        // 使用中文作为默认回退（从 TEXT_MAP）
+        const zhTextFromMap = getTextFromMap(key, 'zh');
+        if (zhTextFromMap !== null) {
+            return zhTextFromMap;
+        }
+
+        // 最后尝试从 MESSAGE_MAP 的中文版本获取
+        let zhCursor = MESSAGE_MAP['zh'];
         for (const segment of segments) {
             if (!zhCursor || typeof zhCursor !== 'object') {
                 zhCursor = null;

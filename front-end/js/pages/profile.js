@@ -27,6 +27,14 @@ document.addEventListener('DOMContentLoaded', function() {
     initProfilePage();
 });
 
+// 监听语言切换事件，重新渲染动态内容
+document.addEventListener('i18n:languageChanged', function() {
+    if (currentProfile) {
+        // 重新渲染所有动态内容
+        renderProfile(currentProfile);
+    }
+});
+
 // 当前用户资料数据
 let currentProfile = null;
 
@@ -319,7 +327,14 @@ function formatDate(date) {
     // 如果是字符串，先尝试解析
     const d = typeof date === 'number' ? new Date(date) : new Date(date);
     if (isNaN(d.getTime())) return t('profile.date.unknown', '未知');
-    return d.toLocaleDateString('zh-CN', {
+    
+    // 根据当前语言选择日期格式
+    const currentLang = (window.I18n && typeof window.I18n.getLang === 'function') 
+        ? window.I18n.getLang() 
+        : 'en';
+    const locale = currentLang === 'zh' ? 'zh-CN' : 'en-US';
+    
+    return d.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
