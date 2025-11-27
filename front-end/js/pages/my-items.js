@@ -258,8 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.getElementById('refreshBtn').addEventListener('click', load);
-
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text || '';
