@@ -142,12 +142,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${t('myItems.card.status', '状态：')}${statusText}</span>
                         <span>${t('myItems.card.views', '浏览：')}${it.viewCount || 0}</span>
                     </div>
-                    <div style="display:flex;gap:8px;margin-top:8px;">
-                        <button class="btn btn-secondary" data-edit="${it.id}">${t('myItems.actions.edit', '编辑')}</button>
-                        <button class="btn btn-secondary" data-status="RESERVED" data-id="${it.id}">${t('myItems.actions.markReserved', '标记预定')}</button>
-                        <button class="btn btn-secondary" data-status="AVAILABLE" data-id="${it.id}">${t('myItems.actions.markAvailable', '标记可售')}</button>
-                        <button class="btn btn-secondary" data-status="SOLD" data-id="${it.id}">${t('myItems.actions.markSold', '标记已售')}</button>
-                        <button class="btn btn-secondary" data-del="${it.id}">${t('myItems.actions.delete', '删除')}</button>
+                    <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;">
+                        <div style="display:flex;gap:4px;">
+                            <button class="btn btn-secondary" data-edit="${it.id}" style="flex:1;">${t('myItems.actions.edit', '编辑')}</button>
+                            <button class="btn btn-danger" data-del="${it.id}" style="flex:1;">${t('myItems.actions.delete', '删除')}</button>
+                        </div>
+                        <div style="display:flex;gap:4px;">
+                            <button class="btn btn-secondary" data-status="RESERVED" data-id="${it.id}" style="flex:1;">${t('myItems.actions.markReserved', '标记预定')}</button>
+                            <button class="btn btn-secondary" data-status="AVAILABLE" data-id="${it.id}" style="flex:1;">${t('myItems.actions.markAvailable', '标记可售')}</button>
+                            <button class="btn btn-secondary" data-status="SOLD" data-id="${it.id}" style="flex:1;">${t('myItems.actions.markSold', '标记已售')}</button>
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -236,7 +240,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(t('myItems.alert.loadDetailFailed', '获取物品详情失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
             }
         } else if (delId) {
-            if (confirm(t('myItems.confirm.delete', '确定删除该宝贝吗？'))) {
+            const itemTitle = e.target.closest('.item-card').querySelector('.item-title').textContent;
+            if (confirm(t('myItems.confirm.delete', `确定要删除"${itemTitle}"吗？此操作不可撤销。`))) {
                 try {
                     await getItemAPI().deleteItem(delId);
                     load();

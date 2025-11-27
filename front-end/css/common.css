@@ -117,6 +117,17 @@ body {
     opacity: 0.9;
 }
 
+.btn-danger {
+    background-color: var(--error-color);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background-color: var(--white);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
+
 .btn-block {
     width: 100%;
     display: block;
