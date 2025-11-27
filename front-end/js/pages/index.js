@@ -4,6 +4,14 @@
  * ============================================
  */
 
+// 国际化函数
+function t(key, fallback = '') {
+    if (window.I18n && typeof window.I18n.t === 'function') {
+        return I18n.t(key, fallback || key);
+    }
+    return fallback || key;
+}
+
 // 选择可用的 ItemAPI（优先使用前端模拟，其次真实后端）
 function getItemAPI() {
     if (typeof window !== 'undefined') {
@@ -92,11 +100,11 @@ function getConditionClass(condition) {
 // 获取状况文本
 function getConditionText(condition) {
     const map = {
-        'NEW': '全新',
-        'LIKE_NEW': '几乎全新',
-        'GOOD': '良好',
-        'FAIR': '一般',
-        'POOR': '较差',
+        'NEW': t('postItem.condition.new', '全新'),
+        'LIKE_NEW': t('postItem.condition.likeNew', '几乎全新'),
+        'GOOD': t('postItem.condition.good', '良好'),
+        'FAIR': t('postItem.condition.fair', '一般'),
+        'POOR': t('postItem.condition.poor', '较差'),
     };
     return map[condition] || condition;
 }
@@ -111,5 +119,10 @@ function escapeHtml(text) {
 // 页面加载时执行
 document.addEventListener('DOMContentLoaded', function() {
     loadFeaturedItems();
+    
+    // 监听语言切换事件，重新加载内容
+    document.addEventListener('i18n:languageChanged', function() {
+        loadFeaturedItems();
+    });
 });
 

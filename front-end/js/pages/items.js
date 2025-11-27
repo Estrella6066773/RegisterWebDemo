@@ -81,6 +81,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 加载物品列表
     loadItems();
+    
+    // 监听语言切换事件，重新加载内容
+    document.addEventListener('i18n:languageChanged', function() {
+        loadItems();
+    });
 });
 
 // 处理搜索
@@ -333,11 +338,11 @@ function getConditionClass(condition) {
 
 function getConditionText(condition) {
     const map = {
-        'NEW': '全新',
-        'LIKE_NEW': '几乎全新',
-        'GOOD': '良好',
-        'FAIR': '一般',
-        'POOR': '较差',
+        'NEW': t('postItem.condition.new', '全新'),
+        'LIKE_NEW': t('postItem.condition.likeNew', '几乎全新'),
+        'GOOD': t('postItem.condition.good', '良好'),
+        'FAIR': t('postItem.condition.fair', '一般'),
+        'POOR': t('postItem.condition.poor', '较差'),
     };
     return map[condition] || condition;
 }
