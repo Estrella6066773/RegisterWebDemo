@@ -33,6 +33,8 @@ function getItemAPI() {
     };
 }
 
+let currentDetailItemId = null;
+
 // 加载物品详情
 async function loadItemDetail() {
     const itemId = getItemId();
@@ -174,14 +176,17 @@ function renderItemDetail(item) {
                             <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
                                 <div style="font-size:14px;color:var(--text-secondary);">${t('itemDetail.status.current', '当前状态：')}<b id="statusText">${getStatusText(item.status)}</b></div>
                                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                                    <button class="btn btn-secondary" onclick="updateStatus('${item.id}','RESERVED')">${t('itemDetail.actions.markReserved', '标记为已预定')}</button>
-                                    <button class="btn btn-secondary" onclick="updateStatus('${item.id}','AVAILABLE')">${t('itemDetail.actions.markAvailable', '标记为可售')}</button>
-                                    <button class="btn btn-secondary" onclick="updateStatus('${item.id}','SOLD')">${t('itemDetail.actions.markSold', '标记为已售出')}</button>
+                                    <button class="btn btn-secondary" data-status-btn="RESERVED" onclick="updateStatus('${item.id}','RESERVED')">${t('itemDetail.actions.markReserved', '标记为已预定')}</button>
+                                    <button class="btn btn-secondary" data-status-btn="AVAILABLE" onclick="updateStatus('${item.id}','AVAILABLE')">${t('itemDetail.actions.markAvailable', '标记为可售')}</button>
+                                    <button class="btn btn-secondary" data-status-btn="SOLD" onclick="updateStatus('${item.id}','SOLD')">${t('itemDetail.actions.markSold', '标记为已售出')}</button>
                                 </div>
                             </div>
                         ` : `
-                            <button class="btn btn-secondary" onclick="toggleWatch('${item.id}')" style="margin-top:8px;">
-                                ⭐ ${t('itemDetail.actions.toggleWatch', '加入/取消关注')}
+                            <button class="btn btn-secondary watch-toggle-btn" 
+                                data-watch-btn="${item.id}"
+                                onclick="toggleWatch('${item.id}')"
+                                style="margin-top:8px;">
+                                ${getWatchButtonLabel(item.id)}
                             </button>
                         `}
                     ` : `
@@ -220,6 +225,11 @@ function renderItemDetail(item) {
             </div>
         </div>
     `;
+
+    // 更新关注按钮状态
+    currentDetailItemId = item.id;
+    updateWatchButtonState(item.id);
+    updateStatusButtons(item.status);
 
     // 加载评价
     loadReviews(item.id);
@@ -330,11 +340,10 @@ function changeMainImage(imageUrl) {
 // 联系卖家
 function contactSeller(sellerId) {
     if (!sellerId) {
-        showGlobalError(t('itemDetail.alert.sellerUnavailable', '卖家信息不可用'));
+        showLocalhoodToast('error', t('itemDetail.alert.sellerUnavailable', '卖家信息不可用'));
         return;
     }
-    // TODO: 实现联系卖家功能
-    showGlobalError(t('itemDetail.alert.contactInDevelopment', '联系卖家功能开发中...'));
+    showLocalhoodToast('info', t('itemDetail.alert.contactInDevelopment', '联系卖家功能开发中...'));
 }
 
 // 编辑物品
@@ -351,13 +360,13 @@ async function deleteItem(itemId) {
 
     try {
         await getItemAPI().deleteItem(itemId);
-        showSuccessMessage(t('itemDetail.alert.deleted', '物品已删除'));
+        showLocalhoodToast('success', t('itemDetail.alert.deleted', '物品已删除'));
         setTimeout(() => {
             window.location.href = 'items.html';
         }, 1500);
     } catch (error) {
         console.error('删除物品失败:', error);
-        showGlobalError(t('itemDetail.alert.deleteFailed', '删除失败：') + (error.message || t('itemDetail.error.retry', '请稍后重试')));
+        showLocalhoodToast('error', t('itemDetail.alert.deleteFailed', '删除失败：') + (error.message || t('itemDetail.error.retry', '请稍后重试')));
     }
 }
 
@@ -414,12 +423,34 @@ function toggleWatch(itemId) {
     const idx = list.indexOf(itemId);
     if (idx >= 0) {
         list.splice(idx, 1);
-        showSuccessMessage(t('itemDetail.alert.unwatched', '已取消关注'));
     } else {
         list.push(itemId);
-        showSuccessMessage(t('itemDetail.alert.watched', '已加入关注列表'));
     }
     localStorage.setItem(key, JSON.stringify(list));
+    updateWatchButtonState(itemId);
+}
+
+function isItemWatched(itemId) {
+    const raw = localStorage.getItem('watchlist');
+    const list = raw ? JSON.parse(raw) : [];
+    return list.includes(itemId);
+}
+
+function getWatchButtonLabel(itemId) {
+    const watched = isItemWatched(itemId);
+    return watched 
+        ? `✔ ${t('itemDetail.actions.watched', '已关注')}`
+        : `⭐ ${t('itemDetail.actions.watch', '加入关注')}`;
+}
+
+function updateWatchButtonState(itemId) {
+    const btn = document.querySelector(`[data-watch-btn="${itemId}"]`);
+    if (!btn) return;
+    const watched = isItemWatched(itemId);
+    btn.classList.toggle('btn-watching', watched);
+    btn.textContent = watched 
+        ? `✔ ${t('itemDetail.actions.watched', '已关注')}`
+        : `⭐ ${t('itemDetail.actions.watch', '加入关注')}`;
 }
 
 // 卖家更新状态（调用API）
@@ -427,10 +458,18 @@ async function updateStatus(itemId, status) {
     try {
         await getItemAPI().updateItemStatus(itemId, status);
         document.getElementById('statusText').textContent = getStatusText(status);
-        showSuccessMessage(t('itemDetail.alert.statusUpdated', '状态已更新为：') + getStatusText(status));
+        updateStatusButtons(status);
     } catch (e) {
         showGlobalError(t('itemDetail.alert.updateFailed', '更新失败：') + (e.message || t('itemDetail.error.retry', '请稍后再试')));
     }
+}
+
+function updateStatusButtons(status) {
+    const buttons = document.querySelectorAll('[data-status-btn]');
+    buttons.forEach((btn) => {
+        const target = btn.getAttribute('data-status-btn');
+        btn.classList.toggle('btn-status-active', target === status);
+    });
 }
 
 // 加载评价
@@ -475,30 +514,7 @@ async function submitReview(itemId) {
  * @param {string} message - 错误消息
  */
 function showGlobalError(message) {
-    // 创建或获取全局错误容器
-    let errorContainer = document.getElementById('globalErrorContainer');
-    if (!errorContainer) {
-        errorContainer = document.createElement('div');
-        errorContainer.id = 'globalErrorContainer';
-        errorContainer.className = 'global-error';
-        const container = document.querySelector('.item-detail-container');
-        if (container) {
-            container.insertBefore(errorContainer, container.firstChild);
-        }
-    }
-    
-    errorContainer.innerHTML = `
-        <div class="error-message">
-            <span class="error-icon">⚠️</span>
-            <span>${message}</span>
-        </div>
-    `;
-    errorContainer.style.display = 'block';
-    
-    // 3秒后自动隐藏
-    setTimeout(() => {
-        errorContainer.style.display = 'none';
-    }, 3000);
+    showLocalhoodToast('error', message);
 }
 
 /**
@@ -506,34 +522,55 @@ function showGlobalError(message) {
  * @param {string} message - 成功消息
  */
 function showSuccessMessage(message) {
-    // 创建或获取成功消息容器
-    let successContainer = document.getElementById('globalSuccessContainer');
-    if (!successContainer) {
-        successContainer = document.createElement('div');
-        successContainer.id = 'globalSuccessContainer';
-        successContainer.className = 'global-success';
-        const container = document.querySelector('.item-detail-container');
-        if (container) {
-            container.insertBefore(successContainer, container.firstChild);
-        }
+    showLocalhoodToast('success', message);
+}
+
+function showLocalhoodToast(type, message) {
+    if (!message) return;
+    let stack = document.getElementById('toastStack');
+    if (!stack) {
+        stack = document.createElement('div');
+        stack.id = 'toastStack';
+        stack.className = 'toast-stack';
+        document.body.appendChild(stack);
     }
-    
-    successContainer.innerHTML = `
-        <div class="success-message">
-            <span class="success-icon">✅</span>
-            <span>${message}</span>
-        </div>
+
+    const toast = document.createElement('div');
+    toast.className = `localhood-toast localhood-toast-${type}`;
+    const iconMap = {
+        success: '✅',
+        error: '⚠️',
+        warning: '⚠️',
+        info: 'ℹ️',
+    };
+    toast.innerHTML = `
+        <span class="localhood-toast-icon">${iconMap[type] || 'ℹ️'}</span>
+        <span>${message}</span>
     `;
-    successContainer.style.display = 'block';
-    
-    // 3秒后自动隐藏
+    stack.appendChild(toast);
+
     setTimeout(() => {
-        successContainer.style.display = 'none';
-    }, 3000);
+        toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-6px)';
+    }, 2800);
+
+    setTimeout(() => {
+        toast.remove();
+        if (!stack.hasChildNodes()) {
+            stack.remove();
+        }
+    }, 3200);
 }
 
 // 页面加载时执行
 document.addEventListener('DOMContentLoaded', function() {
     loadItemDetail();
+});
+
+document.addEventListener('i18n:languageChanged', function() {
+    if (currentDetailItemId) {
+        updateWatchButtonState(currentDetailItemId);
+    }
 });
 

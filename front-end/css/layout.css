@@ -94,6 +94,9 @@
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .nav-link:hover {
@@ -102,6 +105,10 @@
 
 .nav-link.active {
     color: var(--highlight-pink);
+}
+
+.nav-arrow {
+    font-size: 12px;
 }
 
 /* 主内容区 */

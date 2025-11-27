@@ -17,7 +17,10 @@
                         <nav class="nav">
                             <a href="/index.html" class="nav-link" data-nav-item="home" data-i18n-key="common.nav.home">首页</a>
                             <div class="nav-dropdown" data-nav-item="browse">
-                                <a href="/pages/items.html" class="nav-link nav-dropdown-toggle" data-i18n-key="common.nav.items">浏览宝贝 ▾</a>
+                                <a href="/pages/items.html" class="nav-link nav-dropdown-toggle">
+                                    <span data-i18n-key="common.nav.items">浏览宝贝</span>
+                                    <span class="nav-arrow" aria-hidden="true">▾</span>
+                                </a>
                                 <div class="dropdown-menu">
                                     <a href="/pages/items.html" class="dropdown-item" data-i18n-key="common.nav.items">浏览宝贝</a>
                                     <a href="/pages/my-items.html" class="dropdown-item" data-i18n-key="common.nav.myItems">我的宝贝</a>
@@ -36,7 +39,8 @@
                                         data-label-logged-out-en="Not Logged In"
                                         data-i18n-key="common.nav.profile"
                                         data-i18n-zh="个人中心"
-                                    >Profile</span> ▾
+                                    >Profile</span>
+                                    <span class="nav-arrow" aria-hidden="true">▾</span>
                                 </a>
                                 <div class="dropdown-menu" id="profileMenu">
                                     <a href="/pages/profile.html" class="dropdown-item" id="profileLink" data-auth="logged-in" data-i18n-key="common.nav.profile">个人资料</a>
