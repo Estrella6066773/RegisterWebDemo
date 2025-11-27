@@ -1,18 +1,12 @@
 /**
- * 我的宝贝 - 管理页（基于mock）
+ * 我的宝贝 - 管理页
  */
 
 function getItemAPI() {
     if (window.MockItemAPI) return window.MockItemAPI;
     if (window.ItemAPI) return window.ItemAPI;
-    return {
-        async getMyItems() { return { items: [] }; },
-        async createItem() { return { item: null }; },
-        async updateItem() { return { item: null }; },
-        async deleteItem() { return { ok: true }; },
-        async updateItemStatus() { return { ok: true }; },
-        async getItemDetail() { return { data: null }; },
-    };
+    // 如果 ItemAPI 未加载，抛出错误而不是返回空对象
+    throw new Error('ItemAPI 未加载，请检查脚本加载顺序');
 }
 
 let editingId = null;
@@ -26,6 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // 检查 ItemAPI 是否已加载
+    if (!window.ItemAPI && !window.MockItemAPI) {
+        console.error('ItemAPI 未加载');
+        const list = document.getElementById('myItemsList');
+        const t = (key, fallback = '') => window.I18n ? window.I18n.t(key, fallback) : fallback;
+        list.innerHTML = `<div class="items-empty" style="grid-column: 1 / -1;"><div class="items-empty-icon">⚠️</div><p>${t('myItems.error.loadFailed', '加载失败')}</p><p style="font-size:14px;color:var(--text-secondary);">API 模块未正确加载，请刷新页面重试</p></div>`;
+        return;
+    }
+
     const list = document.getElementById('myItemsList');
     const modal = document.getElementById('editorModal');
 
@@ -36,8 +39,19 @@ document.addEventListener('DOMContentLoaded', () => {
     async function load() {
         list.innerHTML = `<div class="items-loading" style="text-align:center;padding:40px;color:var(--text-secondary);"><p>${t('myItems.loading', '正在加载您的宝贝...')}</p></div>`;
         try {
-            const resp = await getItemAPI().getMyItems();
-            const items = resp.data || resp.items || [];
+            const api = getItemAPI();
+            const resp = await api.getMyItems();
+            
+            // 处理不同的响应格式
+            let items = [];
+            if (resp && resp.data) {
+                items = Array.isArray(resp.data) ? resp.data : [];
+            } else if (resp && resp.items) {
+                items = Array.isArray(resp.items) ? resp.items : [];
+            } else if (Array.isArray(resp)) {
+                items = resp;
+            }
+            
             if (items.length === 0) {
                 list.innerHTML = `
                     <div class="items-empty" style="grid-column: 1 / -1;">
@@ -49,31 +63,64 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             list.innerHTML = items.map(renderCard).join('');
         } catch (e) {
-            list.innerHTML = `<div class="items-empty" style="grid-column: 1 / -1;"><div class="items-empty-icon">⚠️</div><p>${t('myItems.error.loadFailed', '加载失败')}</p></div>`;
+            console.error('加载我的宝贝失败:', e);
+            
+            // 处理不同类型的错误
+            let errorMsg = '未知错误';
+            if (e.type === 'AUTH_ERROR') {
+                errorMsg = '登录已过期，请重新登录';
+                // 清除认证信息并跳转到登录页
+                setTimeout(() => {
+                    if (typeof clearAuth === 'function') {
+                        clearAuth();
+                    }
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else if (e.type === 'NETWORK_ERROR') {
+                errorMsg = '网络连接失败，请检查网络或服务器是否运行';
+            } else if (e.message) {
+                errorMsg = e.message;
+            } else if (e.type) {
+                errorMsg = e.type;
+            }
+            
+            list.innerHTML = `
+                <div class="items-empty" style="grid-column: 1 / -1;">
+                    <div class="items-empty-icon">⚠️</div>
+                    <p>${t('myItems.error.loadFailed', '加载失败')}</p>
+                    <p style="font-size:14px;color:var(--text-secondary);">${errorMsg}</p>
+                    <button class="btn btn-primary" onclick="location.reload()" style="margin-top:12px;">${t('common.actions.refresh', '刷新页面')}</button>
+                </div>`;
         }
     }
 
     function renderCard(it) {
-        // 处理图片URL - 如果是相对路径，确保以/开头
+        // 处理图片URL
         let img = 'https://picsum.photos/seed/fallback/800/600';
-        if (it.images && Array.isArray(it.images) && it.images.length > 0) {
-            img = it.images[0];
-            // 如果是相对路径且不是以/开头，添加/
-            if (img && !img.startsWith('http') && !img.startsWith('/')) {
-                img = '/' + img;
-            }
+        
+        // 获取图片数组
+        let images = null;
+        if (it.images && Array.isArray(it.images)) {
+            images = it.images;
         } else if (it.images && typeof it.images === 'string') {
-            // 处理字符串格式的图片
             try {
                 const parsed = JSON.parse(it.images);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    img = parsed[0];
-                    if (img && !img.startsWith('http') && !img.startsWith('/')) {
-                        img = '/' + img;
-                    }
+                if (Array.isArray(parsed)) {
+                    images = parsed;
                 }
             } catch (e) {
                 // 解析失败，使用默认图片
+            }
+        }
+        
+        // 使用第一张图片
+        if (images && images.length > 0 && images[0]) {
+            img = images[0];
+            // 处理相对路径：如果不是完整URL，确保以/开头
+            if (img && !img.startsWith('http://') && !img.startsWith('https://')) {
+                if (!img.startsWith('/')) {
+                    img = '/' + img;
+                }
             }
         }
         const status = it.status || 'AVAILABLE';
@@ -123,13 +170,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 保存
     document.getElementById('saveEdit').addEventListener('click', async () => {
+        const title = document.getElementById('f_title').value.trim();
+        const price = Number(document.getElementById('f_price').value || 0);
+        
+        // 验证必填字段
+        if (!title) {
+            alert(t('myItems.alert.titleRequired', '请输入标题'));
+            return;
+        }
+        if (price <= 0) {
+            alert(t('myItems.alert.priceRequired', '请输入有效的价格'));
+            return;
+        }
+        
         const data = {
-            title: document.getElementById('f_title').value.trim(),
-            price: Number(document.getElementById('f_price').value || 0),
+            title: title,
+            price: price,
             category: document.getElementById('f_category').value,
             condition: document.getElementById('f_condition').value,
             description: document.getElementById('f_desc').value.trim(),
         };
+        
         try {
             if (editingId) {
                 await getItemAPI().updateItem(editingId, data);
@@ -139,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.classList.add('hidden');
             load();
         } catch (e) {
+            console.error('保存失败:', e);
             alert(t('myItems.alert.saveFailed', '保存失败：') + (e.message || t('myItems.alert.retry', '请稍后重试')));
         }
     });
@@ -156,7 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // 取详情填充
             try {
                 const res = await getItemAPI().getItemDetail(editId);
-                const it = res.item || res.data || res;
+                // 后端返回格式: { success: true, data: {...} }
+                const it = res.data || res.item || res;
                 if (!it || !it.id) {
                     throw new Error('无法获取物品详情');
                 }
@@ -178,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await getItemAPI().deleteItem(delId);
                     load();
                 } catch (err) {
+                    console.error('删除失败:', err);
                     alert(t('myItems.alert.deleteFailed', '删除失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
                 }
             }
@@ -186,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await getItemAPI().updateItemStatus(idForStatus, status);
                 load();
             } catch (err) {
+                console.error('更新状态失败:', err);
                 alert(t('myItems.alert.statusFailed', '更新状态失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
             }
         }

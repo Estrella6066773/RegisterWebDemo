@@ -205,6 +205,48 @@ router.get('/featured', (req, res) => {
 });
 
 /**
+ * GET /api/items/my
+ * 获取当前用户的物品列表
+ */
+router.get('/my', authenticateToken, (req, res) => {
+    const db = getDatabase();
+    const { status, page = 1, pageSize = 20 } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(pageSize);
+
+    let query = 'SELECT * FROM items WHERE seller_id = ?';
+    const params = [req.user.userId];
+
+    if (status) {
+        query += ' AND IFNULL(status, \'AVAILABLE\') = ?';
+        params.push(status);
+    } else {
+        query += ' AND IFNULL(status, \'AVAILABLE\') != "DELETED"';
+    }
+
+    query += ' ORDER BY post_date DESC LIMIT ? OFFSET ?';
+    params.push(parseInt(pageSize), offset);
+
+    db.all(query, params, (err, items) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({
+                success: false,
+                message: '获取物品列表失败'
+            });
+        }
+
+        // 转换字段名称
+        const processedItems = convertItemData(items);
+
+        res.json({
+            success: true,
+            data: processedItems,
+            items: processedItems // 兼容前端可能的两种格式
+        });
+    });
+});
+
+/**
  * GET /api/items/:id
  * 获取物品详情
  */
@@ -488,48 +530,6 @@ router.post('/:id/view', (req, res) => {
         res.json({
             success: true,
             message: '浏览量已更新'
-        });
-    });
-});
-
-/**
- * GET /api/items/my
- * 获取当前用户的物品列表
- */
-router.get('/my', authenticateToken, (req, res) => {
-    const db = getDatabase();
-    const { status, page = 1, pageSize = 20 } = req.query;
-    const offset = (parseInt(page) - 1) * parseInt(pageSize);
-
-    let query = 'SELECT * FROM items WHERE seller_id = ?';
-    const params = [req.user.userId];
-
-    if (status) {
-        query += ' AND IFNULL(status, \'AVAILABLE\') = ?';
-        params.push(status);
-    } else {
-        query += ' AND IFNULL(status, \'AVAILABLE\') != "DELETED"';
-    }
-
-    query += ' ORDER BY post_date DESC LIMIT ? OFFSET ?';
-    params.push(parseInt(pageSize), offset);
-
-    db.all(query, params, (err, items) => {
-        if (err) {
-            console.error('Database error:', err);
-            return res.status(500).json({
-                success: false,
-                message: '获取物品列表失败'
-            });
-        }
-
-        // 转换字段名称
-        const processedItems = convertItemData(items);
-
-        res.json({
-            success: true,
-            data: processedItems,
-            items: processedItems // 兼容前端可能的两种格式
         });
     });
 });
