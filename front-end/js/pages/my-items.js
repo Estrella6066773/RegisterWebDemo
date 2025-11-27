@@ -1,6 +1,3 @@
-/**
- * 我的宝贝 - 管理页
- */
 
 function getItemAPI() {
     if (window.MockItemAPI) return window.MockItemAPI;

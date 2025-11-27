@@ -1,8 +1,6 @@
-/* ============================================
-   物品浏览页面样式 - Items Browse Page Styles
-   ============================================ */
 
-/* 搜索栏样式 */
+
+
 .search-container {
     padding: 0;
 }
@@ -67,7 +65,7 @@
     border-color: var(--primary-color);
 }
 
-/* 筛选器侧边栏 */
+
 .filters-sidebar {
     background-color: var(--white);
     border-radius: var(--radius-lg);
@@ -138,7 +136,6 @@
     flex: 0 0 auto;
 }
 
-/* 物品网格 */
 .items-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -252,7 +249,7 @@
     color: #8c8c8c;
 }
 
-/* 空状态 */
+
 .items-empty {
     text-align: center;
     padding: calc(var(--spacing-xl) * 2);
@@ -264,7 +261,7 @@
     margin-bottom: var(--spacing-md);
 }
 
-/* 分页 */
+
 .pagination {
     display: flex;
     justify-content: center;
@@ -305,7 +302,6 @@
     margin: 0 var(--spacing-md);
 }
 
-/* 响应式 */
 @media (max-width: 768px) {
     .search-input-group {
         flex-direction: column;

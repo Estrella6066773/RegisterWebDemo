@@ -1,8 +1,4 @@
-/**
- * ============================================
- * 物品详情页面逻辑 - Item Detail Page Logic
- * ============================================
- */
+
 
 function t(key, fallback = '') {
     return window.I18n ? window.I18n.t(key, fallback) : fallback;
@@ -123,8 +119,8 @@ function renderItemDetail(item) {
     // 渲染详细信息
     const detailsHtml = renderItemDetails(item);
 
-    // 渲染卖家信息
-    const sellerHtml = item.seller ? renderSellerInfo(item.seller) : '';
+    // 渲染卖家信息（放置在标题上方）
+    const sellerInlineHtml = item.seller ? renderSellerInfo(item.seller, 'inline') : '';
 
     container.innerHTML = `
         <div class="item-detail-container">
@@ -135,6 +131,7 @@ function renderItemDetail(item) {
 
             <!-- 右侧：商品信息区域 -->
             <div class="item-detail-info">
+                ${sellerInlineHtml}
                 <div class="item-header">
                     <h1 class="item-title">${escapeHtml(item.title)}</h1>
                     <div class="item-meta-info">
@@ -192,16 +189,14 @@ function renderItemDetail(item) {
                             🔐 ${t('itemDetail.actions.loginToContact', '登录后联系卖家')}
                         </a>
                     `}
-                    <a href="items.html" class="btn btn-secondary" style="margin-top:8px;">
+                    <a href="items.html" class="btn btn-secondary btn-contact" style="margin-top:8px;">
                         ← ${t('itemDetail.actions.backToBrowse', '返回浏览')}
                     </a>
                 </div>
             </div>
 
-            <!-- 底部：卖家信息和评价 -->
+            <!-- 底部：仅保留评价 -->
             <div class="item-detail-sidebar">
-                ${sellerHtml}
-                
                 <div class="sidebar-card">
                     <h3 class="sidebar-card-title">${t('itemDetail.reviews.title', '买家评价')}</h3>
                     <div id="reviewsContainer" style="display:flex;flex-direction:column;gap:12px;"></div>
@@ -290,9 +285,10 @@ function renderItemDetails(item) {
 }
 
 // 渲染卖家信息
-function renderSellerInfo(seller) {
+function renderSellerInfo(seller, placement = 'sidebar') {
+    const cardClass = placement === 'inline' ? 'inline-seller-card' : 'sidebar-card';
     return `
-        <div class="sidebar-card">
+        <div class="${cardClass}">
             <h3 class="sidebar-card-title">${t('itemDetail.seller.title', '卖家信息')}</h3>
             <div class="seller-info">
                 <div class="seller-avatar">

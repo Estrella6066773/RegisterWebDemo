@@ -1,8 +1,3 @@
-/**
- * ============================================
- * 表单验证工具 - Validation Utilities
- * ============================================
- */
 
 function t(key, fallback = '') {
     return (window.I18n && window.I18n.t) ? window.I18n.t(key, fallback) : fallback;

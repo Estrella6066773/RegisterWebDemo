@@ -1,8 +1,3 @@
-/**
- * ============================================
- * 注册页面逻辑 - Register Page Logic
- * ============================================
- */
 
 // 等待DOM加载完成
 document.addEventListener('DOMContentLoaded', function() {
