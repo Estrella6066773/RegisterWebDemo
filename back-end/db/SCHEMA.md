@@ -2,7 +2,7 @@
 
 ## SQLite 数据库结构
 
-数据库文件位置：`back-end/db/student_bay.db`
+数据库文件位置：`back-end/db/database.db`
 
 ## 表结构
 

@@ -61,7 +61,7 @@ NODE_ENV=development
 FRONTEND_URL=http://localhost:8080
 JWT_SECRET=your-secret-key-change-this
 JWT_EXPIRES_IN=7d
-DB_PATH=./db/student_bay.db
+DB_PATH=./db/database.db
 ```
 
 你可以复制 `.env.example` 文件：
