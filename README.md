@@ -23,10 +23,10 @@
 - 中间件、工具库、数据库脚本与 SQLite 文件集中在 `back-end/middleware|utils|db/`
 - 运行方式：`cd back-end && npm install && npm start`
 
-### 提交与运行建议
-1. **开发/演示**：始终在 `back-end` 目录下安装依赖并启动，服务器会自动挂载 `front-end` 静态页面与 `/api/*`。
-2. **提交打包**：保持 `front-end`、`back-end` 双目录结构，与 PDF 要求一致后再统一压缩。
-3. **环境变量**：在 `back-end/.env` 中设置 `PORT`、`JWT_SECRET`、`DB_PATH=./db/student_bay.db` 等键值。
+### 测试须知
+1. **开发/演示**：在 `back-end` 目录下安装依赖并启动，服务器会自动挂载 `front-end` 静态页面与 `/api/*`。
+2. **环境变量**：在 `back-end/.env` 中设置 `PORT`、`JWT_SECRET`、`DB_PATH=./db/student_bay.db` 等键值。
+3. **数据库和图片案例**：在项目中添加了后缀为`.example`的图片文件夹和数据库文件，作为快速检验功能的路径，里面存有已经创建好的账号和商品，可以在更名后快速进行功能检验。
 
 如需更深入的 API、数据库及运行说明，请参考 [`back-end/README.md`](back-end/README.md)。该结构可直接映射到 Assessment Brief 中列出的“Front-end Folder / Back-end Folder / README File”要求，便于导师审核与归档。  
 
