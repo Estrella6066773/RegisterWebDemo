@@ -30,21 +30,36 @@
                                 <span data-i18n-key="verification.devMode.title">开发模式 - 测试验证</span>
                             </div>
                             <div class="notice-content">
-                                <p style="margin-bottom: 8px;" data-i18n-key="verification.devMode.description">当前为前端开发模式，无法发送真实邮件。您可以使用以下测试链接来模拟验证流程：</p>
-                                <p style="margin-bottom: 8px;"><strong data-i18n-key="verification.devMode.linkLabel">测试验证链接：</strong></p>
-                                <a href="#" id="testVerificationLink" class="dev-link" data-i18n-key="verification.devMode.linkText">点击这里模拟验证成功</a>
+                                <p style="margin-bottom: 8px;" data-i18n-key="verification.devMode.description">当前为前端开发模式，无法发送真实邮件。您可以使用以下测试工具来模拟验证流程：</p>
+                                
+                                <!-- 跳过验证按钮 -->
+                                <div style="margin: 16px 0; padding: 12px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
+                                    <p style="margin-bottom: 8px; font-weight: 500; color: #856404;" data-i18n-key="verification.devMode.skipTitle">跳过验证流程</p>
+                                    <p style="margin-bottom: 12px; font-size: 14px; color: #856404;" data-i18n-key="verification.devMode.skipDescription">仅跳过验证流程，账户仍为未验证状态。适用于测试未验证用户的功能。</p>
+                                    <button id="skipVerificationBtn" class="btn btn-warning" style="margin-right: 8px;" data-i18n-key="verification.devMode.skipButton">跳过验证流程</button>
+                                </div>
+                                
+                                <!-- 模拟验证链接 -->
+                                <div style="margin: 16px 0; padding: 12px; background: #e8f5e8; border-radius: 8px; border: 1px solid #b8d8b8;">
+                                    <p style="margin-bottom: 8px; font-weight: 500; color: #2d5a2d;" data-i18n-key="verification.devMode.simulateTitle">完成验证</p>
+                                    <p style="margin-bottom: 12px; font-size: 14px; color: #2d5a2d;" data-i18n-key="verification.devMode.simulateDescription">直接完成验证流程，创建已验证账号。</p>
+                                    <button id="testVerificationLink" class="btn btn-success" style="margin-right: 8px;" data-i18n-key="verification.devMode.linkText">完成验证</button>
+                                </div>
+                                
+                                <!--
                                 <p style="margin-top: 12px; font-size: 12px; color: var(--text-secondary);" data-i18n-key="verification.devMode.hint">
                                     💡 提示：在实际部署后，用户会收到包含验证链接的真实邮件。
                                 </p>
+                                -->
                             </div>
                         </div>
 
                         <!-- 等待验证状态 -->
                         <div id="pendingState" class="text-center">
                             <div style="font-size: 64px; margin-bottom: 24px;">📧</div>
-                            <h2 style="margin-bottom: 16px;" data-i18n-key="verification.pending.title">验证邮件已发送</h2>
+                            <h2 style="margin-bottom: 16px;" data-i18n-key="verification.pending.title">完成验证以创建账号</h2>
                             <p style="color: var(--text-secondary); margin-bottom: 24px;">
-                                <span data-i18n-key="verification.pending.sentPrefix">我们已向</span> <strong id="verificationEmail"></strong> <span data-i18n-key="verification.pending.sentSuffix">发送了验证邮件</span>
+                                <span data-i18n-key="verification.pending.sentPrefix">请验证邮箱</span> <strong id="verificationEmail"></strong> <span data-i18n-key="verification.pending.sentSuffix">以完成账号创建</span>
                             </p>
                             <p style="color: var(--text-secondary); margin-bottom: 32px;" data-i18n-key="verification.pending.instruction">
                                 请检查您的邮箱并点击验证链接。如果未收到邮件，请检查垃圾邮件文件夹。
@@ -91,109 +106,9 @@
     <script src="../js/utils/navbar.js"></script>
     <script src="../js/utils/api.js"></script>
     <script src="../js/utils/navigation.js"></script>
+    <script src="../js/pages/verification.js"></script>
     <script>
-        // 获取URL参数
-        function getUrlParameter(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
-
-        // 初始化验证页面
-        document.addEventListener('DOMContentLoaded', function() {
-            const email = getUrlParameter('email');
-            const token = getUrlParameter('token');
-            
-            if (email) {
-                document.getElementById('verificationEmail').textContent = email;
-            }
-            
-            // 开发模式：如果没有token，显示测试工具
-            if (!token) {
-                showDevModeNotice(email);
-            }
-            
-            // 如果有token，尝试验证
-            if (token) {
-                verifyEmail(token);
-            }
-            
-            // 重新发送验证邮件
-            document.getElementById('resendBtn').addEventListener('click', async function() {
-                if (!email) {
-                    alert(I18n.t('verification.alert.noEmail', '无法获取邮箱地址'));
-                    return;
-                }
-                
-                this.disabled = true;
-                this.textContent = I18n.t('verification.pending.sending', '发送中...');
-                
-                try {
-                    // 调用API（预留后端）
-                    // await UserAPI.sendVerificationEmail(email);
-                    
-                    // 模拟API调用
-                    setTimeout(() => {
-                        alert(I18n.t('verification.alert.resendSuccess', '验证邮件已重新发送！'));
-                        this.disabled = false;
-                        this.textContent = I18n.t('verification.pending.resend', '重新发送验证邮件');
-                    }, 1000);
-                } catch (error) {
-                    alert(I18n.t('verification.alert.resendFailed', '发送失败: {error}', { error: error.message || I18n.t('common.error.unknown', '未知错误') }));
-                    this.disabled = false;
-                    this.textContent = I18n.t('verification.pending.resend', '重新发送验证邮件');
-                }
-            });
-            
-            // 重试按钮
-            document.getElementById('retryBtn').addEventListener('click', function() {
-                if (email) {
-                    window.location.href = `verification.html?email=${encodeURIComponent(email)}`;
-                } else {
-                    window.location.href = 'register.html';
-                }
-            });
-            
-            // 测试验证链接（开发模式）
-            const testLink = document.getElementById('testVerificationLink');
-            if (testLink) {
-                testLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // 模拟验证成功
-                    const testToken = 'test_token_' + Date.now();
-                    verifyEmail(testToken);
-                });
-            }
-        });
-        
-        // 显示开发模式提示
-        function showDevModeNotice(email) {
-            const notice = document.getElementById('devModeNotice');
-            if (notice) {
-                notice.style.display = 'block';
-            }
-        }
-        
-        // 验证邮箱
-        async function verifyEmail(token) {
-            try {
-                // 调用API（预留后端）
-                // const response = await UserAPI.verifyEmail(token);
-                
-                // 模拟API调用
-                setTimeout(() => {
-                    // 显示成功状态
-                    document.getElementById('pendingState').classList.add('hidden');
-                    document.getElementById('errorState').classList.add('hidden');
-                    document.getElementById('successState').classList.remove('hidden');
-                }, 1000);
-            } catch (error) {
-                // 显示失败状态
-                document.getElementById('pendingState').classList.add('hidden');
-                document.getElementById('successState').classList.add('hidden');
-                document.getElementById('errorState').classList.remove('hidden');
-                document.getElementById('errorMessage').textContent = error.message || I18n.t('verification.error.defaultMessage', '验证失败');
-            }
-        }
+        // 移除旧的验证页面逻辑，现在使用 verification.js
     </script>
 </body>
 </html>

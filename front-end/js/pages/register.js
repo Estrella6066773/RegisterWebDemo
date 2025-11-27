@@ -264,7 +264,7 @@ function validateRegisterForm() {
     
     // 验证会员类型
     if (!memberType) {
-        alert(t('register.validation.memberType', '请选择会员类型'));
+        showGlobalError(t('register.validation.memberType', '请选择会员类型'));
         return false;
     }
     
@@ -293,6 +293,64 @@ function validateRegisterForm() {
 }
 
 /**
+ * 显示全局错误信息
+ * @param {string} message - 错误消息
+ */
+function showGlobalError(message) {
+    // 创建或获取全局错误容器
+    let errorContainer = document.getElementById('globalErrorContainer');
+    if (!errorContainer) {
+        errorContainer = document.createElement('div');
+        errorContainer.id = 'globalErrorContainer';
+        errorContainer.className = 'global-error';
+        const form = document.getElementById('registerForm');
+        form.insertBefore(errorContainer, form.firstChild);
+    }
+    
+    errorContainer.innerHTML = `
+        <div class="error-message">
+            <span class="error-icon">⚠️</span>
+            <span>${message}</span>
+        </div>
+    `;
+    errorContainer.style.display = 'block';
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        errorContainer.style.display = 'none';
+    }, 3000);
+}
+
+/**
+ * 显示成功消息
+ * @param {string} message - 成功消息
+ */
+function showSuccessMessage(message) {
+    // 创建或获取成功消息容器
+    let successContainer = document.getElementById('globalSuccessContainer');
+    if (!successContainer) {
+        successContainer = document.createElement('div');
+        successContainer.id = 'globalSuccessContainer';
+        successContainer.className = 'global-success';
+        const form = document.getElementById('registerForm');
+        form.insertBefore(successContainer, form.firstChild);
+    }
+    
+    successContainer.innerHTML = `
+        <div class="success-message">
+            <span class="success-icon">✅</span>
+            <span>${message}</span>
+        </div>
+    `;
+    successContainer.style.display = 'block';
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        successContainer.style.display = 'none';
+    }, 3000);
+}
+
+/**
  * 提交注册表单
  */
 async function submitRegisterForm() {
@@ -311,21 +369,21 @@ async function submitRegisterForm() {
             name: document.getElementById('name')?.value.trim() || '',
         };
         
-        // 调用API
+        // 调用API存储临时注册数据
         const response = await UserAPI.register(formData);
         
         if (response.success) {
-            let successMessage = t('register.alert.success', '注册成功！');
+            let successMessage = t('register.alert.success', '注册信息已保存！');
             if (response.requiresVerification) {
-                successMessage += t('register.alert.checkEmail', '请检查您的邮箱以完成验证。');
+                successMessage += t('register.alert.checkEmail', '请完成验证以创建账号。');
             }
-            alert(successMessage);
-            // 跳转到登录页面或验证页面
-            if (response.requiresVerification) {
-                window.location.href = 'verification.html?email=' + encodeURIComponent(formData.email);
-            } else {
-                window.location.href = 'login.html';
-            }
+            showSuccessMessage(successMessage);
+            
+            // 跳转到验证页面，传递临时注册ID
+            setTimeout(() => {
+                window.location.href = 'verification.html?tempId=' + encodeURIComponent(response.tempId) + 
+                                      '&email=' + encodeURIComponent(formData.email);
+            }, 1500);
         }
         
     } catch (error) {
@@ -340,7 +398,7 @@ async function submitRegisterForm() {
             errorMessage += error.message || t('register.alert.unknown', '未知错误');
         }
         
-        alert(errorMessage);
+        showGlobalError(errorMessage);
         submitButton.disabled = false;
         submitButton.textContent = t('register.form.submit', '注册');
     }

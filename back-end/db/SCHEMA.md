@@ -8,42 +8,42 @@
 
 ### 1. users 表（用户表）
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| id | TEXT PRIMARY KEY | 用户唯一ID（UUID） |
-| email | TEXT UNIQUE NOT NULL | 邮箱地址 |
-| password_hash | TEXT NOT NULL | 密码哈希值（bcrypt） |
-| name | TEXT | 姓名 |
-| member_type | TEXT NOT NULL | 会员类型：STUDENT/ASSOCIATE（GENERAL已废弃，仅用于兼容旧数据） |
-| verified | INTEGER DEFAULT 0 | 是否已验证（0/1） |
-| verification_token | TEXT | 验证令牌 |
-| verification_token_expires | INTEGER | 验证令牌过期时间 |
-| avatar | TEXT | 头像URL |
-| bio | TEXT | 个人简介 |
-| university | TEXT | 大学名称 |
-| enrollment_year | INTEGER | 入学年份 |
-| student_id | TEXT | 学生ID |
-| join_date | INTEGER NOT NULL | 加入日期（时间戳） |
-| created_at | INTEGER NOT NULL | 创建时间（时间戳） |
-| updated_at | INTEGER NOT NULL | 更新时间（时间戳） |
+| 字段 | 类型 | 说明                       |
+|------|------|--------------------------|
+| id | TEXT PRIMARY KEY | 用户唯一ID（UUID）             |
+| email | TEXT UNIQUE NOT NULL | 邮箱地址                     |
+| password_hash | TEXT NOT NULL | 密码哈希值（bcrypt）            |
+| name | TEXT | 姓名                       |
+| member_type | TEXT NOT NULL | 会员类型：<br/>STUDENT / ASSOCIATE |
+| verified | INTEGER DEFAULT 0 | 是否已验证（0/1）               |
+| verification_token | TEXT | 验证令牌                     |
+| verification_token_expires | INTEGER | 验证令牌过期时间                 |
+| avatar | TEXT | 头像URL                    |
+| bio | TEXT | 个人简介                     |
+| university | TEXT | 大学名称                     |
+| enrollment_year | INTEGER | 入学年份                     |
+| student_id | TEXT | 学生ID                     |
+| join_date | INTEGER NOT NULL | 加入日期（时间戳）                |
+| created_at | INTEGER NOT NULL | 创建时间（时间戳）                |
+| updated_at | INTEGER NOT NULL | 更新时间（时间戳）                |
 
 ### 2. items 表（物品表）
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| id | TEXT PRIMARY KEY | 物品唯一ID（UUID） |
-| seller_id | TEXT NOT NULL | 卖家ID（外键） |
-| title | TEXT NOT NULL | 物品标题 |
-| description | TEXT | 物品描述 |
-| category | TEXT NOT NULL | 类别：TEXTBOOK/ELECTRONICS/FURNITURE/APPAREL/SPORTS |
-| price | REAL NOT NULL | 价格 |
-| condition | TEXT NOT NULL | 状况：NEW/LIKE_NEW/GOOD/FAIR/POOR |
-| status | TEXT NOT NULL | 状态：AVAILABLE/RESERVED/SOLD |
-| view_count | INTEGER DEFAULT 0 | 浏览量 |
-| images | TEXT | 图片URL数组（JSON格式） |
-| post_date | INTEGER NOT NULL | 发布时间（时间戳） |
-| created_at | INTEGER NOT NULL | 创建时间（时间戳） |
-| updated_at | INTEGER NOT NULL | 更新时间（时间戳） |
+| 字段 | 类型 | 说明                                                       |
+|------|------|----------------------------------------------------------|
+| id | TEXT PRIMARY KEY | 物品唯一ID（UUID）                                             |
+| seller_id | TEXT NOT NULL | 卖家ID（外键）                                                 |
+| title | TEXT NOT NULL | 物品标题                                                     |
+| description | TEXT | 物品描述                                                     |
+| category | TEXT NOT NULL | 类别：TEXTBOOK / ELECTRONICS / FURNITURE / APPAREL / SPORTS |
+| price | REAL NOT NULL | 价格                                                       |
+| condition | TEXT NOT NULL | 状况：NEW/LIKE_NEW/GOOD/FAIR/POOR                           |
+| status | TEXT NOT NULL | 状态：AVAILABLE/RESERVED/SOLD                               |
+| view_count | INTEGER DEFAULT 0 | 浏览量                                                      |
+| images | TEXT | 图片URL数组（JSON格式）                                          |
+| post_date | INTEGER NOT NULL | 发布时间（时间戳）                                                |
+| created_at | INTEGER NOT NULL | 创建时间（时间戳）                                                |
+| updated_at | INTEGER NOT NULL | 更新时间（时间戳）                                                |
 
 #### 类别特定字段
 

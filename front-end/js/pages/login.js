@@ -130,14 +130,16 @@ async function submitLoginForm() {
         
         if (response.success && response.token && response.userData) {
             saveAuth(response.userData, response.token);
-            alert(t('login.alert.success', '登录成功！'));
+            showSuccessMessage(t('login.alert.success', '登录成功！'));
             submitButton.disabled = false;
             submitButton.textContent = t('login.form.submit', '登录');
             // 更新导航后跳转
             if (typeof updateNavigation === 'function') {
                 updateNavigation();
             }
-            window.location.href = 'profile.html';
+            setTimeout(() => {
+                window.location.href = 'profile.html';
+            }, 1500);
         } else {
             throw new Error(response.message || t('login.alert.genericError', '登录失败'));
         }
@@ -156,9 +158,67 @@ async function submitLoginForm() {
             errorMessage += error.message || t('login.alert.auth', '邮箱或密码错误');
         }
         
-        alert(errorMessage);
+        showGlobalError(errorMessage);
         submitButton.disabled = false;
         submitButton.textContent = t('login.form.submit', '登录');
     }
+}
+
+/**
+ * 显示全局错误信息
+ * @param {string} message - 错误消息
+ */
+function showGlobalError(message) {
+    // 创建或获取全局错误容器
+    let errorContainer = document.getElementById('globalErrorContainer');
+    if (!errorContainer) {
+        errorContainer = document.createElement('div');
+        errorContainer.id = 'globalErrorContainer';
+        errorContainer.className = 'global-error';
+        const form = document.getElementById('loginForm');
+        form.insertBefore(errorContainer, form.firstChild);
+    }
+    
+    errorContainer.innerHTML = `
+        <div class="error-message">
+            <span class="error-icon">⚠️</span>
+            <span>${message}</span>
+        </div>
+    `;
+    errorContainer.style.display = 'block';
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        errorContainer.style.display = 'none';
+    }, 3000);
+}
+
+/**
+ * 显示成功消息
+ * @param {string} message - 成功消息
+ */
+function showSuccessMessage(message) {
+    // 创建或获取成功消息容器
+    let successContainer = document.getElementById('globalSuccessContainer');
+    if (!successContainer) {
+        successContainer = document.createElement('div');
+        successContainer.id = 'globalSuccessContainer';
+        successContainer.className = 'global-success';
+        const form = document.getElementById('loginForm');
+        form.insertBefore(successContainer, form.firstChild);
+    }
+    
+    successContainer.innerHTML = `
+        <div class="success-message">
+            <span class="success-icon">✅</span>
+            <span>${message}</span>
+        </div>
+    `;
+    successContainer.style.display = 'block';
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        successContainer.style.display = 'none';
+    }, 3000);
 }
 

@@ -14,9 +14,12 @@ const { getDatabase } = require('../db/database');
 const { authenticateToken, optionalAuth } = require('../middleware/auth');
 const { validateRegister, validateLogin, validateProfileUpdate } = require('../middleware/validation');
 
+// 临时存储注册数据（在实际应用中应该使用Redis或数据库）
+const tempRegistrations = new Map();
+
 /**
  * POST /api/users/register
- * 用户注册
+ * 用户注册 - 只存储临时数据，不立即创建账号
  */
 router.post('/register', validateRegister, async (req, res) => {
     try {
@@ -56,10 +59,7 @@ router.post('/register', validateRegister, async (req, res) => {
         }
 
         const db = getDatabase();
-        const userId = uuidv4();
-        const passwordHash = await bcrypt.hash(password, 10);
-        const now = Date.now();
-
+        
         // 检查邮箱是否已存在
         db.get('SELECT id FROM users WHERE email = ?', [email], async (err, row) => {
             if (err) {
@@ -77,44 +77,32 @@ router.post('/register', validateRegister, async (req, res) => {
                 });
             }
 
-            // 生成验证令牌（如果需要验证）
-            let verificationToken = null;
-            let verificationTokenExpires = null;
-            if (memberType === 'STUDENT' || memberType === 'ASSOCIATE') {
-                verificationToken = uuidv4();
-                verificationTokenExpires = now + 24 * 60 * 60 * 1000; // 24小时后过期
-            }
+            // 生成临时注册ID和验证令牌
+            const tempId = uuidv4();
+            const verificationToken = uuidv4();
+            const verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000; // 24小时后过期
+            
+            // 存储临时注册数据
+            const tempRegistration = {
+                id: tempId,
+                email,
+                password,
+                memberType,
+                name: name || null,
+                verificationToken,
+                verificationTokenExpires,
+                createdAt: Date.now()
+            };
+            
+            tempRegistrations.set(tempId, tempRegistration);
 
-            // 插入新用户
-            db.run(
-                `INSERT INTO users (
-                    id, email, password_hash, name, member_type, verified,
-                    verification_token, verification_token_expires,
-                    join_date, created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [
-                    userId, email, passwordHash, name || null, memberType,
-                    0, // 学生会员和关联会员需要验证
-                    verificationToken, verificationTokenExpires,
-                    now, now, now
-                ],
-                (err) => {
-                    if (err) {
-                        console.error('Database error:', err);
-                        return res.status(500).json({
-                            success: false,
-                            message: '注册失败'
-                        });
-                    }
-
-                    res.status(201).json({
-                        success: true,
-                        message: '注册成功',
-                        userId: userId,
-                        requiresVerification: true // 学生会员和关联会员都需要验证
-                    });
-                }
-            );
+            res.status(200).json({
+                success: true,
+                message: '注册信息已保存，请完成验证',
+                tempId: tempId,
+                verificationToken: verificationToken,
+                requiresVerification: true
+            });
         });
     } catch (error) {
         console.error('Registration error:', error);
@@ -455,57 +443,158 @@ router.post('/verification/send', authenticateToken, async (req, res) => {
 
 /**
  * POST /api/users/verification/verify
- * 验证邮箱
+ * 验证邮箱并创建账号 - 直接视为验证成功
  */
-router.post('/verification/verify', (req, res) => {
-    const { token } = req.body;
+router.post('/verification/verify', async (req, res) => {
+    const { token, tempId } = req.body;
 
-    if (!token) {
+    try {
+        let tempRegistration = null;
+        
+        // 如果有tempId，使用新的注册流程
+        if (tempId) {
+            tempRegistration = tempRegistrations.get(tempId);
+            if (!tempRegistration) {
+                return res.status(400).json({
+                    success: false,
+                    message: '无效的临时注册ID'
+                });
+            }
+        }
+        // 如果有token，使用旧的验证流程（兼容性）
+        else if (token) {
+            for (let [id, registration] of tempRegistrations.entries()) {
+                if (registration.verificationToken === token) {
+                    tempRegistration = registration;
+                    tempId = id;
+                    break;
+                }
+            }
+        }
+        
+        if (!tempRegistration) {
+            return res.status(400).json({
+                success: false,
+                message: '无效的验证请求'
+            });
+        }
+
+        const db = getDatabase();
+        const userId = uuidv4();
+        const passwordHash = await bcrypt.hash(tempRegistration.password, 10);
+        const now = Date.now();
+
+        // 创建已验证的用户账号
+        db.run(
+            `INSERT INTO users (
+                id, email, password_hash, name, member_type, verified,
+                verification_token, verification_token_expires,
+                join_date, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                userId, tempRegistration.email, passwordHash, tempRegistration.name, tempRegistration.memberType,
+                1, // 已验证
+                null, null, // 清除验证令牌
+                now, now, now
+            ],
+            (err) => {
+                if (err) {
+                    console.error('Database error:', err);
+                    return res.status(500).json({
+                        success: false,
+                        message: '创建账号失败'
+                    });
+                }
+
+                // 删除临时注册数据
+                if (tempId) {
+                    tempRegistrations.delete(tempId);
+                }
+
+                res.json({
+                    success: true,
+                    message: '验证成功，账号已创建',
+                    userId: userId
+                });
+            }
+        );
+    } catch (error) {
+        console.error('Verification error:', error);
+        res.status(500).json({
+            success: false,
+            message: '服务器错误'
+        });
+    }
+});
+
+/**
+ * POST /api/users/verification/skip
+ * 跳过验证流程并创建账号（仅开发/测试环境使用）
+ * 注意：创建未验证的账号
+ */
+router.post('/verification/skip', async (req, res) => {
+    const { tempId } = req.body;
+
+    if (!tempId) {
         return res.status(400).json({
             success: false,
-            message: '需要提供验证令牌'
+            message: '需要提供临时注册ID'
         });
     }
 
-    const db = getDatabase();
-    db.get(
-        'SELECT * FROM users WHERE verification_token = ? AND verification_token_expires > ?',
-        [token, Date.now()],
-        (err, user) => {
-            if (err) {
-                console.error('Database error:', err);
-                return res.status(500).json({
-                    success: false,
-                    message: '数据库错误'
-                });
-            }
+    try {
+        const tempRegistration = tempRegistrations.get(tempId);
+        if (!tempRegistration) {
+            return res.status(400).json({
+                success: false,
+                message: '无效的临时注册ID'
+            });
+        }
 
-            if (!user) {
-                return res.status(400).json({
-                    success: false,
-                    message: '无效或过期的验证令牌'
-                });
-            }
+        const db = getDatabase();
+        const userId = uuidv4();
+        const passwordHash = await bcrypt.hash(tempRegistration.password, 10);
+        const now = Date.now();
 
-            db.run(
-                'UPDATE users SET verified = 1, verification_token = NULL, verification_token_expires = NULL WHERE id = ?',
-                [user.id],
-                (err) => {
-                    if (err) {
-                        return res.status(500).json({
-                            success: false,
-                            message: '验证失败'
-                        });
-                    }
-
-                    res.json({
-                        success: true,
-                        message: '邮箱验证成功'
+        // 创建未验证的用户账号
+        db.run(
+            `INSERT INTO users (
+                id, email, password_hash, name, member_type, verified,
+                verification_token, verification_token_expires,
+                join_date, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                userId, tempRegistration.email, passwordHash, tempRegistration.name, tempRegistration.memberType,
+                0, // 未验证
+                null, null, // 清除验证令牌
+                now, now, now
+            ],
+            (err) => {
+                if (err) {
+                    console.error('Database error:', err);
+                    return res.status(500).json({
+                        success: false,
+                        message: '创建账号失败'
                     });
                 }
-            );
-        }
-    );
+
+                // 删除临时注册数据
+                tempRegistrations.delete(tempId);
+
+                res.json({
+                    success: true,
+                    message: '验证流程已跳过，未验证账号已创建',
+                    userId: userId
+                });
+            }
+        );
+    } catch (error) {
+        console.error('Skip verification error:', error);
+        res.status(500).json({
+            success: false,
+            message: '服务器错误'
+        });
+    }
 });
 
 /**

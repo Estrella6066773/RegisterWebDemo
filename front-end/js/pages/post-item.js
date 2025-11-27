@@ -218,18 +218,18 @@ function handleImageSelect(e) {
     const remainingSlots = 5 - selectedImages.length;
 
     if (files.length > remainingSlots) {
-        alert(formatMessage('postItem.alert.maxImages', '最多只能上传5张图片，您还可以上传{count}张', { count: remainingSlots }));
+        showGlobalError(formatMessage('postItem.alert.maxImages', '最多只能上传5张图片，您还可以上传{count}张', { count: remainingSlots }));
         return;
     }
 
     files.forEach(file => {
         if (file.size > 5 * 1024 * 1024) {
-            alert(formatMessage('postItem.alert.imageTooLarge', '图片 {name} 超过5MB，请选择较小的图片', { name: file.name }));
+            showGlobalError(formatMessage('postItem.alert.imageTooLarge', '图片 {name} 超过5MB，请选择较小的图片', { name: file.name }));
             return;
         }
 
         if (!file.type.startsWith('image/')) {
-            alert(formatMessage('postItem.alert.notImage', '文件 {name} 不是图片格式', { name: file.name }));
+            showGlobalError(formatMessage('postItem.alert.notImage', '文件 {name} 不是图片格式', { name: file.name }));
             return;
         }
 
@@ -293,7 +293,7 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
 
     // 验证图片
     if (selectedImages.length === 0) {
-        alert(t('postItem.alert.imageRequired', '请至少上传一张图片'));
+        showGlobalError(t('postItem.alert.imageRequired', '请至少上传一张图片'));
         return;
     }
 
@@ -312,19 +312,19 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
     
     // 前端基础验证
     if (!itemData.title) {
-        alert(t('postItem.alert.titleRequired', '请输入物品标题'));
+        showGlobalError(t('postItem.alert.titleRequired', '请输入物品标题'));
         return;
     }
     if (!itemData.category) {
-        alert(t('postItem.alert.categoryRequired', '请选择物品类别'));
+        showGlobalError(t('postItem.alert.categoryRequired', '请选择物品类别'));
         return;
     }
     if (priceNum === null || isNaN(priceNum) || priceNum < 0) {
-        alert(t('postItem.alert.priceInvalid', '请输入有效的价格（大于等于0）'));
+        showGlobalError(t('postItem.alert.priceInvalid', '请输入有效的价格（大于等于0）'));
         return;
     }
     if (!itemData.condition) {
-        alert(t('postItem.alert.conditionRequired', '请选择物品状况'));
+        showGlobalError(t('postItem.alert.conditionRequired', '请选择物品状况'));
         return;
     }
 
@@ -371,7 +371,7 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
                 errorMessage += uploadError.message || t('postItem.alert.retry', '请稍后重试');
             }
             
-            alert(errorMessage);
+            showGlobalError(errorMessage);
             return;
         }
 
@@ -385,8 +385,10 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
         const response = await ItemAPI.createItem(itemData);
         
         if (response.success) {
-            alert(t('postItem.alert.success', '物品发布成功！'));
-            window.location.href = `item-detail.html?id=${response.itemId || response.data?.id || response.id}`;
+            showSuccessMessage(t('postItem.alert.success', '物品发布成功！'));
+            setTimeout(() => {
+                window.location.href = `item-detail.html?id=${response.itemId || response.data?.id || response.id}`;
+            }, 1500);
         } else {
             throw new Error(response.message || t('postItem.alert.failed', '发布失败'));
         }
@@ -416,7 +418,7 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
             errorMessage += t('postItem.alert.retry', '请稍后重试');
         }
         
-        alert(errorMessage);
+        showGlobalError(errorMessage);
         
         // 恢复按钮状态
         const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -424,4 +426,62 @@ document.getElementById('postItemForm').addEventListener('submit', async functio
         submitBtn.textContent = t('postItem.form.submit', '发布物品');
     }
 });
+
+/**
+ * 显示全局错误信息
+ * @param {string} message - 错误消息
+ */
+function showGlobalError(message) {
+    // 创建或获取全局错误容器
+    let errorContainer = document.getElementById('globalErrorContainer');
+    if (!errorContainer) {
+        errorContainer = document.createElement('div');
+        errorContainer.id = 'globalErrorContainer';
+        errorContainer.className = 'global-error';
+        const form = document.getElementById('postItemForm');
+        form.insertBefore(errorContainer, form.firstChild);
+    }
+    
+    errorContainer.innerHTML = `
+        <div class="error-message">
+            <span class="error-icon">⚠️</span>
+            <span>${message}</span>
+        </div>
+    `;
+    errorContainer.style.display = 'block';
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        errorContainer.style.display = 'none';
+    }, 3000);
+}
+
+/**
+ * 显示成功消息
+ * @param {string} message - 成功消息
+ */
+function showSuccessMessage(message) {
+    // 创建或获取成功消息容器
+    let successContainer = document.getElementById('globalSuccessContainer');
+    if (!successContainer) {
+        successContainer = document.createElement('div');
+        successContainer.id = 'globalSuccessContainer';
+        successContainer.className = 'global-success';
+        const form = document.getElementById('postItemForm');
+        form.insertBefore(successContainer, form.firstChild);
+    }
+    
+    successContainer.innerHTML = `
+        <div class="success-message">
+            <span class="success-icon">✅</span>
+            <span>${message}</span>
+        </div>
+    `;
+    successContainer.style.display = 'block';
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        successContainer.style.display = 'none';
+    }, 3000);
+}
 

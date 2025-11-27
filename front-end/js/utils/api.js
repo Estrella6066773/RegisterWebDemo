@@ -192,11 +192,16 @@ const UserAPI = {
     /**
      * 验证邮箱
      * @param {string} token - 验证token
+     * @param {string} tempId - 临时注册ID（可选）
      */
-    async verifyEmail(token) {
+    async verifyEmail(token, tempId = null) {
+        const body = { token };
+        if (tempId) {
+            body.tempId = tempId;
+        }
         return apiRequest('/users/verification/verify', {
             method: 'POST',
-            body: JSON.stringify({ token }),
+            body: JSON.stringify(body),
         });
     },
 
@@ -205,6 +210,28 @@ const UserAPI = {
      */
     async checkVerificationStatus() {
         return apiRequest('/users/verification/status');
+    },
+
+    /**
+     * 跳过验证并创建未验证账号（仅开发/测试环境使用）
+     * @param {string} tempId - 临时注册ID
+     */
+    async skipVerification(tempId) {
+        return apiRequest('/users/verification/skip', {
+            method: 'POST',
+            body: JSON.stringify({ tempId }),
+        });
+    },
+
+    /**
+     * 管理员验证用户（仅开发/测试环境使用）
+     * @param {string} userId - 用户ID
+     */
+    async adminVerifyUser(userId) {
+        return apiRequest('/users/verification/admin-verify', {
+            method: 'POST',
+            body: JSON.stringify({ userId }),
+        });
     },
 };
 
