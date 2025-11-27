@@ -179,11 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 验证必填字段
         if (!title) {
-            alert(t('myItems.alert.titleRequired', '请输入标题'));
+            showGlobalError(t('myItems.alert.titleRequired', '请输入标题'));
             return;
         }
         if (price <= 0) {
-            alert(t('myItems.alert.priceRequired', '请输入有效的价格'));
+            showGlobalError(t('myItems.alert.priceRequired', '请输入有效的价格'));
             return;
         }
         
@@ -202,10 +202,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 await getItemAPI().createItem(data);
             }
             modal.classList.add('hidden');
+            showSuccessMessage(t('myItems.alert.saveSuccess', '保存成功！'));
             load();
         } catch (e) {
             console.error('保存失败:', e);
-            alert(t('myItems.alert.saveFailed', '保存失败：') + (e.message || t('myItems.alert.retry', '请稍后重试')));
+            showGlobalError(t('myItems.alert.saveFailed', '保存失败：') + (e.message || t('myItems.alert.retry', '请稍后重试')));
         }
     });
 
@@ -237,26 +238,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.classList.remove('hidden');
             } catch (err) {
                 console.error('获取物品详情失败:', err);
-                alert(t('myItems.alert.loadDetailFailed', '获取物品详情失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
+                showGlobalError(t('myItems.alert.loadDetailFailed', '获取物品详情失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
             }
         } else if (delId) {
             const itemTitle = e.target.closest('.item-card').querySelector('.item-title').textContent;
             if (confirm(t('myItems.confirm.delete', `确定要删除"${itemTitle}"吗？此操作不可撤销。`))) {
                 try {
                     await getItemAPI().deleteItem(delId);
+                    showSuccessMessage(t('myItems.alert.deleteSuccess', '删除成功！'));
                     load();
                 } catch (err) {
                     console.error('删除失败:', err);
-                    alert(t('myItems.alert.deleteFailed', '删除失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
+                    showGlobalError(t('myItems.alert.deleteFailed', '删除失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
                 }
             }
         } else if (status && idForStatus) {
             try {
                 await getItemAPI().updateItemStatus(idForStatus, status);
+                showSuccessMessage(t('myItems.alert.statusSuccess', '状态更新成功！'));
                 load();
             } catch (err) {
                 console.error('更新状态失败:', err);
-                alert(t('myItems.alert.statusFailed', '更新状态失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
+                showGlobalError(t('myItems.alert.statusFailed', '更新状态失败：') + (err.message || t('myItems.alert.retry', '请稍后再试')));
             }
         }
     });
@@ -269,5 +272,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
     load();
 });
+
+/**
+ * 显示全局错误信息
+ * @param {string} message - 错误消息
+ */
+function showGlobalError(message) {
+    // 创建或获取全局错误容器
+    let errorContainer = document.getElementById('globalErrorContainer');
+    if (!errorContainer) {
+        errorContainer = document.createElement('div');
+        errorContainer.id = 'globalErrorContainer';
+        errorContainer.className = 'global-error';
+        const container = document.querySelector('.my-items-container');
+        if (container) {
+            container.insertBefore(errorContainer, container.firstChild);
+        }
+    }
+    
+    errorContainer.innerHTML = `
+        <div class="error-message">
+            <span class="error-icon">⚠️</span>
+            <span>${message}</span>
+        </div>
+    `;
+    errorContainer.style.display = 'block';
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        errorContainer.style.display = 'none';
+    }, 3000);
+}
+
+/**
+ * 显示成功消息
+ * @param {string} message - 成功消息
+ */
+function showSuccessMessage(message) {
+    // 创建或获取成功消息容器
+    let successContainer = document.getElementById('globalSuccessContainer');
+    if (!successContainer) {
+        successContainer = document.createElement('div');
+        successContainer.id = 'globalSuccessContainer';
+        successContainer.className = 'global-success';
+        const container = document.querySelector('.my-items-container');
+        if (container) {
+            container.insertBefore(successContainer, container.firstChild);
+        }
+    }
+    
+    successContainer.innerHTML = `
+        <div class="success-message">
+            <span class="success-icon">✅</span>
+            <span>${message}</span>
+        </div>
+    `;
+    successContainer.style.display = 'block';
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        successContainer.style.display = 'none';
+    }, 3000);
+}
 
 

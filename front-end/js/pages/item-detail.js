@@ -334,17 +334,17 @@ function changeMainImage(imageUrl) {
 // 联系卖家
 function contactSeller(sellerId) {
     if (!sellerId) {
-        alert(t('itemDetail.alert.sellerUnavailable', '卖家信息不可用'));
+        showGlobalError(t('itemDetail.alert.sellerUnavailable', '卖家信息不可用'));
         return;
     }
     // TODO: 实现联系卖家功能
-    alert(t('itemDetail.alert.contactInDevelopment', '联系卖家功能开发中...'));
+    showGlobalError(t('itemDetail.alert.contactInDevelopment', '联系卖家功能开发中...'));
 }
 
 // 编辑物品
 function editItem(itemId) {
     // TODO: 实现编辑功能
-    alert(t('itemDetail.alert.editInDevelopment', '编辑功能开发中...'));
+    showGlobalError(t('itemDetail.alert.editInDevelopment', '编辑功能开发中...'));
 }
 
 // 删除物品
@@ -354,12 +354,14 @@ async function deleteItem(itemId) {
     }
 
     try {
-        await ItemAPI.deleteItem(itemId);
-        alert(t('itemDetail.alert.deleted', '物品已删除'));
-        window.location.href = 'items.html';
+        await getItemAPI().deleteItem(itemId);
+        showSuccessMessage(t('itemDetail.alert.deleted', '物品已删除'));
+        setTimeout(() => {
+            window.location.href = 'items.html';
+        }, 1500);
     } catch (error) {
         console.error('删除物品失败:', error);
-        alert(t('itemDetail.alert.deleteFailed', '删除失败：') + (error.message || t('itemDetail.error.retry', '请稍后重试')));
+        showGlobalError(t('itemDetail.alert.deleteFailed', '删除失败：') + (error.message || t('itemDetail.error.retry', '请稍后重试')));
     }
 }
 
@@ -416,10 +418,10 @@ function toggleWatch(itemId) {
     const idx = list.indexOf(itemId);
     if (idx >= 0) {
         list.splice(idx, 1);
-        alert(t('itemDetail.alert.unwatched', '已取消关注'));
+        showSuccessMessage(t('itemDetail.alert.unwatched', '已取消关注'));
     } else {
         list.push(itemId);
-        alert(t('itemDetail.alert.watched', '已加入关注列表'));
+        showSuccessMessage(t('itemDetail.alert.watched', '已加入关注列表'));
     }
     localStorage.setItem(key, JSON.stringify(list));
 }
@@ -429,9 +431,9 @@ async function updateStatus(itemId, status) {
     try {
         await getItemAPI().updateItemStatus(itemId, status);
         document.getElementById('statusText').textContent = getStatusText(status);
-        alert(t('itemDetail.alert.statusUpdated', '状态已更新为：') + getStatusText(status));
+        showSuccessMessage(t('itemDetail.alert.statusUpdated', '状态已更新为：') + getStatusText(status));
     } catch (e) {
-        alert(t('itemDetail.alert.updateFailed', '更新失败：') + (e.message || t('itemDetail.error.retry', '请稍后再试')));
+        showGlobalError(t('itemDetail.alert.updateFailed', '更新失败：') + (e.message || t('itemDetail.error.retry', '请稍后再试')));
     }
 }
 
@@ -464,12 +466,74 @@ async function submitReview(itemId) {
     const comment = (document.getElementById('reviewComment').value || '').trim();
     try {
         await getItemAPI().addReview(itemId, { rating, comment });
-        alert(t('itemDetail.alert.reviewSubmitted', '评价提交成功！'));
+        showSuccessMessage(t('itemDetail.alert.reviewSubmitted', '评价提交成功！'));
         document.getElementById('reviewComment').value = '';
         loadReviews(itemId);
     } catch (e) {
-        alert(t('itemDetail.alert.reviewFailed', '提交失败：') + (e.message || t('itemDetail.error.retry', '请稍后再试')));
+        showGlobalError(t('itemDetail.alert.reviewFailed', '提交失败：') + (e.message || t('itemDetail.error.retry', '请稍后再试')));
     }
+}
+
+/**
+ * 显示全局错误信息
+ * @param {string} message - 错误消息
+ */
+function showGlobalError(message) {
+    // 创建或获取全局错误容器
+    let errorContainer = document.getElementById('globalErrorContainer');
+    if (!errorContainer) {
+        errorContainer = document.createElement('div');
+        errorContainer.id = 'globalErrorContainer';
+        errorContainer.className = 'global-error';
+        const container = document.querySelector('.item-detail-container');
+        if (container) {
+            container.insertBefore(errorContainer, container.firstChild);
+        }
+    }
+    
+    errorContainer.innerHTML = `
+        <div class="error-message">
+            <span class="error-icon">⚠️</span>
+            <span>${message}</span>
+        </div>
+    `;
+    errorContainer.style.display = 'block';
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        errorContainer.style.display = 'none';
+    }, 3000);
+}
+
+/**
+ * 显示成功消息
+ * @param {string} message - 成功消息
+ */
+function showSuccessMessage(message) {
+    // 创建或获取成功消息容器
+    let successContainer = document.getElementById('globalSuccessContainer');
+    if (!successContainer) {
+        successContainer = document.createElement('div');
+        successContainer.id = 'globalSuccessContainer';
+        successContainer.className = 'global-success';
+        const container = document.querySelector('.item-detail-container');
+        if (container) {
+            container.insertBefore(successContainer, container.firstChild);
+        }
+    }
+    
+    successContainer.innerHTML = `
+        <div class="success-message">
+            <span class="success-icon">✅</span>
+            <span>${message}</span>
+        </div>
+    `;
+    successContainer.style.display = 'block';
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        successContainer.style.display = 'none';
+    }, 3000);
 }
 
 // 页面加载时执行
