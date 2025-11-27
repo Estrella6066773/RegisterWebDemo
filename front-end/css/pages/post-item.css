@@ -193,7 +193,6 @@
     justify-content: flex-end;
     margin-top: var(--spacing-xl);
     padding-top: var(--spacing-xl);
-    border-top: 1px solid var(--border-color);
 }
 
 .btn-lg {
