@@ -1,0 +1,26 @@
+.my-items-grid .item-card {
+    background-color: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(18, 55, 42, 0.1);
+    box-shadow: 0 12px 30px rgba(18, 55, 42, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.my-items-grid .item-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 36px rgba(18, 55, 42, 0.12);
+}
+
+.my-items-grid .item-info {
+    background-color: transparent;
+}
+
+.my-items-grid .item-meta {
+    color: var(--text-secondary);
+}
+
+.my-items-grid .item-actions button,
+.my-items-grid .item-actions-section button,
+.my-items-grid .item-actions-section a {
+    min-width: 92px;
+}
+
