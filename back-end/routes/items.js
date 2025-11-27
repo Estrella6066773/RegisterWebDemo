@@ -492,8 +492,8 @@ router.delete('/:id', authenticateToken, (req, res) => {
             });
         }
 
-        // 软删除（标记为已删除）
-        db.run('UPDATE items SET status = "DELETED" WHERE id = ?', [id], (err) => {
+        // 物理删除
+        db.run('DELETE FROM items WHERE id = ?', [id], (err) => {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).json({
