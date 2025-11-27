@@ -61,7 +61,7 @@ function createItemCard(item) {
     const conditionText = getConditionText(item.condition);
 
     return `
-        <a href="item-detail.html?id=${item.id}" class="item-card">
+        <a href="pages/item-detail.html?id=${item.id}" class="item-card">
             <div class="item-image-container">
                 ${imageHtml}
             </div>
