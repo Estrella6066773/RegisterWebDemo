@@ -4,19 +4,38 @@
 
 .item-detail-container {
     display: grid;
-    grid-template-columns: 1fr 400px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
     gap: var(--spacing-xl);
     margin-top: var(--spacing-lg);
+    align-items: stretch;
 }
 
-.item-detail-main {
+/* 左侧：图片区域 */
+.item-detail-images {
     background-color: var(--white);
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
     box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
+/* 右侧：商品信息区域 */
+.item-detail-info {
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* 底部：侧边栏（卖家信息和评价） */
 .item-detail-sidebar {
+    grid-column: 1 / -1;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
@@ -24,25 +43,35 @@
 
 /* 图片展示 */
 .item-images {
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .item-main-image {
     width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 450px;
+    max-height: none;
     aspect-ratio: 1;
     border-radius: var(--radius-md);
-    object-fit: cover;
+    object-fit: contain;
     background-color: var(--bg-color);
     margin-bottom: var(--spacing-md);
+    flex-shrink: 0;
 }
 
 .item-thumbnails {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     gap: var(--spacing-sm);
 }
 
 .item-thumbnail {
+    width: 100%;
     aspect-ratio: 1;
     border-radius: var(--radius-sm);
     object-fit: cover;
@@ -269,10 +298,35 @@
     color: var(--error-color);
 }
 
+/* 操作按钮区域 */
+.item-actions-section {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+}
+
 /* 响应式 */
 @media (max-width: 968px) {
     .item-detail-container {
         grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+    }
+
+    .item-detail-images {
+        height: auto;
+    }
+
+    .item-detail-info {
+        height: auto;
+    }
+
+    .item-main-image {
+        min-height: 300px;
+        max-height: 400px;
+    }
+
+    .item-detail-sidebar {
+        grid-column: 1;
     }
 
     .item-details-grid {
