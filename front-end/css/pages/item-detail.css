@@ -1,6 +1,3 @@
-/* ============================================
-   物品详情页面样式 - Item Detail Page Styles
-   ============================================ */
 
 .item-detail-container {
     display: grid;
@@ -11,7 +8,6 @@
     align-items: stretch;
 }
 
-/* 左侧：图片区域 */
 .item-detail-images {
     background-color: var(--white);
     border-radius: var(--radius-lg);
@@ -22,7 +18,6 @@
     height: 100%;
 }
 
-/* 右侧：商品信息区域 */
 .item-detail-info {
     background-color: var(--white);
     border-radius: var(--radius-lg);
@@ -33,7 +28,6 @@
     height: 100%;
 }
 
-/* 底部：侧边栏（卖家信息和评价） */
 .item-detail-sidebar {
     grid-column: 1 / -1;
     display: flex;
@@ -41,7 +35,6 @@
     gap: var(--spacing-lg);
 }
 
-/* 图片展示 */
 .item-images {
     margin-bottom: 0;
     flex: 1;
@@ -88,7 +81,7 @@
     border-color: var(--primary-color);
 }
 
-/* 物品信息 */
+
 .item-header {
     margin-bottom: var(--spacing-lg);
     padding-bottom: var(--spacing-lg);
@@ -162,7 +155,7 @@
     color: #8c8c8c;
 }
 
-/* 物品描述 */
+
 .item-description {
     margin-bottom: var(--spacing-xl);
 }
@@ -181,7 +174,6 @@
     white-space: pre-wrap;
 }
 
-/* 详细信息 */
 .item-details {
     margin-bottom: var(--spacing-xl);
 }
@@ -216,12 +208,20 @@
     font-weight: 500;
 }
 
-/* 侧边栏卡片 */
+
 .sidebar-card {
     background-color: var(--white);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
     box-shadow: var(--shadow-sm);
+}
+
+.inline-seller-card {
+    background-color: rgba(251, 250, 218, 0.95);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-lg);
 }
 
 .sidebar-card-title {
@@ -231,7 +231,7 @@
     margin-bottom: var(--spacing-md);
 }
 
-/* 卖家信息 */
+
 .seller-info {
     display: flex;
     align-items: center;
@@ -275,7 +275,7 @@
     gap: var(--spacing-sm);
 }
 
-/* 操作按钮 */
+
 .item-actions {
     display: flex;
     flex-direction: column;
@@ -284,9 +284,12 @@
 
 .btn-contact {
     width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* 加载和错误状态 */
+
 .loading-state,
 .error-state {
     text-align: center;
@@ -298,14 +301,14 @@
     color: var(--error-color);
 }
 
-/* 操作按钮区域 */
+
 .item-actions-section {
     margin-top: var(--spacing-xl);
     padding-top: var(--spacing-lg);
     border-top: 1px solid var(--border-color);
 }
 
-/* 响应式 */
+
 @media (max-width: 968px) {
     .item-detail-container {
         grid-template-columns: 1fr;

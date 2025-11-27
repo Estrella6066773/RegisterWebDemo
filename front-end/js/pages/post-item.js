@@ -1,8 +1,3 @@
-/**
- * ============================================
- * 发布物品页面逻辑 - Post Item Page Logic
- * ============================================
- */
 
 function t(key, fallback = '') {
     return window.I18n ? window.I18n.t(key, fallback) : fallback;

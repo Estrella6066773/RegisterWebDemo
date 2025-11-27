@@ -1,8 +1,3 @@
-/**
- * ============================================
- * 登录页面逻辑 - Login Page Logic
- * ============================================
- */
 
 // 等待DOM加载完成
 document.addEventListener('DOMContentLoaded', function() {
