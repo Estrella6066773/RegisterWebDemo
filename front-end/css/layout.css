@@ -4,8 +4,8 @@
 
 /* 头部导航 */
 .header {
-    background-color: var(--white);
-    box-shadow: var(--shadow-sm);
+    background-color: var(--header-bg);
+    box-shadow: 0 4px 20px rgba(106, 169, 91, 0.18);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -21,12 +21,12 @@
 .logo {
     font-size: 24px;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--header-text);
     text-decoration: none;
 }
 
 .logo:hover {
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 .nav {
@@ -36,9 +36,9 @@
 }
 
 .lang-toggle {
-    border: 1px solid var(--border-color);
-    background-color: var(--white);
-    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--header-text);
     border-radius: var(--radius-md);
     padding: 6px 14px;
     font-size: 13px;
@@ -53,8 +53,9 @@
 }
 
 .lang-toggle:hover {
-    color: var(--primary-color);
-    border-color: var(--primary-color);
+    color: var(--primary-light);
+    border-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.25);
 }
 
 .nav-dropdown {
@@ -89,22 +90,22 @@
 
 .dropdown-item:hover {
     background: var(--bg-color);
-    color: var(--primary-color);
+    color: var(--primary-dark);
 }
 
 .nav-link {
-    color: var(--text-primary);
+    color: var(--header-text);
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s ease;
 }
 
 .nav-link:hover {
-    color: var(--primary-color);
+    color: var(--primary-light);
 }
 
 .nav-link.active {
-    color: var(--primary-color);
+    color: var(--highlight-pink);
 }
 
 /* 主内容区 */

@@ -106,7 +106,7 @@ function renderItemDetail(item) {
             ${mainImage ? `
                 <img src="${mainImage}" alt="${escapeHtml(item.title)}" class="item-main-image" id="mainImage">
             ` : `
-                <div class="item-main-image" style="display: flex; align-items: center; justify-content: center; color: var(--text-disabled); font-size: 48px;">
+                <div class="item-main-image" style="display: flex; align-items: center; justify-content: center; color: var(--text-disabled); font-size: 48px; min-height: 200px;">
                     📦
                 </div>
             `}
@@ -128,9 +128,13 @@ function renderItemDetail(item) {
 
     container.innerHTML = `
         <div class="item-detail-container">
-            <div class="item-detail-main">
+            <!-- 左侧：图片区域 -->
+            <div class="item-detail-images">
                 ${imagesHtml}
-                
+            </div>
+
+            <!-- 右侧：商品信息区域 -->
+            <div class="item-detail-info">
                 <div class="item-header">
                     <h1 class="item-title">${escapeHtml(item.title)}</h1>
                     <div class="item-meta-info">
@@ -162,43 +166,42 @@ function renderItemDetail(item) {
                 </div>
 
                 ${detailsHtml}
+
+                <!-- 操作按钮区域 -->
+                <div class="item-actions-section">
+                    ${isAuthenticated() ? `
+                        <button class="btn btn-primary btn-contact" onclick="contactSeller('${item.seller?.id || ''}')">
+                            💬 ${t('itemDetail.actions.contactSeller', '联系卖家')}
+                        </button>
+                        ${item.seller?.id === getCurrentUserId() ? `
+                            <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+                                <div style="font-size:14px;color:var(--text-secondary);">${t('itemDetail.status.current', '当前状态：')}<b id="statusText">${getStatusText(item.status)}</b></div>
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                    <button class="btn btn-secondary" onclick="updateStatus('${item.id}','RESERVED')">${t('itemDetail.actions.markReserved', '标记为已预定')}</button>
+                                    <button class="btn btn-secondary" onclick="updateStatus('${item.id}','AVAILABLE')">${t('itemDetail.actions.markAvailable', '标记为可售')}</button>
+                                    <button class="btn btn-secondary" onclick="updateStatus('${item.id}','SOLD')">${t('itemDetail.actions.markSold', '标记为已售出')}</button>
+                                </div>
+                            </div>
+                        ` : `
+                            <button class="btn btn-secondary" onclick="toggleWatch('${item.id}')" style="margin-top:8px;">
+                                ⭐ ${t('itemDetail.actions.toggleWatch', '加入/取消关注')}
+                            </button>
+                        `}
+                    ` : `
+                        <a href="login.html" class="btn btn-primary btn-contact">
+                            🔐 ${t('itemDetail.actions.loginToContact', '登录后联系卖家')}
+                        </a>
+                    `}
+                    <a href="items.html" class="btn btn-secondary" style="margin-top:8px;">
+                        ← ${t('itemDetail.actions.backToBrowse', '返回浏览')}
+                    </a>
+                </div>
             </div>
 
+            <!-- 底部：卖家信息和评价 -->
             <div class="item-detail-sidebar">
                 ${sellerHtml}
                 
-                <div class="sidebar-card">
-                    <h3 class="sidebar-card-title">${t('itemDetail.actions.title', '操作')}</h3>
-                    <div class="item-actions">
-                        ${isAuthenticated() ? `
-                            <button class="btn btn-primary btn-contact" onclick="contactSeller('${item.seller?.id || ''}')">
-                                💬 ${t('itemDetail.actions.contactSeller', '联系卖家')}
-                            </button>
-                            ${item.seller?.id === getCurrentUserId() ? `
-                                <div style="display:flex;flex-direction:column;gap:8px;">
-                                    <div style="font-size:14px;color:var(--text-secondary);">${t('itemDetail.status.current', '当前状态：')}<b id="statusText">${getStatusText(item.status)}</b></div>
-                                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                                        <button class="btn btn-secondary" onclick="updateStatus('${item.id}','RESERVED')">${t('itemDetail.actions.markReserved', '标记为已预定')}</button>
-                                        <button class="btn btn-secondary" onclick="updateStatus('${item.id}','AVAILABLE')">${t('itemDetail.actions.markAvailable', '标记为可售')}</button>
-                                        <button class="btn btn-secondary" onclick="updateStatus('${item.id}','SOLD')">${t('itemDetail.actions.markSold', '标记为已售出')}</button>
-                                    </div>
-                                </div>
-                            ` : `
-                                <button class="btn btn-secondary" onclick="toggleWatch('${item.id}')">
-                                    ⭐ ${t('itemDetail.actions.toggleWatch', '加入/取消关注')}
-                                </button>
-                            `}
-                        ` : `
-                            <a href="login.html" class="btn btn-primary btn-contact">
-                                🔐 ${t('itemDetail.actions.loginToContact', '登录后联系卖家')}
-                            </a>
-                        `}
-                        <a href="items.html" class="btn btn-secondary">
-                            ← ${t('itemDetail.actions.backToBrowse', '返回浏览')}
-                        </a>
-                    </div>
-                </div>
-
                 <div class="sidebar-card">
                     <h3 class="sidebar-card-title">${t('itemDetail.reviews.title', '买家评价')}</h3>
                     <div id="reviewsContainer" style="display:flex;flex-direction:column;gap:12px;"></div>
