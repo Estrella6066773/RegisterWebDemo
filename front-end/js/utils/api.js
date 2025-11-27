@@ -104,9 +104,7 @@ async function apiRequest(endpoint, options = {}) {
 }
 
 /**
- * ============================================
- * 用户相关API - User APIs
- * ============================================
+ * 用户相关API
  */
 
 const UserAPI = {
@@ -231,9 +229,7 @@ const UserAPI = {
 };
 
 /**
- * ============================================
- * 物品相关API - Item APIs
- * ============================================
+ * 物品相关API
  */
 
 const ItemAPI = {
@@ -366,9 +362,7 @@ const ItemAPI = {
 };
 
 /**
- * ============================================
- * 图片上传相关API - Upload APIs
- * ============================================
+ * 图片上传相关API
  */
 
 const UploadAPI = {
@@ -472,10 +466,9 @@ const UploadAPI = {
 };
 
 /**
- * ============================================
  * 导出API模块
- * ============================================
  */
+
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { UserAPI, ItemAPI, UploadAPI, apiRequest };
 } else {

@@ -1,8 +1,5 @@
 /**
- * ============================================
  * Student Bay - 后端服务器主文件
- * Express.js API 服务器（基本框架）
- * ============================================
  */
 
 require('dotenv').config();
@@ -21,9 +18,7 @@ const { initDatabase } = require('./db/database');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// ============================================
 // 中间件配置
-// ============================================
 
 // CORS 配置（同源访问，可以简化）
 app.use(cors({
@@ -45,9 +40,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const frontendPath = path.join(__dirname, '../front-end');
 app.use(express.static(frontendPath));
 
-// ============================================
 // API 路由
-// ============================================
 
 // 健康检查
 app.get('/api/health', (req, res) => {
@@ -67,9 +60,7 @@ app.use('/api/items', itemRoutes);
 // 图片上传路由
 app.use('/api/upload', uploadRoutes);
 
-// ============================================
 // 前端路由处理（SPA支持）
-// ============================================
 
 // 对于所有非API请求，返回前端index.html（支持前端路由）
 app.get('*', (req, res, next) => {
@@ -87,9 +78,7 @@ app.get('*', (req, res, next) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// ============================================
 // 错误处理中间件
-// ============================================
 
 // API 404 处理
 app.use('/api/*', (req, res) => {
@@ -108,9 +97,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// ============================================
 // 服务器启动
-// ============================================
 
 async function startServer() {
     try {
